@@ -2,7 +2,8 @@ import numpy as np
 
 from panda_gym.envs.core import RobotTaskEnv
 from panda_gym.envs.robots.panda import Panda
-from panda_gym.envs.tasks.reach import Reach
+# from panda_gym.envs.tasks.reach import Reach
+from panda_gym.envs.tasks.reach_safe import Reach
 from panda_gym.pybullet import PyBullet
 
 
