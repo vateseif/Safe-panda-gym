@@ -1,14 +1,16 @@
 import gym
 import panda_gym
 import time
-env = gym.make("PandaReach-v2", render=True)
+# env = gym.make("PandaReach-v2", render=True)
+env = gym.make("PandaReachSafe-v2", render=True)
 
 obs = env.reset()
 done = False
 
 while not done:
     action = env.action_space.sample()
-    obs, reward, done, info = env.step(action)
+    obs, cost_reward, done, info = env.step(action)
+    print(cost_reward)
     env.render(mode='human')
     # time.sleep(9)
 

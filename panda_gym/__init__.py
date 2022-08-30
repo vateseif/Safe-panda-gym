@@ -19,6 +19,13 @@ for reward_type in ["sparse", "dense"]:
         )
 
         register(
+            id="PandaReachSafe{}{}-v2".format(control_suffix, reward_suffix),
+            entry_point="panda_gym.envs:PandaReachSafeEnv",
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
+
+        register(
             id="PandaPush{}{}-v2".format(control_suffix, reward_suffix),
             entry_point="panda_gym.envs:PandaPushEnv",
             kwargs=kwargs,
