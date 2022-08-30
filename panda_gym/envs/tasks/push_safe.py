@@ -79,12 +79,16 @@ class Push(Task):
         object_rotation = np.array(self.sim.get_base_rotation("object"))
         object_velocity = np.array(self.sim.get_base_velocity("object"))
         object_angular_velocity = np.array(self.sim.get_base_angular_velocity("object"))
+        unsafe_region_1_pos = self.unsafe_state_1_pos
+        unsafe_region_2_pos = self.unsafe_state_2_pos
         observation = np.concatenate(
             [
                 object_position,
                 object_rotation,
                 object_velocity,
                 object_angular_velocity,
+                unsafe_region_1_pos,
+                unsafe_region_2_pos,
             ]
         )
         return observation
