@@ -95,6 +95,7 @@ class Reach(Task):
         random_y_base = self._sample_unsafe_state_z_boundary()
         # return np.array([random_x_base, -0.25, - self.object_size /2])
         return np.array([random_x_base, -0.25, random_y_base  ])
+        
     def _sample_unsafe_state_right(self):
         random_y_base = self._sample_unsafe_state_z_boundary()
         random_x_base = self._sample_unsafe_state_x_boundary()

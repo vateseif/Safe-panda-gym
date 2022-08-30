@@ -6,7 +6,7 @@ from panda_gym.envs.tasks.push_safe import Push
 from panda_gym.pybullet import PyBullet
 
 
-class PandaPushEnv(RobotTaskEnv):
+class PandaPushSafeEnv(RobotTaskEnv):
     """Push task wih Panda robot.
 
     Args:
@@ -19,5 +19,5 @@ class PandaPushEnv(RobotTaskEnv):
     def __init__(self, render: bool = False, reward_type: str = "sparse", control_type: str = "ee") -> None:
         sim = PyBullet(render=render)
         robot = Panda(sim, block_gripper=True, base_position=np.array([-0.6, 0.0, 0.0]), control_type=control_type)
-        task = Push(sim, reward_type=reward_type)
+        task = Push(sim, reward_type=reward_type, get_ee_position=robot.get_ee_position)
         super().__init__(robot, task)

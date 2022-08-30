@@ -1,3 +1,5 @@
+from dis import dis
+from math import dist
 from typing import Any, Dict, Union
 
 import numpy as np
@@ -10,6 +12,7 @@ class Push(Task):
     def __init__(
         self,
         sim,
+        get_ee_position,
         reward_type="sparse",
         distance_threshold=0.05,
         goal_xy_range=0.3,
@@ -20,6 +23,7 @@ class Push(Task):
         self.distance_threshold = distance_threshold
         self.object_size = 0.04
         self.unsafe_region_radius = 0.1
+        self.get_ee_position = get_ee_position
         self.max_base_unsafe = 0.15 # max x pos to put unsafe space
         self.min_base_unsafe = -0.25
         self.goal_range_low = np.array([-goal_xy_range / 2, -goal_xy_range / 2, 0])
@@ -89,6 +93,10 @@ class Push(Task):
         object_position = np.array(self.sim.get_base_position("object"))
         return object_position
 
+    def get_end_effector_position(self) -> np.ndarray:
+        ee_position = np.array(self.get_ee_position())
+        return ee_position
+    
     def _sample_unsafe_state_x_boundary(self):
         
         return np.random.uniform(self.max_base_unsafe,  self.min_base_unsafe )
@@ -109,6 +117,38 @@ class Push(Task):
         random_x_base = self._sample_unsafe_state_x_boundary()
         return np.array([random_x_base, 0.25, random_y_base])
 
+    def _target_in_unsafe_region(self):
+        target_pos = self.goal
+        # distance between object anf unsafe space
+        distance_target_unsafe_1 = distance(target_pos , self.unsafe_state_1_pos )
+        distance_target_unsafe_2 = distance(target_pos , self.unsafe_state_2_pos )
+        # lowest distance possible is sphere radius plus max posssible value using size 
+        # this is a mathematical apporximation
+        min_distance_treshhold = self.unsafe_region_radius + (self.object_size / 2)
+        return (distance_target_unsafe_1 < min_distance_treshhold) or (distance_target_unsafe_2 < min_distance_treshhold)
+
+    def _object_in_unsafe_region(self):
+        object_pos = self.get_achieved_goal()
+        # distance between object anf unsafe space
+        distance_obj_unsafe_1 = distance(object_pos , self.unsafe_state_1_pos )
+        distance_obj_unsafe_2 = distance(object_pos , self.unsafe_state_2_pos )
+        # lowest distance possible is sphere radius plus max posssible value using size 
+        # this is a mathematical apporximation
+        min_distance_treshhold = self.unsafe_region_radius + (self.object_size / 2)
+        return (distance_obj_unsafe_1 < min_distance_treshhold) or (distance_obj_unsafe_2 < min_distance_treshhold)
+        
+
+    def _end_effector_in_unsafe_region(self):
+        end_effector_pos = self.get_end_effector_position()
+        # distacne between end effector and unsafe space center
+        distance_end_effector_unsafe_1 = distance(end_effector_pos , self.unsafe_state_1_pos )
+        distance_end_effector_unsafe_2 = distance(end_effector_pos , self.unsafe_state_2_pos )
+        min_distance_treshhold = self.unsafe_region_radius
+        return (distance_end_effector_unsafe_1 < min_distance_treshhold) or (distance_end_effector_unsafe_2 < min_distance_treshhold)
+        #     return True
+        # return NotImplementedError
+
+
     def reset(self) -> None:
         self.unsafe_state_1_pos = self._sample_unsafe_state_left()
         self.sim.set_base_pose("unsafe_region_1", self.unsafe_state_1_pos, np.array([0.0, 0.0, 0.0, 1.0]))
@@ -118,9 +158,21 @@ class Push(Task):
 
 
         self.goal = self._sample_goal()
+       
+
         object_position = self._sample_object()
-        self.sim.set_base_pose("target", self.goal, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("object", object_position, np.array([0.0, 0.0, 0.0, 1.0]))
+
+        # ensure target and object don't render in unsafe region
+        while not self._target_in_unsafe_region():
+            self.goal = self._sample_goal()
+
+        while not self._object_in_unsafe_region():
+            object_position = self._sample_object()
+            self.sim.set_base_pose("object", object_position, np.array([0.0, 0.0, 0.0, 1.0]))
+
+        self.sim.set_base_pose("target", self.goal, np.array([0.0, 0.0, 0.0, 1.0]))
+       
 
     def _sample_goal(self) -> np.ndarray:
         """Randomize goal."""
@@ -136,13 +188,26 @@ class Push(Task):
         object_position += noise
         return object_position
 
+    def _compute_cost_function(self):
+        '''
+        two possible contontitions to get a non 0 cost
+        1 Object enters unsafe space 1  or 2
+        2 end effector enters unsafe space 1 or 2
+        '''
+        if self._object_in_unsafe_region():
+            return 1.0
+        elif self._end_effector_in_unsafe_region():
+            return 1.0
+        else:
+            return 0.0
     def is_success(self, achieved_goal: np.ndarray, desired_goal: np.ndarray) -> Union[np.ndarray, float]:
         d = distance(achieved_goal, desired_goal)
         return np.array(d < self.distance_threshold, dtype=np.float64)
 
     def compute_reward(self, achieved_goal, desired_goal, info: Dict[str, Any]) -> Union[np.ndarray, float]:
         d = distance(achieved_goal, desired_goal)
+        unsafe_cost = self._compute_cost_function()
         if self.reward_type == "sparse":
-            return -np.array(d > self.distance_threshold, dtype=np.float64)
+            return np.array(d > self.distance_threshold, dtype=np.float64) + unsafe_cost
         else:
-            return -d
+            return d + unsafe_cost

@@ -5,3 +5,4 @@ from panda_gym.envs.panda_tasks.panda_reach import PandaReachEnv
 from panda_gym.envs.panda_tasks.panda_slide import PandaSlideEnv
 from panda_gym.envs.panda_tasks.panda_stack import PandaStackEnv
 from panda_gym.envs.panda_tasks.panda_reach_safe import PandaReachSafeEnv
+from panda_gym.envs.panda_tasks.panda_push_safe import PandaPushSafeEnv
