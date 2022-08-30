@@ -12,7 +12,7 @@ while not done:
     obs, cost_reward, done, info = env.step(action)
     print(cost_reward)
     env.render(mode='human')
-    # time.sleep(9)
+    time.sleep(9)
 
 
 env.close()

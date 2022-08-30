@@ -59,6 +59,12 @@ You can also [![Open in Colab](https://colab.research.google.com/assets/colab-ba
 |         `PandaStack-v2`          |              `PandaFlip-v2`                    |
 | ![PandaStack-v2](docs/_static/img/stack.png) | ![PandaFlip-v2](docs/_static/img/flip.png) |
 
+## Safe Environments
+|                                  |                                                |
+| :------------------------------: | :--------------------------------------------: |
+|         `PandaReachSafe-v2`          |              `PandaFlip-v2`                    |
+| ![PandaReachSafe-v2](docs/_static/img/reach-safe.png) | ![PandaFlip-v2](docs/_static/img/flip.png) |
+
 ## Baselines results
 
 Baselines results and pre-trained agents available in [rl-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo).
