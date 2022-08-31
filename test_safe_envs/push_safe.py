@@ -1,7 +1,7 @@
 import gym
 import panda_gym
 import time
-# env = gym.make("PandaReach-v2", render=True)
+
 env = gym.make("PandaPushSafe-v2", render=True)
 
 obs = env.reset()

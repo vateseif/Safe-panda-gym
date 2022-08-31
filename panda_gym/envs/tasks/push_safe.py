@@ -114,12 +114,12 @@ class Push(Task):
         random_x_base = self._sample_unsafe_state_x_boundary()
         random_y_base = self._sample_unsafe_state_z_boundary()
         # return np.array([random_x_base, -0.25, - self.object_size /2])
-        return np.array([random_x_base, -0.25, random_y_base  ])
+        return np.array([random_x_base, -0.25, - self.object_size /2   ])
 
     def _sample_unsafe_state_right(self):
         random_y_base = self._sample_unsafe_state_z_boundary()
         random_x_base = self._sample_unsafe_state_x_boundary()
-        return np.array([random_x_base, 0.25, random_y_base])
+        return np.array([random_x_base, 0.25, - self.object_size /2 ])
 
     def _target_in_unsafe_region(self):
         target_pos = self.goal
@@ -129,7 +129,8 @@ class Push(Task):
         # lowest distance possible is sphere radius plus max posssible value using size 
         # this is a mathematical apporximation
         min_distance_treshhold = self.unsafe_region_radius + (self.object_size / 2)
-        return (distance_target_unsafe_1 < min_distance_treshhold) or (distance_target_unsafe_2 < min_distance_treshhold)
+        if (distance_target_unsafe_1 < min_distance_treshhold) or (distance_target_unsafe_2 < min_distance_treshhold):
+            return True
 
     def _object_in_unsafe_region(self):
         object_pos = self.get_achieved_goal()
@@ -168,10 +169,10 @@ class Push(Task):
         self.sim.set_base_pose("object", object_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
         # ensure target and object don't render in unsafe region
-        while not self._target_in_unsafe_region():
+        while  self._target_in_unsafe_region():
             self.goal = self._sample_goal()
 
-        while not self._object_in_unsafe_region():
+        while self._object_in_unsafe_region():
             object_position = self._sample_object()
             self.sim.set_base_pose("object", object_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
