@@ -215,16 +215,19 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         self.robot = robot
         self.task = task
         obs = self.reset()  # required for init; seed can be changed later
-        observation_shape = obs["observation"].shape
-        achieved_goal_shape = obs["achieved_goal"].shape
-        desired_goal_shape = obs["achieved_goal"].shape
-        self.observation_space = gym.spaces.Dict(
-            dict(
-                observation=gym.spaces.Box(-10.0, 10.0, shape=observation_shape, dtype=np.float32),
-                desired_goal=gym.spaces.Box(-10.0, 10.0, shape=achieved_goal_shape, dtype=np.float32),
-                achieved_goal=gym.spaces.Box(-10.0, 10.0, shape=desired_goal_shape, dtype=np.float32),
-            )
-        )
+        observation_shape = obs.shape
+        # achieved_goal_shape = obs["achieved_goal"].shape
+        # desired_goal_shape = obs["achieved_goal"].shape
+        # self.observation_space = gym.spaces.Dict(
+        #     dict(
+        #         observation=gym.spaces.Box(-10.0, 10.0, shape=observation_shape, dtype=np.float32),
+        #         desired_goal=gym.spaces.Box(-10.0, 10.0, shape=achieved_goal_shape, dtype=np.float32),
+        #         achieved_goal=gym.spaces.Box(-10.0, 10.0, shape=desired_goal_shape, dtype=np.float32),
+        #     )
+        # )
+
+        self.observation_space = gym.spaces.Box(-10.0, 10.0, shape=observation_shape, dtype=np.float32)
+    
         self.action_space = self.robot.action_space
         self.compute_reward = self.task.compute_reward
         self._saved_goal = dict()
@@ -234,13 +237,14 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         task_obs = self.task.get_obs()  # object position, velococity, unsafe state locations etc...
         observation = np.concatenate([robot_obs, task_obs])
         achieved_goal = self.task.get_achieved_goal()
-        return {
+        return  np.concatenate([observation,  achieved_goal, self.task.get_goal()])
+        # return {
             
-            "observation": np.concatenate([observation,  achieved_goal, self.task.get_goal()]),
-            # "observation": observation,
-            "achieved_goal": achieved_goal,
-            "desired_goal": self.task.get_goal(),
-        }
+        #     "observation": np.concatenate([observation,  achieved_goal, self.task.get_goal()]),
+        #     # "observation": observation,
+        #     "achieved_goal": achieved_goal,
+        #     "desired_goal": self.task.get_goal(),
+        # }
 
     def reset(self, seed: Optional[int] = None) -> Dict[str, np.ndarray]:
         self.task.np_random, seed = gym.utils.seeding.np_random(seed)
