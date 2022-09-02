@@ -24,12 +24,7 @@ for reward_type in ["sparse", "dense"]:
             kwargs=kwargs,
             max_episode_steps=50,
         )
-        register(
-            id="PandaPushSafe{}{}-v2".format(control_suffix, reward_suffix),
-            entry_point="panda_gym.envs:PandaPushSafeEnv",
-            kwargs=kwargs,
-            max_episode_steps=50,
-        )
+      
 
         register(
             id="PandaPush{}{}-v2".format(control_suffix, reward_suffix),
@@ -38,8 +33,12 @@ for reward_type in ["sparse", "dense"]:
             max_episode_steps=50,
         )
 
-     
-
+        register(
+            id="PandaPushSafe{}{}-v2".format(control_suffix, reward_suffix),
+            entry_point="panda_gym.envs:PandaPushSafeEnv",
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
 
         register(
             id="PandaSlide{}{}-v2".format(control_suffix, reward_suffix),
@@ -58,6 +57,14 @@ for reward_type in ["sparse", "dense"]:
         register(
             id="PandaStack{}{}-v2".format(control_suffix, reward_suffix),
             entry_point="panda_gym.envs:PandaStackEnv",
+            kwargs=kwargs,
+            max_episode_steps=100,
+        )
+
+
+        register(
+            id="PandaStack3{}{}-v2".format(control_suffix, reward_suffix),
+            entry_point="panda_gym.envs:PandaStack3Env",
             kwargs=kwargs,
             max_episode_steps=100,
         )
