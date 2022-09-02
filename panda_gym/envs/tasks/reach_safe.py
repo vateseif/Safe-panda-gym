@@ -132,12 +132,10 @@ class Reach(Task):
 
         self.unsafe_state_2_pos = self._sample_unsafe_state_right()
         self.sim.set_base_pose("unsafe_region_2", self.unsafe_state_2_pos, np.array([0.0, 0.0, 0.0, 1.0]))
-
         self.goal = self._sample_goal()
-
         while self._goal_in_unsafe_area():
-            print("initalisation is not fine, change goal")
             self.goal = self._sample_goal()
+        
         # note to self : recursive funtions are slower use loop instead
         # if not self._goal_in_safe_area():
         #     print("initalisation is not fine")

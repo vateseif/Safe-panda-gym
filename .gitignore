@@ -8,3 +8,4 @@ build/
 .DS_Store
 sandbox
 /venv
+/train_safe_rl_algorithms/runs
