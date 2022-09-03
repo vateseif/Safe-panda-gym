@@ -55,6 +55,14 @@ for reward_type in ["sparse", "dense"]:
         )
 
         register(
+            id="PandaPickAndPlacePlatform{}{}-v2".format(control_suffix, reward_suffix),
+            entry_point="panda_gym.envs:PandaPickAndPlacePlatformEnv",
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
+        
+
+        register(
             id="PandaStack{}{}-v2".format(control_suffix, reward_suffix),
             entry_point="panda_gym.envs:PandaStackEnv",
             kwargs=kwargs,
@@ -68,6 +76,14 @@ for reward_type in ["sparse", "dense"]:
             kwargs=kwargs,
             max_episode_steps=100,
         )
+        register(
+            id="PandaStackPyramid{}{}-v2".format(control_suffix, reward_suffix),
+            entry_point="panda_gym.envs:PandaStackPyramidEnv",
+            kwargs=kwargs,
+            max_episode_steps=100,
+        )
+
+        
 
         register(
             id="PandaFlip{}{}-v2".format(control_suffix, reward_suffix),

@@ -1,7 +1,7 @@
 import gym
 import panda_gym
 import time
-env = gym.make("PandaStack3-v2", render=True)
+env = gym.make("PandaPickAndPlacePlatform-v2", render=True)
 # PandaStackPyramid
 obs = env.reset()
 done = False
