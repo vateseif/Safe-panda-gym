@@ -48,8 +48,6 @@ class Reach(Task):
         )
 
        
-        # pre_size = np.ones(3) * self.object_size 
-        self.unsafe_size_region  = np.array([0.1, 0.1, 0.1])
         self.sim.create_sphere(
             body_name = "unsafe_region_1",
             radius = self.unsafe_region_radius,

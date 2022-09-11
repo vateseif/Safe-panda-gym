@@ -1,4 +1,3 @@
-from curses.ascii import FS
 from typing import Any, Dict, Union
 
 import numpy as np
@@ -8,10 +7,11 @@ from panda_gym.pybullet import PyBullet
 from panda_gym.utils import distance
 
 
-class PickAndPlacePlatform(Task):
+class PickAndPlaceSafe(Task):
     def __init__(
         self,
         sim: PyBullet,
+        get_ee_position,
         reward_type: str = "sparse",
         distance_threshold: float = 0.05,
         goal_xy_range: float = 0.3,
@@ -22,6 +22,8 @@ class PickAndPlacePlatform(Task):
         self.reward_type = reward_type
         self.distance_threshold = distance_threshold
         self.object_size = 0.04
+        self.get_ee_position = get_ee_position
+        self.unsafe_region_radius = 0.1
         self.goal_range_low = np.array([-goal_xy_range / 2, -goal_xy_range / 2, 0])
         self.goal_range_high = np.array([goal_xy_range / 2, goal_xy_range / 2, goal_z_range])
         self.obj_range_low = np.array([-obj_xy_range / 2, -obj_xy_range / 2, 0])
@@ -50,13 +52,23 @@ class PickAndPlacePlatform(Task):
             rgba_color=np.array([0.1, 0.9, 0.1, 0.3]),
         )
 
-        self.sim.create_box(
-            body_name="elevated_table",
-            # half_extents=np.ones(3) * self.object_size / 2,
-            half_extents=np.array([1.1/15, 0.7/3 ,  2.9 * self.object_size ]),
-            mass=200000000000,
-            position=np.array([0.15, 0.15, 2.905 * self.object_size / 2]),
-            rgba_color=np.array([0.1, 0.9, 0.1, 1.0]),
+
+        self.sim.create_sphere(
+            body_name = "unsafe_region_1",
+            radius = self.unsafe_region_radius,
+            mass = 0.0,
+            ghost = True,
+            position = np.array([0.0, 0.0, -self.object_size / 2]),
+            rgba_color = np.array([0.9, 0.1, 0.1, 0.3]),
+        )
+
+        self.sim.create_sphere(
+            body_name = "unsafe_region_2",
+            radius = self.unsafe_region_radius,
+            mass = 0.0,
+            ghost = True,
+            position = np.array([0.0, 0.0, -self.object_size / 2]),
+            rgba_color = np.array([0.9, 0.1, 0.1, 0.3]),
         )
 
 
@@ -66,14 +78,49 @@ class PickAndPlacePlatform(Task):
         object_rotation = self.sim.get_base_rotation("object")
         object_velocity = self.sim.get_base_velocity("object")
         object_angular_velocity = self.sim.get_base_angular_velocity("object")
-        observation = np.concatenate([object_position, object_rotation, object_velocity, object_angular_velocity])
+        unsafe_space_1 = self.sim.get_base_position("unsafe_region_1")
+        unsafe_space_2 = self.sim.get_base_position("unsafe_region_2")
+        observation = np.concatenate([object_position, object_rotation, \
+            object_velocity, object_angular_velocity, unsafe_space_1, unsafe_space_2 ])
         return observation
+
+    def get_end_effector_position(self) -> np.ndarray:
+        ee_position = np.array(self.get_ee_position())
+        return ee_position
 
     def get_achieved_goal(self) -> np.ndarray:
         object_position = np.array(self.sim.get_base_position("object"))
         return object_position
 
+    def _sample_unsafe_state_z_boundary(self):
+        
+        return np.random.uniform(0.28, - self.object_size / 2 )
+
+    def _sample_unsafe_state_x_boundary(self):
+        
+        return np.random.uniform(self.max_base_unsafe,  self.min_base_unsafe )
+
+    def _sample_unsafe_state_left(self):
+        # sample boundary to right after base of robot    
+        random_x_base = self._sample_unsafe_state_x_boundary()
+        random_z_base = self._sample_unsafe_state_z_boundary()
+        
+        return np.array([random_x_base, -0.25,random_z_base  ])
+
+    def _sample_unsafe_state_right(self):
+        random_z_base = self._sample_unsafe_state_z_boundary()
+        random_x_base = self._sample_unsafe_state_x_boundary()
+        return np.array([random_x_base, 0.25, random_z_base])
+
     def reset(self) -> None:
+        self.unsafe_state_1_pos = self._sample_unsafe_state_left()
+        self.sim.set_base_pose("unsafe_region_1", self.unsafe_state_1_pos, np.array([0.0, 0.0, 0.0, 1.0]))
+
+        self.unsafe_state_2_pos = self._sample_unsafe_state_right()
+        self.sim.set_base_pose("unsafe_region_2", self.unsafe_state_2_pos, np.array([0.0, 0.0, 0.0, 1.0]))
+
+
+
         self.goal = self._sample_goal()
         object_position = self._sample_object()
         self.sim.set_base_pose("target", self.goal, np.array([0.0, 0.0, 0.0, 1.0]))

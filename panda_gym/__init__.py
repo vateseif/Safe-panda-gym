@@ -83,8 +83,14 @@ for reward_type in ["sparse", "dense"]:
             max_episode_steps=100,
         )
 
-        
+        register(
+            id="PandaBuildL{}{}-v2".format(control_suffix, reward_suffix),
+            entry_point="panda_gym.envs:PandaBuildLEnv",
+            kwargs=kwargs,
+            max_episode_steps=100,
+        )
 
+        
         register(
             id="PandaFlip{}{}-v2".format(control_suffix, reward_suffix),
             entry_point="panda_gym.envs:PandaFlipEnv",
