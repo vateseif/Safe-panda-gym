@@ -152,17 +152,16 @@ class Reach(Task):
         return np.array(d < self.distance_threshold, dtype=np.float64)
 
     def compute_cost(self, achieved_goal: np.ndarray, desired_goal: np.ndarray, info: Dict[str, Any] = ...) -> Union[np.ndarray, float]:
+        d = distance(achieved_goal, desired_goal)
         cost_safe = self._compute_cost_safe_space(achieved_goal)
-        return cost_safe
-        
+        if self.reward_type == "sparse": 
+            return np.array(d > self.distance_threshold, dtype=np.float64) + cost_safe
+        else:
+            return d + cost_safe
+
     def compute_reward(self, achieved_goal, desired_goal, info: Dict[str, Any]) -> Union[np.ndarray, float]:
         d = distance(achieved_goal, desired_goal)
-        
         if self.reward_type == "sparse":
-            # print("sparse")
-            # print("cost safe : ", cost_safe)
-            # print("normal_cost : ", np.array(d > self.distance_threshold, dtype=np.float64) )
             return -np.array(d > self.distance_threshold, dtype=np.float64)
         else:
-            # return d + cost_safe d + cost_safe
             return -d
