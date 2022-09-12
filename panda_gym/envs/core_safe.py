@@ -198,6 +198,12 @@ class Task(ABC):
     ) -> Union[np.ndarray, float]:
         """Compute reward associated to the achieved and the desired goal."""
 
+    @abstractmethod
+    def compute_cost(
+        self, achieved_goal: np.ndarray, desired_goal: np.ndarray, info: Dict[str, Any] = {}
+    ) -> Union[np.ndarray, float]:
+        """Compute reward associated to the achieved and the desired goal."""
+
 
 class RobotTaskEnv(gym_robotics.GoalEnv):
     """Robotic task goal env, as the junction of a task and a robot.
@@ -272,7 +278,9 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         self.sim.step()
         obs = self._get_obs()
         done = False
-        info = {"is_success": self.task.is_success(obs["achieved_goal"], self.task.get_goal())}
+        cost_value = self.task.compute_cost()
+        info = {"is_success": self.task.is_success(obs["achieved_goal"], self.task.get_goal()), "cost" : cost_value}
+
         reward = self.task.compute_reward(obs["achieved_goal"], self.task.get_goal(), info)
         assert isinstance(reward, float)  # needed for pytype cheking
         return obs["observation"], reward, done, info

@@ -208,11 +208,14 @@ class Push(Task):
     def is_success(self, achieved_goal: np.ndarray, desired_goal: np.ndarray) -> Union[np.ndarray, float]:
         d = distance(achieved_goal, desired_goal)
         return np.array(d < self.distance_threshold, dtype=np.float64)
+        
+    def compute_cost(self, achieved_goal: np.ndarray, desired_goal: np.ndarray, info: Dict[str, Any] = ...) -> Union[np.ndarray, float]:
+        unsafe_cost = self._compute_cost_function()
+        return unsafe_cost
 
     def compute_reward(self, achieved_goal, desired_goal, info: Dict[str, Any]) -> Union[np.ndarray, float]:
         d = distance(achieved_goal, desired_goal)
-        unsafe_cost = self._compute_cost_function()
         if self.reward_type == "sparse":
-            return np.array(d > self.distance_threshold, dtype=np.float64) + unsafe_cost
+            return -np.array(d > self.distance_threshold, dtype=np.float64)
         else:
-            return d + unsafe_cost
+            return -d

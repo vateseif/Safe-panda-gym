@@ -108,7 +108,6 @@ class Stack(Task):
                 object3_velocity,
                 object3_angular_velocity,
 
-
             ]
         )
         return observation

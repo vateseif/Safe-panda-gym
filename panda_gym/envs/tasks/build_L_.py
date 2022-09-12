@@ -2,7 +2,7 @@ from typing import Any, Dict, Tuple, Union
 
 import numpy as np
 
-from panda_gym.envs.core_multi_task import Task
+from panda_gym.envs.core_safe import Task
 from panda_gym.pybullet import PyBullet
 from panda_gym.utils import distance
 
@@ -180,8 +180,7 @@ class  BuildL(Task):
         # must be vectorized !!
         d = distance(achieved_goal, desired_goal)
         return np.array((d < self.distance_threshold), dtype=np.float64)
-
-    def compute_reward(self, achieved_goal, desired_goal, info: Dict[str, Any]) -> Union[np.ndarray, float]:
+    def compute_cost(self, achieved_goal: np.ndarray, desired_goal: np.ndarray, info: Dict[str, Any] = ...) -> Union[np.ndarray, float]:
         objective_position = self.goal
         current_position = self.get_achieved_goal()
 
@@ -199,4 +198,11 @@ class  BuildL(Task):
                 cost_sparse[key] = sparse_co
             return cost_sparse
         else:
-            return cost
+            return cost 
+
+    def compute_reward(self, achieved_goal, desired_goal, info: Dict[str, Any]) -> Union[np.ndarray, float]:
+        d = distance(achieved_goal, desired_goal)
+        if self.reward_type == "sparse":
+            return -np.array(d > self.distance_threshold, dtype=np.float64)
+        else:
+            return -d
