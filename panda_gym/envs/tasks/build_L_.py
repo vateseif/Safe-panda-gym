@@ -195,6 +195,7 @@ class  BuildL(Task):
         if self.reward_type == "sparse":
             cost_sparse = cost.copy()
             for key in cost_sparse:
+                sparse_co = np.array((cost_sparse[key] > self.distance_threshold), dtype=np.float64)
                 cost_sparse[key] = sparse_co
             return cost_sparse
         else:
