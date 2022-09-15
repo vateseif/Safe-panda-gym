@@ -75,7 +75,7 @@ class Reach(Task):
         goal_sphere_location = self.goal.copy()
         # return np.array([])  # no tasak-specific observation
 
-        return np.concatenate([unsafe_state, end_effector_location, goal_sphere_location])
+        return np.concatenate([unsafe_state, end_effector_location, goal_sphere_location, self.unsafe_region_radius, self.object_size])
 
     def get_achieved_goal(self) -> np.ndarray:
         ee_position = np.array(self.get_ee_position())
