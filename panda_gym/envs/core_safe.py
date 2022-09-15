@@ -243,14 +243,15 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         robot_obs = self.robot.get_obs()  # robot state
         task_obs = self.task.get_obs()  # object position, velococity, unsafe state locations etc...
         observation = np.concatenate([robot_obs, task_obs])
-        achieved_goal = self.task.get_achieved_goal()
+        # achieved_goal = self.task.get_achieved_goal()
         # return  np.concatenate([observation,  achieved_goal, self.task.get_goal()])
+        return  observation
+        # np.concatenate([observation,  achieved_goal, self.task.get_goal()])
         return {
-            
             "observation": np.concatenate([observation,  achieved_goal, self.task.get_goal()]),
             # "observation": observation,
-            "achieved_goal": achieved_goal,
-            "desired_goal": self.task.get_goal(),
+            # "achieved_goal": achieved_goal,
+            # "desired_goal": self.task.get_goal(),
         }
 
     def reset(self, seed: Optional[int] = None) -> Dict[str, np.ndarray]:
@@ -258,7 +259,7 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         with self.sim.no_rendering():
             self.robot.reset()
             self.task.reset()
-        return self._get_obs()["observation"]
+        return self._get_obs()
 
     def save_state(self) -> int:
         state_id = self.sim.save_state()
@@ -277,13 +278,15 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         self.robot.set_action(action)
         self.sim.step()
         obs = self._get_obs()
+        achieved_goal = self.task.get_achieved_goal()
+        get_goal = self.task.get_goal()
         done = False
         cost_value = self.task.compute_cost()
-        info = {"is_success": self.task.is_success(obs["achieved_goal"], self.task.get_goal()), "cost" : cost_value}
+        info = {"is_success": self.task.is_success(achieved_goal, get_goal), "cost" : cost_value}
 
-        reward = self.task.compute_reward(obs["achieved_goal"], self.task.get_goal(), info)
+        reward = self.task.compute_reward(achieved_goal, get_goal, info)
         assert isinstance(reward, float)  # needed for pytype cheking
-        return obs["observation"], reward, done, info
+        return obs, reward, done, info
 
     def close(self) -> None:
         self.sim.close()

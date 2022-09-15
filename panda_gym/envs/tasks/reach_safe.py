@@ -70,10 +70,12 @@ class Reach(Task):
         '''
         returns unsafe states positions as observation
         '''
-        unsafe_state = np.concatenate([self.unsafe_state_1_pos, self.unsafe_state_2_pos] )
+        unsafe_state = np.concatenate([self.unsafe_state_1_pos, self.unsafe_state_2_pos])
+        end_effector_location = self.get_achieved_goal()
+        goal_sphere_location = self.goal.copy()
         # return np.array([])  # no tasak-specific observation
 
-        return unsafe_state
+        return np.concatenate([unsafe_state, end_effector_location, goal_sphere_location])
 
     def get_achieved_goal(self) -> np.ndarray:
         ee_position = np.array(self.get_ee_position())
@@ -100,7 +102,6 @@ class Reach(Task):
         return np.array([random_x_base, 0.25, random_y_base])
 
     def _goal_in_unsafe_area(self):
-
         d1 = distance(self.goal, self.unsafe_state_1_pos)
         d2 = distance(self.goal, self.unsafe_state_2_pos)
         min_tresh_distane = self.unsafe_region_radius + 0.02# 0.02 is radius of goal
@@ -115,7 +116,7 @@ class Reach(Task):
         d1 = distance( achieved_goal, self.unsafe_state_1_pos)
         d2 = distance(achieved_goal, self.unsafe_state_2_pos)
         min_tresh_distane = self.unsafe_region_radius
-        cost_value =  (d1> min_tresh_distane) and (d2> min_tresh_distane)
+        # cost_value =  (d1> min_tresh_distane) and (d2> min_tresh_distane)
         if (d1<min_tresh_distane) or (d2<min_tresh_distane):
             return 1.0
         else:
