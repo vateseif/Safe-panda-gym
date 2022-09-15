@@ -2,7 +2,7 @@ from typing import Any, Dict, Tuple, Union
 
 import numpy as np
 
-from panda_gym.envs.core_safe import Task
+from panda_gym.envs.core_multi_task import Task
 from panda_gym.pybullet import PyBullet
 from panda_gym.utils import distance
 
@@ -100,20 +100,44 @@ class  BuildL(Task):
         object1_rotation = np.array(self.sim.get_base_rotation("object1"))
         object1_velocity = np.array(self.sim.get_base_velocity("object1"))
         object1_angular_velocity = np.array(self.sim.get_base_angular_velocity("object1"))
+
         object2_position = np.array(self.sim.get_base_position("object2"))
         object2_rotation = np.array(self.sim.get_base_rotation("object2"))
         object2_velocity = np.array(self.sim.get_base_velocity("object2"))
         object2_angular_velocity = np.array(self.sim.get_base_angular_velocity("object2"))
+
+        object3_position = np.array(self.sim.get_base_position("object3"))
+        object3_rotation = np.array(self.sim.get_base_rotation("object3"))
+        object3_velocity = np.array(self.sim.get_base_velocity("object3"))
+        object3_angular_velocity = np.array(self.sim.get_base_angular_velocity("object3"))
+
+        object4_position = np.array(self.sim.get_base_position("object4"))
+        object4_rotation = np.array(self.sim.get_base_rotation("object4"))
+        object4_velocity = np.array(self.sim.get_base_velocity("object4"))
+        object4_angular_velocity = np.array(self.sim.get_base_angular_velocity("object4"))
+
+
         observation = np.concatenate(
             [
                 object1_position,
                 object1_rotation,
                 object1_velocity,
                 object1_angular_velocity,
+
                 object2_position,
                 object2_rotation,
                 object2_velocity,
                 object2_angular_velocity,
+
+                object3_position,
+                object3_rotation,
+                object3_velocity,
+                object3_angular_velocity,
+
+                object4_position,
+                object4_rotation,
+                object4_velocity,
+                object4_angular_velocity,
             ]
         )
         return observation
@@ -123,6 +147,8 @@ class  BuildL(Task):
         object2_position = self.sim.get_base_position("object2")
         object3_position = self.sim.get_base_position("object3")
         object4_position = self.sim.get_base_position("object4")
+
+        
         achieved_goal = np.concatenate((object1_position, object2_position, object3_position, object4_position))
         return achieved_goal
 
@@ -130,7 +156,7 @@ class  BuildL(Task):
         self.goal = self._sample_goal()
         object1_position, object2_position, object3_position, object4_position = self._sample_objects()
 
-        self.sim.set_base_pose("target1", self.goal[:3], np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("target1", self.goal[ :3], np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("target2", self.goal[3:6], np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("target3", self.goal[6:9], np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("target4", self.goal[9: ], np.array([0.0, 0.0, 0.0, 1.0]))
@@ -154,6 +180,7 @@ class  BuildL(Task):
         goal2 += noise
         goal3 += noise
         goal4 += noise
+
         return np.concatenate((goal1, goal2, goal3, goal4))
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
@@ -176,6 +203,13 @@ class  BuildL(Task):
         # if distance(object1_position, object2_position) > 0.1:
         return object1_position, object2_position, object3_position, object4_position
 
+    def _get_object_orietation(self):
+        object1_rotation = np.array(self.sim.get_base_rotation("object1", "quaternion"))
+        object2_rotation = np.array(self.sim.get_base_rotation("object2", "quaternion"))
+        object3_rotation = np.array(self.sim.get_base_rotation("object3", "quaternion"))
+        object4_rotation = np.array(self.sim.get_base_rotation("object4", "quaternion"))
+        return object1_rotation, object2_rotation, object3_rotation, object4_rotation
+
     def is_success(self, achieved_goal: np.ndarray, desired_goal: np.ndarray) -> Union[np.ndarray, float]:
         # must be vectorized !!
         d = distance(achieved_goal, desired_goal)
@@ -184,10 +218,13 @@ class  BuildL(Task):
         objective_position = self.goal
         current_position = self.get_achieved_goal()
 
+
         cost1 = distance(objective_position[:3], current_position[:3])
         cost2 = distance(objective_position[3:6], current_position[3:6])
         cost3 = distance(objective_position[6:9], current_position[6:9])
         cost4 = distance(objective_position[9: ], current_position[9: ])
+
+        
         
         cost = {"cost1": cost1, "cost2": cost2, "cost3": cost3, "cost4": cost4}
 
