@@ -1,0 +1,63 @@
+{
+    "ac_kwargs":	{
+        "pi":	{
+            "activation":	"tanh",
+            "hidden_sizes":	[
+                64,
+                64
+            ]
+        },
+        "val":	{
+            "activation":	"tanh",
+            "hidden_sizes":	[
+                64,
+                64
+            ]
+        }
+    },
+    "actor":	"mlp",
+    "adv_estimation_method":	"gae",
+    "algo":	"cpo",
+    "cg_damping":	0.1,
+    "cg_iters":	10,
+    "check_freq":	25,
+    "cost_limit":	25.0,
+    "entropy_coef":	0.01,
+    "env_id":	"PandaReachSafe-v2",
+    "epochs":	500,
+    "exp_name":	"PandaReachSafe-v2/cpo",
+    "gamma":	0.99,
+    "lam":	0.95,
+    "lam_c":	0.95,
+    "logger_kwargs":	{
+        "exp_name":	"PandaReachSafe-v2/cpo",
+        "level":	1,
+        "log_dir":	"./runs/PandaReachSafe-v2/cpo/2022-09-15__15-45-13/seed_00000",
+        "use_tensor_board":	true,
+        "verbose":	true
+    },
+    "max_ep_len":	50,
+    "max_grad_norm":	0.5,
+    "num_mini_batches":	16,
+    "optimizer":	"Adam",
+    "pi_lr":	0.0003,
+    "save_freq":	10,
+    "seed":	0,
+    "steps_per_epoch":	30000,
+    "target_kl":	0.01,
+    "train_pi_iterations":	80,
+    "train_v_iterations":	40,
+    "use_cost_value_function":	true,
+    "use_entropy":	false,
+    "use_exploration_noise_anneal":	true,
+    "use_kl_early_stopping":	false,
+    "use_linear_lr_decay":	true,
+    "use_max_grad_norm":	false,
+    "use_reward_penalty":	false,
+    "use_reward_scaling":	true,
+    "use_shared_weights":	false,
+    "use_standardized_advantages":	false,
+    "use_standardized_obs":	true,
+    "vf_lr":	0.001,
+    "weight_initialization":	"kaiming_uniform"
+}

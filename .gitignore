@@ -9,3 +9,5 @@ build/
 sandbox
 /venv
 /train_safe_rl_algorithms/runs
+runs/PandaReachSafe-v2/cpo/2022-09-15__21-21-27/seed_00000/tb/events.out.tfevents.1663273291.Tosins-Air.59063.0
+runs/PandaReachSafe-v2/cpo/2022-09-15__21-21-27/seed_00000/config.json

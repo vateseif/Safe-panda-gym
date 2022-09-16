@@ -79,4 +79,4 @@ if __name__ == '__main__':
 
 
 # run
-#  python train_cpo.py --env_id PandaReachSafe-v2 --algo cpo --cores 1 --no-mpi
+#  python train_safe_rl_algorithms/train_cpo.py --env_id PandaReachSafe-v2 --algo cpo --cores 1 --no-mpi

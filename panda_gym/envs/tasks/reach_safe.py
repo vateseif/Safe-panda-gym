@@ -75,7 +75,7 @@ class Reach(Task):
         goal_sphere_location = self.goal.copy()
         # return np.array([])  # no tasak-specific observation
 
-        return np.concatenate([unsafe_state, end_effector_location, goal_sphere_location, self.unsafe_region_radius, self.object_size])
+        return np.concatenate([unsafe_state, end_effector_location, goal_sphere_location])
 
     def get_achieved_goal(self) -> np.ndarray:
         ee_position = np.array(self.get_ee_position())
@@ -152,7 +152,9 @@ class Reach(Task):
         d = distance(achieved_goal, desired_goal)
         return np.array(d < self.distance_threshold, dtype=np.float64)
 
-    def compute_cost(self, achieved_goal: np.ndarray, desired_goal: np.ndarray, info: Dict[str, Any] = ...) -> Union[np.ndarray, float]:
+    def compute_cost(self) -> Union[np.ndarray, float]:
+        achieved_goal = self.get_achieved_goal()
+        desired_goal = self.goal.copy()
         d = distance(achieved_goal, desired_goal)
         cost_safe = self._compute_cost_safe_space(achieved_goal)
         if self.reward_type == "sparse": 
