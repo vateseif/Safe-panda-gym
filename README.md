@@ -10,6 +10,28 @@ Set of OpenAI/gym robotic environments based on PyBullet physics engine.
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![arXiv](https://img.shields.io/badge/cs.LG-arXiv%3A2106.13687-B31B1B.svg)](https://arxiv.org/abs/2106.13687)
 
+### TODO
+
+- [ ]Add pyramid env to ReadME
+- [ ] Create Safe Env version of 
+  - [x] Reach
+  - [x] Push
+      - [x] Fix observation state
+      
+  - [ ] Pick and Place
+    - [x] started
+  - [ ] Stack 
+     - [x] started
+  - [ ] Flip
+  - [ ] Stack 3
+  - [ ] Stack3 Pyramid
+  - [ ] 
+- [ ] Finish stack PLatform env
+    - [x] started
+- [ ] Fininsh L multi task environment
+    - [x] started
+
+
 ## Documentation
 
 Check out the [documentation](https://panda-gym.readthedocs.io/en/latest/).
@@ -67,6 +89,14 @@ You can also [![Open in Colab](https://colab.research.google.com/assets/colab-ba
 |         `PandaStack3-v2`          |              `PandaFlip-v2`                    |
 | ![PandaStack-v2](docs/_static/img/stack-3.png) | ![PandaFlip-v2](docs/_static/img/flip.png) |
 
+## Other Extra Environments by US
+
+|                                  |                                                |
+| :------------------------------: | :--------------------------------------------: |
+|         `PandaStack3-v2`          |              `PandaPushSafe-v2`                    |
+| ![PandaStack-v2](docs/_static/img/stack-3.png) | ![PandaFlip-v2](docs/_static/img/push-safe.png) |
+
+
 ## Baselines results
 
 Baselines results and pre-trained agents available in [rl-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo).
@@ -85,3 +115,5 @@ Cite as
 ```
 
 Environments are widely inspired from [OpenAI Fetch environments](https://openai.com/blog/ingredients-for-robotics-research/). 
+
+

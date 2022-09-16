@@ -13,7 +13,7 @@ class Push(Task):
         self,
         sim,
         get_ee_position,
-        reward_type="sparse",
+        reward_type="dense",
         distance_threshold=0.05,
         goal_xy_range=0.3,
         obj_xy_range=0.3,
@@ -75,12 +75,14 @@ class Push(Task):
 
     def get_obs(self) -> np.ndarray:
         # position, rotation of the object
+        target_position = np.array(self.sim.get_base_position("target"))
         object_position = np.array(self.sim.get_base_position("object"))
         object_rotation = np.array(self.sim.get_base_rotation("object"))
         object_velocity = np.array(self.sim.get_base_velocity("object"))
         object_angular_velocity = np.array(self.sim.get_base_angular_velocity("object"))
         unsafe_region_1_pos = self.unsafe_state_1_pos
         unsafe_region_2_pos = self.unsafe_state_2_pos
+        end_effector_pos = self.get_end_effector_position()
         observation = np.concatenate(
             [
                 object_position,
@@ -89,6 +91,11 @@ class Push(Task):
                 object_angular_velocity,
                 unsafe_region_1_pos,
                 unsafe_region_2_pos,
+                np.array([self.unsafe_region_radius]), # unsafe region radius or size
+                # add target position and possibly orientation
+                target_position,
+                end_effector_pos
+                
             ]
         )
         return observation
@@ -209,7 +216,10 @@ class Push(Task):
         d = distance(achieved_goal, desired_goal)
         return np.array(d < self.distance_threshold, dtype=np.float64)
 
-    def compute_cost(self, achieved_goal: np.ndarray, desired_goal: np.ndarray, info: Dict[str, Any] = ...) -> Union[np.ndarray, float]:
+    def compute_cost(self) -> Union[np.ndarray, float]:
+        achieved_goal = self.get_achieved_goal()
+        desired_goal = self.goal.copy()
+        
         unsafe_cost = self._compute_cost_function()
         d = distance(achieved_goal, desired_goal)
         if self.reward_type == "sparse":

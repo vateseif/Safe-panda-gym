@@ -12,7 +12,9 @@ done = False
 
 while not done:
     action = env.action_space.sample()
-    obs, cost_reward, done, info = env.step(action)
+    obs, reward, done, info = env.step(action)
+    print(reward)
+    print(info['cost'])
     # print(obs.shape)
     env.render(mode='human')
     # time.sleep(9)

@@ -17,7 +17,7 @@ class Reach(Task):
         self,
         sim,
         get_ee_position,
-        reward_type="sparse",
+        reward_type="dense",
         distance_threshold=0.05,
         goal_range=0.3,
     ) -> None:
@@ -70,12 +70,19 @@ class Reach(Task):
         '''
         returns unsafe states positions as observation
         '''
-        unsafe_state = np.concatenate([self.unsafe_state_1_pos, self.unsafe_state_2_pos])
+        unsafe_state_pos = np.concatenate([self.unsafe_state_1_pos, self.unsafe_state_2_pos])
         end_effector_location = self.get_achieved_goal()
         goal_sphere_location = self.goal.copy()
         # return np.array([])  # no tasak-specific observation
 
-        return np.concatenate([unsafe_state, end_effector_location, goal_sphere_location])
+        return np.concatenate([
+            unsafe_state_pos,
+            end_effector_location,
+            goal_sphere_location,
+            np.array([self.unsafe_region_radius]),
+            np.array([self.object_size]),
+
+        ])
 
     def get_achieved_goal(self) -> np.ndarray:
         ee_position = np.array(self.get_ee_position())
