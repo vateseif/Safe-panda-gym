@@ -29,7 +29,7 @@ pip install panda-gym
 ### From source
 
 ```bash
-git clone https://github.com/qgallouedec/panda-gym.git
+git clone https://github.com/tohsin/panda-gym.git
 pip install -e panda-gym
 ```
 
