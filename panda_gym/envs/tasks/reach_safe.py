@@ -27,8 +27,8 @@ class Reach(Task):
         self.distance_threshold = distance_threshold
         self.get_ee_position = get_ee_position
         self.unsafe_region_radius = 0.1
-        self.max_base_unsafe = 0.15 # max x pos to put unsafe space
-        self.min_base_unsafe = -0.25
+        self.max_x_base_unsafe = 0.15 # max x pos to put unsafe space
+        self.min_x_base_unsafe = -0.25
         self.goal_range_low = np.array([-goal_range / 2, -goal_range / 2, 0])
         self.goal_range_high = np.array([goal_range / 2, goal_range / 2, goal_range])
         with self.sim.no_rendering():
@@ -90,23 +90,28 @@ class Reach(Task):
 
     def _sample_unsafe_state_x_boundary(self):
         
-        return np.random.uniform(self.max_base_unsafe,  self.min_base_unsafe )
+        return np.random.uniform(self.max_x_base_unsafe,  self.min_x_base_unsafe )
 
     def _sample_unsafe_state_z_boundary(self):
-        
         return np.random.uniform(0.3, - self.object_size /2 )
 
+    def _sample_unsafe_state_y_boundary(self):
+        return np.random.uniform(-0.25, 0.25 )
+
     def _sample_unsafe_state_left(self):
-        # sample boundary to right after base of robot    
+        # sample boundary to right after base of robot   
+         
         random_x_base = self._sample_unsafe_state_x_boundary()
-        random_y_base = self._sample_unsafe_state_z_boundary()
+        random_y_base = self._sample_unsafe_state_y_boundary()
+        random_z_base = self._sample_unsafe_state_z_boundary()
         # return np.array([random_x_base, -0.25, - self.object_size /2])
-        return np.array([random_x_base, -0.25, random_y_base  ])
+        return np.array([random_x_base, random_y_base, random_z_base  ])
         
     def _sample_unsafe_state_right(self):
-        random_y_base = self._sample_unsafe_state_z_boundary()
+        random_z_base = self._sample_unsafe_state_z_boundary()
         random_x_base = self._sample_unsafe_state_x_boundary()
-        return np.array([random_x_base, 0.25, random_y_base])
+        random_y_base = self._sample_unsafe_state_y_boundary()
+        return np.array([random_x_base, random_y_base, random_z_base])
 
     def _goal_in_unsafe_area(self):
         d1 = distance(self.goal, self.unsafe_state_1_pos)
@@ -122,9 +127,9 @@ class Reach(Task):
     def _compute_cost_safe_space(self, achieved_goal):
         d1 = distance( achieved_goal, self.unsafe_state_1_pos)
         d2 = distance(achieved_goal, self.unsafe_state_2_pos)
-        min_tresh_distane = self.unsafe_region_radius
+        min_tresh_distance = self.unsafe_region_radius + 0.035
         # cost_value =  (d1> min_tresh_distane) and (d2> min_tresh_distane)
-        if (d1<min_tresh_distane) or (d2<min_tresh_distane):
+        if (d1<min_tresh_distance) or (d2<min_tresh_distance):
             return 1.0
         else:
             return 0.0
@@ -164,11 +169,8 @@ class Reach(Task):
         desired_goal = self.goal.copy()
         d = distance(achieved_goal, desired_goal)
         cost_safe = self._compute_cost_safe_space(achieved_goal)
-        if self.reward_type == "sparse": 
-            return np.array(d > self.distance_threshold, dtype=np.float64) + cost_safe
-        else:
-            return d + cost_safe
-
+        return cost_safe
+    
     def compute_reward(self, achieved_goal, desired_goal, info: Dict[str, Any]) -> Union[np.ndarray, float]:
         d = distance(achieved_goal, desired_goal)
         if self.reward_type == "sparse":

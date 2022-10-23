@@ -6,16 +6,16 @@ env = gym.make("PandaPushSafe-v2", render=True)
 
 obs = env.reset()
 done = False
-
+mdp = []
 while not done:
+    transition = []
     action = env.action_space.sample()
     obs, reward, done, info = env.step(action)
-    cost = info['cost']
-    # print("cost", cost)
-    # print("reward" ,  reward)
-    # print(obs['observation'].size)
+    cost = info["cost"]
+    print(cost)
+    transition =[obs, reward, done, info["cost"]]
+    mdp.append(transition)
     env.render(mode='human')
-    time.sleep(2)
 
 
 env.close()
