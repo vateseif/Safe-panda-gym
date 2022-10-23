@@ -185,6 +185,7 @@ class Task(ABC):
             raise RuntimeError("No goal yet, call reset() first")
         else:
             return self.goal.copy()
+    
 
     @abstractmethod
     def is_success(

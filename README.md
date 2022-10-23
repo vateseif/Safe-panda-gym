@@ -68,10 +68,10 @@ You can also [![Open in Colab](https://colab.research.google.com/assets/colab-ba
 | :------------------------------: | :--------------------------------------------: |
 |         `PandaReachSafe-v2`          |              `PandaPushSafe-v2`                    |
 | ![PandaReachSafe-v2](docs/_static/img/reach-safe.png) | ![PandaFlip-v2](docs/_static/img/push-safe.png) |
-|         `PandaStack3-v2`          |              `PandaFlip-v2`                    |
-| ![PandaStack-v2](docs/_static/img/stack-3.png) | ![PandaFlip-v2](docs/_static/img/flip.png) |
+|         `PandaSlideSafe-v2`          |              `PandaFlip-v2`                    |
+| ![PandaSlideSafe-v2](docs/_static/img/slide-safe.png) | ![PandaFlip-v2](docs/_static/img/flip.png) |
 
-## Other Extra Environments by US
+## Other Extra Environments by the Team
 
 |                                  |                                                |
 | :------------------------------: | :--------------------------------------------: |
