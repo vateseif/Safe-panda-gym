@@ -2,7 +2,7 @@ import gym
 import panda_gym
 import time
 
-env = gym.make("PickAndPlaceSafe-v2", render=True)
+env = gym.make("PandaPickAndPlaceSafe-v2", render=True)
 
 obs = env.reset()
 done = False
@@ -12,7 +12,6 @@ while not done:
     action = env.action_space.sample()
     obs, reward, done, info = env.step(action)
     cost = info["cost"]
-    print(cost)
     transition = [obs, reward, done, info["cost"]]
     mdp.append(transition)
     env.render(mode='human')

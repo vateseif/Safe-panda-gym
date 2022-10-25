@@ -71,12 +71,12 @@ You can also [![Open in Colab](https://colab.research.google.com/assets/colab-ba
 |         `PandaSlideSafe-v2`          |              `PickAndPlaceSafe-v2`                    |
 | ![PandaSlideSafe-v2](docs/_static/img/slide-safe.png) | ![PickAndPlaceSafe-v2](docs/_static/img/pick-and-place-safe.png) |
 
-## Other Extra Environments by the
+## Extra Environments by the Team
 
 |                                  |                                                |
 | :------------------------------: | :--------------------------------------------: |
-|         `PandaStack3-v2`          |              `PandaPushSafe-v2`                    |
-| ![PandaStack-v2](docs/_static/img/stack-3.png) | ![PandaFlip-v2](docs/_static/img/push-safe.png) |
+|         `PandaStack3-v2`          |              `PandaStackPyramid-v2`                    |
+| ![PandaStack-v2](docs/_static/img/stack-3.png) | ![PandaStackPyramid-v2](docs/_static/img/stack-pyramid.png) |
 
 
 ## Baselines results

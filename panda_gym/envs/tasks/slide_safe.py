@@ -204,7 +204,7 @@ class Slide(Task):
         elif self._end_effector_in_unsafe_region():
             return 1.0
         elif self._object_not_on_table():
-            return 1.0
+            return 2.0
         else:
             return 0.0
 
