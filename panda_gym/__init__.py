@@ -62,6 +62,13 @@ for reward_type in ["sparse", "dense"]:
         )
 
         register(
+            id="PickAndPlaceSafe{}{}-v2".format(control_suffix, reward_suffix),
+            entry_point="panda_gym.envs:PandaPickAndPlaceSafeEnv",
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
+
+        register(
             id="PandaPickAndPlacePlatform{}{}-v2".format(control_suffix, reward_suffix),
             entry_point="panda_gym.envs:PandaPickAndPlacePlatformEnv",
             kwargs=kwargs,

@@ -1,3 +1,4 @@
+from re import L
 from typing import Any, Dict, Union
 
 import numpy as np
@@ -187,6 +188,10 @@ class Slide(Task):
         d = distance(achieved_goal, desired_goal)
         return np.array(d < self.distance_threshold, dtype=np.float64)
 
+    def _object_not_on_table(self):
+        object_pos = self.get_achieved_goal()
+        z_pos = object_pos[2]
+        return z_pos < 0.0
 
     def _compute_cost_function(self):
         '''
@@ -197,6 +202,8 @@ class Slide(Task):
         if self._object_in_unsafe_region():
             return 1.0
         elif self._end_effector_in_unsafe_region():
+            return 1.0
+        elif self._object_not_on_table():
             return 1.0
         else:
             return 0.0

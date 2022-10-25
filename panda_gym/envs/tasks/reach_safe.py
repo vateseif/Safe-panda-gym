@@ -125,6 +125,7 @@ class Reach(Task):
    
 
     def _compute_cost_safe_space(self, achieved_goal):
+        # constarint due to unsafe space
         d1 = distance( achieved_goal, self.unsafe_state_1_pos)
         d2 = distance(achieved_goal, self.unsafe_state_2_pos)
         min_tresh_distance = self.unsafe_region_radius + 0.035

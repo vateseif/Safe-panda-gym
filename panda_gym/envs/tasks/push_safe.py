@@ -74,7 +74,7 @@ class Push(Task):
         object_angular_velocity = np.array(self.sim.get_base_angular_velocity("object"))
 
         unsafe_region_pos = self.unsafe_state_pos
-        end_effector_pos = self.get_end_effector_position()
+        end_effector_pos = self.get_end_effector_position().copy()
         observation = np.concatenate(
             [
                 object_position,
@@ -132,7 +132,6 @@ class Push(Task):
         min_distance_treshhold = self.unsafe_region_radius + (self.object_size / 2)
         return (distance_obj_unsafe < min_distance_treshhold)
         
-
     def _end_effector_in_unsafe_region(self):
         end_effector_pos = self.get_end_effector_position()
         # distacne between end effector and unsafe space center
@@ -140,10 +139,7 @@ class Push(Task):
        
         min_distance_treshhold = self.unsafe_region_radius
         return (distance_end_effector_unsafe < min_distance_treshhold)
-        #     return True
-        # return NotImplementedError
-
-
+      
     def reset(self) -> None:
         self.unsafe_state_pos = self._sample_unsafe_state()
         self.sim.set_base_pose("unsafe_region", self.unsafe_state_pos, np.array([0.0, 0.0, 0.0, 1.0]))
@@ -151,17 +147,16 @@ class Push(Task):
         self.goal = self._sample_goal()
         object_position = self._sample_object()
         self.sim.set_base_pose("object", object_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("target", self.goal, np.array([0.0, 0.0, 0.0, 1.0]))
 
         # ensure target and object don't render in unsafe region
         while  self._target_in_unsafe_region():
             self.goal = self._sample_goal()
+            self.sim.set_base_pose("target", self.goal, np.array([0.0, 0.0, 0.0, 1.0]))
 
         while self._object_in_unsafe_region():
             object_position = self._sample_object()
             self.sim.set_base_pose("object", object_position, np.array([0.0, 0.0, 0.0, 1.0]))
-
-        self.sim.set_base_pose("target", self.goal, np.array([0.0, 0.0, 0.0, 1.0]))
-       
 
     def _sample_goal(self) -> np.ndarray:
         """Randomize goal."""
@@ -177,6 +172,10 @@ class Push(Task):
         object_position += noise
         return object_position
 
+    def _object_not_on_table(self):
+        object_pos = self.get_achieved_goal()
+        z_pos = object_pos[2]
+        return z_pos < 0.0
     def _compute_cost_function(self):
         '''
         two possible contontitions to get a non 0 cost
@@ -186,6 +185,8 @@ class Push(Task):
         if self._object_in_unsafe_region():
             return 1.0
         elif self._end_effector_in_unsafe_region():
+            return 1.0
+        elif self._object_not_on_table():
             return 1.0
         else:
             return 0.0
