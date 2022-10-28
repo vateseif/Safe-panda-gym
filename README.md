@@ -1,7 +1,5 @@
 # panda-gym
 
-
-
 Set of OpenAI/gym robotic environments based on PyBullet physics engine.
 
 [![PyPI version](https://img.shields.io/pypi/v/panda-gym.svg?logo=pypi&logoColor=FFE873)](https://pypi.org/project/panda-gym/)
@@ -12,13 +10,20 @@ Set of OpenAI/gym robotic environments based on PyBullet physics engine.
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![arXiv](https://img.shields.io/badge/cs.LG-arXiv%3A2106.13687-B31B1B.svg)](https://arxiv.org/abs/2106.13687)
 
+
+
 ## Safe-Panda-gym
-We develop a modification to the original Panda gym by adding contraints to the environments like Unsafe regions and,
-constarints on the task. The aim is to develop an environment to test CMDPs (Constarint Markov Decison Process) algortihms
-such as CPO, PPO - Lagrnagian and algorithms developed by the team.
+We develop a modification to the original Panda gym by adding constraints to the environments like Unsafe regions and,
+constraints on the task. The aim is to develop an environment to test CMDPs (Constraint Markov Decision Process) / Safe-RL algorithms
+such as CPO, PPO - Lagrangian and algorithms developed by the team.
 
-Current major contributors are
 
+Safe-Panda-Gym is a project maintained by 
+[Shengjie Wang](https://github.com/Shengjie-bob) and [Tosin](https://github.com/tohsin).
+We encourage modifications and recommendations like new constraints, new environments, bug fixes, and Image-based observation environments intended to be used for Dreamer-v2 like Model-based algorithms.
+
+##  Safe Multi Task env
+We add environments intended to be used to learn multi-task or sub-goal RL, as some tasks build on another, and knowledge used to solve one can be transferable to another.
 
 ## Documentation
 
