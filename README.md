@@ -1,5 +1,7 @@
 # panda-gym
 
+
+
 Set of OpenAI/gym robotic environments based on PyBullet physics engine.
 
 [![PyPI version](https://img.shields.io/pypi/v/panda-gym.svg?logo=pypi&logoColor=FFE873)](https://pypi.org/project/panda-gym/)
@@ -9,6 +11,13 @@ Set of OpenAI/gym robotic environments based on PyBullet physics engine.
 [![codecov](https://codecov.io/gh/qgallouedec/panda-gym/branch/master/graph/badge.svg?token=pv0VdsXByP)](https://codecov.io/gh/qgallouedec/panda-gym)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![arXiv](https://img.shields.io/badge/cs.LG-arXiv%3A2106.13687-B31B1B.svg)](https://arxiv.org/abs/2106.13687)
+
+## Safe-Panda-gym
+We develop a modification to the original Panda gym by adding contraints to the environments like Unsafe regions and,
+constarints on the task. The aim is to develop an environment to test CMDPs (Constarint Markov Decison Process) algortihms
+such as CPO, PPO - Lagrnagian and algorithms developed by the team.
+
+Current major contributors are
 
 
 ## Documentation
@@ -52,6 +61,8 @@ env.close()
 
 You can also [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/qgallouedec/panda-gym/blob/master/examples/PickAndPlace.ipynb)
 
+
+
 ## Environments
 
 |                                  |                                                |
@@ -70,6 +81,10 @@ You can also [![Open in Colab](https://colab.research.google.com/assets/colab-ba
 | ![PandaReachSafe-v2](docs/_static/img/reach-safe.png) | ![PandaFlip-v2](docs/_static/img/push-safe.png) |
 |         `PandaSlideSafe-v2`          |              `PickAndPlaceSafe-v2`                    |
 | ![PandaSlideSafe-v2](docs/_static/img/slide-safe.png) | ![PickAndPlaceSafe-v2](docs/_static/img/pick-and-place-safe.png) |
+|         `PandaStackSafe-v2`          
+| ![PandaSlideSafe-v2](docs/_static/img/stack-safe.png) 
+
+
 
 ## Extra Environments by the Team
 
@@ -77,6 +92,8 @@ You can also [![Open in Colab](https://colab.research.google.com/assets/colab-ba
 | :------------------------------: | :--------------------------------------------: |
 |         `PandaStack3-v2`          |              `PandaStackPyramid-v2`                    |
 | ![PandaStack-v2](docs/_static/img/stack-3.png) | ![PandaStackPyramid-v2](docs/_static/img/stack-pyramid.png) |
+|         `PandaBuildL-v2`          
+| ![PandaBuildL-v2](docs/_static/img/build-l.png) 
 
 
 ## Baselines results
