@@ -30,7 +30,7 @@ git submodule add .git
 
 ```bash
 git clone https://github.com/tohsin/Safe-panda-gym.git
-pip install -e panda-gym
+pip install -e .
 ```
 
 ## Usage
