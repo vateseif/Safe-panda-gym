@@ -26,12 +26,6 @@ Check out the [documentation](https://panda-gym.readthedocs.io/en/latest/) in [P
 ## Add Safe Rl submodule
 git submodule add .git
 
-### Using PyPI
-
-```bash
-pip install panda-gym
-```
-
 ### From source
 
 ```bash
