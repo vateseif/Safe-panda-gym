@@ -3,6 +3,12 @@ We develop a modification to the [Panda Gym](https://github.com/qgallouedec/pand
 constraints on the task. The aim is to develop an environment to test CMDPs (Constraint Markov Decision Process) / Safe-RL algorithms
 such as CPO, PPO - Lagrangian and algorithms developed by the team.
 
+Safe-Panda-gym are developed with the following key features:
+
+* Add safe environments considering the constraints, like `PandaReachSafe-v2`, `PandaPushSafe-v2`, `PandaSlideSafe-v2`, `PickAndPlaceSafe-v2` and `PandaStackSafe-v2`.
+* Support image-based environments, which you can see `rgb_rendering_safe.py` in the `test_safe_envs` folder.
+* Support [SafePO-Baselines](https://github.com/PKU-MARL/Safe-Policy-Optimization) to train the safe environments in our repo, which can be seen in the `train_safe_rl_algorithms` folder.
+
 
 Safe-Panda-Gym is a project maintained by 
 [Tosin](https://github.com/tohsin) and [Shengjie Wang](https://github.com/Shengjiewang-Jason).
