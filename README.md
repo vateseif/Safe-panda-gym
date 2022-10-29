@@ -1,25 +1,11 @@
-# panda-gym
-
-Set of OpenAI/gym robotic environments based on PyBullet physics engine.
-
-[![PyPI version](https://img.shields.io/pypi/v/panda-gym.svg?logo=pypi&logoColor=FFE873)](https://pypi.org/project/panda-gym/)
-[![Downloads](https://pepy.tech/badge/panda-gym)](https://pepy.tech/project/panda-gym)
-[![GitHub](https://img.shields.io/github/license/qgallouedec/panda-gym.svg)](LICENSE.txt)
-[![build](https://github.com/qgallouedec/panda-gym/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/qgallouedec/panda-gym/actions/workflows/build.yml)
-[![codecov](https://codecov.io/gh/qgallouedec/panda-gym/branch/master/graph/badge.svg?token=pv0VdsXByP)](https://codecov.io/gh/qgallouedec/panda-gym)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![arXiv](https://img.shields.io/badge/cs.LG-arXiv%3A2106.13687-B31B1B.svg)](https://arxiv.org/abs/2106.13687)
-
-
-
-## Safe-Panda-gym
-We develop a modification to the original Panda gym by adding constraints to the environments like Unsafe regions and,
+# Safe-Panda-gym
+We develop a modification to the [Panda Gym](https://github.com/qgallouedec/panda-gym) by adding constraints to the environments like Unsafe regions and,
 constraints on the task. The aim is to develop an environment to test CMDPs (Constraint Markov Decision Process) / Safe-RL algorithms
 such as CPO, PPO - Lagrangian and algorithms developed by the team.
 
 
 Safe-Panda-Gym is a project maintained by 
-[Shengjie Wang](https://github.com/Shengjie-bob) and [Tosin](https://github.com/tohsin).
+[Tosin](https://github.com/tohsin) and [Shengjie Wang](https://github.com/Shengjiewang-Jason).
 We encourage modifications and recommendations like new constraints, new environments, bug fixes, and Image-based observation environments intended to be used for Dreamer-v2 like Model-based algorithms.
 
 ##  Safe Multi Task env
@@ -27,7 +13,7 @@ We add environments intended to be used to learn multi-task or sub-goal RL, as s
 
 ## Documentation
 
-Check out the [documentation](https://panda-gym.readthedocs.io/en/latest/).
+Check out the [documentation](https://panda-gym.readthedocs.io/en/latest/) in [Panda Gym](https://github.com/qgallouedec/panda-gym).
 
 ## Installation
 
@@ -43,7 +29,7 @@ pip install panda-gym
 ### From source
 
 ```bash
-git clone https://github.com/tohsin/panda-gym.git
+git clone https://github.com/tohsin/Safe-panda-gym.git
 pip install -e panda-gym
 ```
 
@@ -52,32 +38,30 @@ pip install -e panda-gym
 ```python
 import gym
 import panda_gym
-
-env = gym.make('PandaReach-v2', render=True)
+import time
+env = gym.make("PandaReachSafe-v2", render=True)
+obs_dim = env.observation_space.shape
 
 obs = env.reset()
 done = False
+
 while not done:
-    action = env.action_space.sample() # random action
+    action = env.action_space.sample()
     obs, reward, done, info = env.step(action)
+    cost = info['cost']
+    env.render(mode='human')
+    print(cost)
+    time.sleep(2)
+
 
 env.close()
 ```
-
-You can also [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/qgallouedec/panda-gym/blob/master/examples/PickAndPlace.ipynb)
-
+More testing examples can be found in the `test_safe_env` folder.
 
 
-## Environments
 
-|                                  |                                                |
-| :------------------------------: | :--------------------------------------------: |
-|         `PandaReach-v2`          |                 `PandaPush-v2`                 |
-| ![PandaReach-v2](docs/_static/img/reach.png) |         ![PandaPush-v2](docs/_static/img/push.png)         |
-|         `PandaSlide-v2`          |             `PandaPickAndPlace-v2`             |
-| ![PandaSlide-v2](docs/_static/img/slide.png) | ![PandaPickAndPlace-v2](docs/_static/img/pickandplace.png) |
-|         `PandaStack-v2`          |              `PandaFlip-v2`                    |
-| ![PandaStack-v2](docs/_static/img/stack.png) | ![PandaFlip-v2](docs/_static/img/flip.png) |
+
+
 
 ## Safe Environments
 |                                  |                                                |
@@ -103,21 +87,33 @@ You can also [![Open in Colab](https://colab.research.google.com/assets/colab-ba
 
 ## Baselines results
 
-Baselines results and pre-trained agents available in [rl-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo).
+Baselines results are obtained by [SafePO](https://github.com/PKU-MARL/Safe-Policy-Optimization).
 
 ## Citation
 
-Cite as
+If you think the bechmark is useful, please cite as
 
 ```bib
+
+@misc{SafePandaGym,
+  author = {Tosin Oseni, Shengjie Wang},
+  title = {Safe Panda Gym},
+  year = {2022},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/tohsin/Safe-panda-gym}},
+}
+
 @article{gallouedec2021pandagym,
   title        = {{panda-gym: Open-Source Goal-Conditioned Environments for Robotic Learning}},
   author       = {Gallou{\'e}dec, Quentin and Cazin, Nicolas and Dellandr{\'e}a, Emmanuel and Chen, Liming},
   year         = 2021,
   journal      = {4th Robot Learning Workshop: Self-Supervised and Lifelong Learning at NeurIPS},
 }
+
+
 ```
 
-Environments are widely inspired from [OpenAI Fetch environments](https://openai.com/blog/ingredients-for-robotics-research/). 
+
 
 
