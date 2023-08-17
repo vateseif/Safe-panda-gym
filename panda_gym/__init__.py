@@ -108,7 +108,7 @@ for reward_type in ["sparse", "dense"]:
             id="PandaBuildL{}{}-v2".format(control_suffix, reward_suffix),
             entry_point="panda_gym.envs:PandaBuildLEnv",
             kwargs=kwargs,
-            max_episode_steps=100,
+            max_episode_steps=100000,
         )
 
         
