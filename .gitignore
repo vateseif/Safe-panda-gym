@@ -14,3 +14,5 @@ runs/PandaReachSafe-v2/cpo/2022-09-15__21-21-27/seed_00000/config.json
 panda_gym/__pycache__
 runs/
 /runs
+
+deletable.*
