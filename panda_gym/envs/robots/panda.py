@@ -49,6 +49,27 @@ class Panda(PyBulletRobot):
         self.sim.set_spinning_friction(self.body_name, self.fingers_indices[0], spinning_friction=0.001)
         self.sim.set_spinning_friction(self.body_name, self.fingers_indices[1], spinning_friction=0.001)
 
+        # visualize right gripper constraint
+        #radius = 0.05
+        #self.sim.create_sphere(
+        #  body_name="gripper_right",
+        #  radius=radius,
+        #  mass=0.,
+        #  position=np.array([0.5, 0.0, 0.15]),
+        #  rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+        #  ghost=True
+        #)
+#
+        ## visualize left gripper constraint
+        #self.sim.create_sphere(
+        #  body_name="gripper_left",
+        #  radius=radius,
+        #  mass=0.,
+        #  position=np.array([0.5, 0.0, 0.15]),
+        #  rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+        #  ghost=True
+        #)
+
     def set_action(self, action: np.ndarray) -> None:
         action = action.copy()  # ensure action don't change
         action = np.clip(action, self.action_space.low, self.action_space.high)
@@ -68,6 +89,13 @@ class Panda(PyBulletRobot):
 
         target_angles = np.concatenate((target_arm_angles, [target_fingers_width / 2, target_fingers_width / 2]))
         self.control_joints(target_angles=target_angles)
+
+        # update position of custome sphere
+        #ee_position = np.array(self.get_ee_position())
+        #offset = 0.048
+        #self.sim.set_base_pose("gripper_left", ee_position + np.array([0., offset, 0.0]), np.array([0.0, 0.0, 0.0, 1.0]))
+        #self.sim.set_base_pose("gripper_right", ee_position + np.array([0, -offset, 0.0]), np.array([0.0, 0.0, 0.0, 1.0]))
+        
 
     def ee_displacement_to_target_arm_angles(self, ee_displacement: np.ndarray) -> np.ndarray:
         """Compute the target arm angles from the end-effector displacement.
