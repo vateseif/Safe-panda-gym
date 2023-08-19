@@ -44,7 +44,7 @@ class  BuildL(Task):
             mass=0.0,
             ghost=True,
             position=np.array([0.0, 0.0, 0.05]),
-            rgba_color=np.array([0.1, 0.1, 0.9, 0.3]),
+            rgba_color=np.array([0.1, 0.1, 0.9, 0.]),
         )
         self.sim.create_box(
             body_name="object2",
@@ -59,7 +59,7 @@ class  BuildL(Task):
             mass=0.0,
             ghost=True,
             position=np.array([0.5, 0.0, 0.05]),
-            rgba_color=np.array([0.1, 0.9, 0.1, 0.3]),
+            rgba_color=np.array([0.1, 0.9, 0.1, 0.]),
         )
         self.sim.create_box(
             body_name="object3",
@@ -74,7 +74,7 @@ class  BuildL(Task):
             mass=0.0,
             ghost=True,
             position=np.array([0.5, 0.0, 0.05]),
-            rgba_color=np.array([0.1, 0.9, 0.1, 0.3]),
+            rgba_color=np.array([0.1, 0.9, 0.1, 0.]),
         )
 
         self.sim.create_box(
@@ -90,8 +90,45 @@ class  BuildL(Task):
             mass=0.0,
             ghost=True,
             position=np.array([0.5, 0.0, 0.05]),
-            rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+            rgba_color=np.array([0.9, 0.1, 0.1, 0.0]),
         )
+
+        """
+        ## visualize right gripper constraint
+        radius = 0.048
+        self.sim.create_sphere(
+          body_name="cube1",
+          radius=radius,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
+        self.sim.create_sphere(
+          body_name="cube2",
+          radius=radius,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
+        self.sim.create_sphere(
+          body_name="cube3",
+          radius=radius,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
+        self.sim.create_sphere(
+          body_name="cube4",
+          radius=radius,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
+        """
 
 
     def get_obs(self) -> np.ndarray:
@@ -160,12 +197,16 @@ class  BuildL(Task):
         self.sim.set_base_pose("target2", self.goal[3:6], np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("target3", self.goal[6:9], np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("target4", self.goal[9: ], np.array([0.0, 0.0, 0.0, 1.0]))
-        
+        #self.sim.set_base_pose("cube", object4_position, np.array([0.0, 0.0, 0.0, 1.0]))
         
         self.sim.set_base_pose("object1",  object1_position, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("object2",  object2_position, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("object3",  object3_position, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("object4",  object4_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        #self.sim.set_base_pose("cube1", object1_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        #self.sim.set_base_pose("cube2", object2_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        #self.sim.set_base_pose("cube3", object3_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        #self.sim.set_base_pose("cube4", object4_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
     def _sample_goal(self) -> np.ndarray:
         z_pos =  self.object_size / 2
