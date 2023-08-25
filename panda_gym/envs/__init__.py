@@ -11,7 +11,7 @@ from panda_gym.envs.panda_tasks.panda_stack_pyramid import PandaStackPyramidEnv
 
 
 from panda_gym.envs.panda_tasks.panda_build_L import  PandaBuildLEnv
-
+from panda_gym.envs.panda_tasks.panda_rope import PandaRope
 
 # safe env
 
