@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<robot name="rope">
+  <!-- Define the material for the rope (you can customize this) -->
+  <material name="rope_color">
+    <color rgba="1. 1. 1. 1." />
+  </material>
+
+  <!-- Define the link properties (cylinders) -->
+  <link name="link_1">
+    <visual>
+      <geometry>
+        <cylinder length="0.1" radius="0.005" />
+      </geometry>
+      <material name="rope_color" />
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.1" radius="0.005" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="joint_1" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0.05" />
+    <parent link="link_1" />
+    <child link="link_2" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.1416" upper="3.1416" effort="1" velocity="10" />
+  </joint>
+
+  <link name="link_2">
+    <visual>
+      <geometry>
+        <cylinder length="0.1" radius="0.005" />
+      </geometry>
+      <material name="rope_color" />
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.1" radius="0.005" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Add more links and joints to extend the rope as needed -->
+</robot>

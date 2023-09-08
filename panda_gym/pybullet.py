@@ -635,6 +635,152 @@ class PyBullet:
             spinning_friction=spinning_friction,
         )
 
+
+    def create_rope2(self):
+        """
+        # Set the sizes for your cylinders and the distance between them
+        cylinderRadius = 0.1
+        cylinderHeight = 0.2
+        interCylinderDistance = 0.3
+
+        # Set the lengths along the x and y axis and mass
+        lengthX = 1
+        lengthY = 1
+        mass = 1
+
+        cylinderPosition = [0,0,1]
+
+        # Stores the Ids of the cylinders and constraints
+        cylinderIds = []
+        constraintIds = []
+
+        # Create the cylinders and constraints in a loop
+        for i in range(lengthX):
+            for j in range(lengthY):
+                cylinderId = p.createCollisionShape(shapeType=p.GEOM_CYLINDER, radius=cylinderRadius, 
+                                                    height=cylinderHeight, 
+                                                    collisionFramePosition=cylinderPosition)
+                visualShapeId = p.createVisualShape(shapeType=p.GEOM_CYLINDER, radius=cylinderRadius,
+                                                    length=cylinderHeight, 
+                                                    visualFramePosition=cylinderPosition, rgbaColor=[1,0,0,1])
+                
+                cylinderMbt = p.createMultiBody(baseMass=mass, baseCollisionShapeIndex=cylinderId, 
+                                                baseVisualShapeIndex=visualShapeId, 
+                                                basePosition=[i*interCylinderDistance, j*interCylinderDistance, 1])
+                
+                cylinderIds.append(cylinderId)
+
+                if i > 0:
+                    constraintId = p.createConstraint(cylinderMbt, -1, cylinderIds[i-1], -1, p.JOINT_REVOLUTE, 
+                                                    [0, 1, 0], [0, 0.2, 0], [0, -0.2, 0]) 
+                    constraintIds.append(constraintId)
+
+        self._bodies_idx["rope"] = cylinderIds[0]
+        """
+        rope =  self.physics_client.loadMJCF(mjcfFileName="/Users/seifboss/thesis/Safe-panda-gym/panda_gym/assets/rope.xml")
+        print(f"ROPE: {rope}")
+        self._bodies_idx["rope"] = rope[0]
+
+    def create_rope3(self):
+        # Set some constants for the rope
+        link_mass = 0.01 
+        link_length = 0.1 
+        link_collision_shape_id = p.createCollisionShape(p.GEOM_CYLINDER, radius=0.01, height=link_length)
+        link_visual_shape_id = -1  # Use the collision shape as the visual shape
+        link_positions = [[0, i * link_length, 0] for i in range(10)]  # 10 links
+        link_orientations = [[0, 0, 0, 1] for _ in range(10)]
+
+        # Initialize the rope with the first link
+        rope = [self.physics_client.createMultiBody(baseMass=link_mass,
+                                baseCollisionShapeIndex=link_collision_shape_id,
+                                baseVisualShapeIndex=link_visual_shape_id,
+                                basePosition=link_positions[0],
+                                baseOrientation=link_orientations[0])]
+
+        # For the rest of the links, add them and connect them with a point-to-point joint
+        for i in range(1, 10):
+            link = self.physics_client.createMultiBody(baseMass=link_mass,
+                                baseCollisionShapeIndex=link_collision_shape_id,
+                                baseVisualShapeIndex=link_visual_shape_id,
+                                basePosition=link_positions[i],
+                                baseOrientation=link_orientations[i])
+            self.physics_client.createConstraint(rope[-1], -1, link, -1, p.JOINT_POINT2POINT,
+                            [0, 0, 0], [0, 0, link_length / 2], [0, 0, -link_length / 2])
+            rope.append(link)
+
+        self._bodies_idx["rope"] = rope[0]
+
+    def create_rope(self):
+
+        n_links = 30          # num links
+        dx_link = 0.02        # length of link segment
+        link_mass = 0.005     # 5g
+        base_mass = 0.1       # 100g
+
+        joint_friction = 0.0005  # rotational joint friction [N/(rad/s)]
+
+        # setup shapes
+        link_shape = p.createCollisionShape(p.GEOM_CYLINDER, 
+                                            radius=0.005, 
+                                            height=dx_link, 
+                                            collisionFramePosition=[0, 0, -dx_link/2])
+        base_shape = p.createCollisionShape(p.GEOM_BOX,
+                                            halfExtents=[0.01, 0.01, 0.01])
+
+        linkMasses = [link_mass]*n_links
+        linkCollisionShapeIndices=[link_shape]*n_links
+        linkVisualShapeIndices=[-1]*n_links
+
+        # relative position 
+        linkPositions = []
+        for i in range(n_links):
+            linkPositions.append([0,0,-dx_link])
+
+        # cm positions
+        linkOrientations=[[0,0,0,1]]*n_links
+        linkInertialFramePositions=[[0,0,0]]*n_links
+        linkInertialFrameOrientations=[[0,0,0,1]]*n_links
+
+        # connection graph
+        indices = range(n_links)
+
+        # use spherical joints
+        jointTypes = [p.JOINT_SPHERICAL]*n_links
+        jointTypes[1] = p.JOINT_FIXED
+
+        # rotational axis (dosnt't matter, spherical)
+        axis = [[1,0,0]]*n_links
+
+        # create rope body
+        visualShapeId = -1
+        basePosition = [0,0,2]
+        baseOrientation = [0,0,0,1]
+        rope = p.createMultiBody(base_mass,base_shape,visualShapeId,basePosition,baseOrientation,
+                                linkMasses=linkMasses,
+                                linkCollisionShapeIndices=linkCollisionShapeIndices,
+                                linkVisualShapeIndices=linkVisualShapeIndices,
+                                linkPositions=linkPositions,
+                                linkOrientations=linkOrientations,
+                                linkInertialFramePositions=linkInertialFramePositions,
+                                linkInertialFrameOrientations=linkInertialFrameOrientations,
+                                linkParentIndices=indices,
+                                linkJointTypes=jointTypes,
+                                linkJointAxis=axis)
+                                #flags=p.URDF_USE_SELF_COLLISION)
+        n_joints = p.getNumJoints(rope)
+        friction_vec = [joint_friction]*3   # same all axis
+        control_mode = p.POSITION_CONTROL   # set pos control mode
+        for j in range(n_joints):
+            p.setJointMotorControlMultiDof(rope,j,control_mode,
+                                            targetPosition=[0,0,0,1],
+                                            targetVelocity=[0,0,0],
+                                            positionGain=0,
+                                            velocityGain=1,
+                                            force=friction_vec)
+        self._bodies_idx["rope"] = rope
+
+
+
     def set_lateral_friction(self, body: str, link: int, lateral_friction: float) -> None:
         """Set the lateral friction of a link.
 

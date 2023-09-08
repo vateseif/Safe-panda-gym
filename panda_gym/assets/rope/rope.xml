@@ -1,0 +1,25 @@
+  <mujoco model="ur5e table">
+  <compiler angle="radian" autolimits="true"/> 
+
+   
+  <worldbody>      
+ 
+ 
+    <body name="rope" pos="0.1  -0.2  0.1 ">
+      <freejoint name="rope_joint"/>
+      <site name="rope_front_end" pos="0 0 0.1" class='site_top' />
+      <body name="CB0" pos="0 0 0" >
+        <composite type="rope" count="25 1 1" spacing="0.03" offset="0 0 0" prefix="C">
+          <joint kind="main" damping="0.005" armature="0.01"/>
+          <joint kind="twist" damping="0.05" armature="0.1"/>
+          <joint kind="stretch" damping="0.05" armature="0.1"/> 
+          <geom type="capsule" size=".01 .015" rgba="0.78 0.215 0.184 1" mass="0.01" condim="1" friction="0.1"/>
+        </composite>
+      </body>
+    </body> 
+
+
+  </worldbody> 
+   
+ 
+</mujoco>
