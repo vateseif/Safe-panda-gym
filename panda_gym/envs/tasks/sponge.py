@@ -41,6 +41,9 @@ class Sponge(Task):
             rgba_color=np.array([1, 1, 0, 1.0]),
         )
 
+        
+        self.sim.create_sink(base_position=np.array([0, -0.5, 0.]))
+
     def get_obs(self) -> np.ndarray:
         # position, rotation of the object
         plate_position = np.array(self.sim.get_base_position("plate"))

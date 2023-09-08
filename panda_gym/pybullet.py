@@ -635,6 +635,22 @@ class PyBullet:
             spinning_friction=spinning_friction,
         )
 
+    def create_sink(self, base_position:np.ndarray):
+
+        sink_shape = p.createVisualShape(
+            shapeType=p.GEOM_MESH,
+            fileName="/Users/seifboss/thesis/Safe-panda-gym/panda_gym/assets/sink/faucet.stl",
+            meshScale=np.ones(3)*0.5
+        )
+        sink = p.createMultiBody(
+            baseVisualShapeIndex=sink_shape,
+            basePosition=base_position,
+            baseOrientation=(0, 0, 1, 1),
+        )
+
+        self._bodies_idx["sink"] = sink
+
+
     def set_lateral_friction(self, body: str, link: int, lateral_friction: float) -> None:
         """Set the lateral friction of a link.
 
