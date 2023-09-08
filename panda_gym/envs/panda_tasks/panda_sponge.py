@@ -1,12 +1,12 @@
 import numpy as np
 
-from panda_gym.envs.core import RobotTaskEnv
+from panda_gym.envs.core_multi_task import RobotTaskEnv
 from panda_gym.envs.robots.panda import Panda
-from panda_gym.envs.tasks.stack3 import Stack
+from panda_gym.envs.tasks.sponge import Sponge
 from panda_gym.pybullet import PyBullet
 
 
-class PandaStack3Env(RobotTaskEnv):
+class PandaSponge(RobotTaskEnv):
     """Stack task wih Panda robot.
 
     Args:
@@ -18,6 +18,8 @@ class PandaStack3Env(RobotTaskEnv):
 
     def __init__(self, render: bool = False, reward_type: str = "sparse", control_type: str = "ee") -> None:
         sim = PyBullet(render=render)
-        robot = Panda(sim, block_gripper=False, base_position=np.array([-0.6, 0.0, 0.0]), control_type=control_type)
-        task = Stack(sim, reward_type=reward_type)
-        super().__init__([robot], task)
+        #robot1 = Panda(sim, block_gripper=False, base_position=np.array([-0.6, 0.0, 0.0]), base_orientation=np.array([0, 0, 0]), control_type=control_type)
+        robot2 = Panda(sim, block_gripper=False, base_position=np.array([-0.6, 0.0, 0.0]), base_orientation=np.array([0, 0, 0]), control_type=control_type)
+        robots = [robot2]
+        task = Sponge(sim, reward_type=reward_type)
+        super().__init__(robots, task)

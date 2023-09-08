@@ -215,10 +215,10 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
 
     metadata = {"render.modes": ["human", "rgb_array"]}
 
-    def __init__(self, robot: PyBulletRobot, task: Task) -> None:
-        assert robot.sim == task.sim, "The robot and the task must belong to the same simulation."
-        self.sim = robot.sim
-        self.robot = robot
+    def __init__(self, robots: PyBulletRobot, task: Task) -> None:
+        assert robots[0].sim == task.sim, "The robot and the task must belong to the same simulation."
+        self.sim = robots[0].sim
+        self.robots = robots
         self.task = task
         obs = self.reset()  # required for init; seed can be changed later
         observation_shape = obs.shape
@@ -235,12 +235,12 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
 
         self.observation_space = gym.spaces.Box(-10.0, 10.0, shape=observation_shape, dtype=np.float32)
     
-        self.action_space = self.robot.action_space
+        self.action_space = [r.action_space for r in self.robots]
         self.compute_reward = self.task.compute_reward
         self._saved_goal = dict()
 
     def _get_obs(self) -> Dict[str, np.ndarray]:
-        robot_obs = self.robot.get_obs()  # robot state
+        robot_obs = np.concatenate([r.get_obs()  for r in self.robots])# robot state
         task_obs = self.task.get_obs()  # object position, velococity, unsafe state locations etc...
         observation = np.concatenate([robot_obs, task_obs])
         achieved_goal = self.task.get_achieved_goal()
@@ -256,7 +256,7 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
     def reset(self, seed: Optional[int] = None) -> Dict[str, np.ndarray]:
         self.task.np_random, seed = gym.utils.seeding.np_random(seed)
         with self.sim.no_rendering():
-            self.robot.reset()
+            for i in range(len(self.robots)): self.robots[i].reset()
             self.task.reset()
         return self._get_obs()["observation"]
 
@@ -274,7 +274,7 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         self.sim.remove_state(state_id)
 
     def step(self, action: np.ndarray) -> Tuple[Dict[str, np.ndarray], float, bool, Dict[str, Any]]:
-        self.robot.set_action(action)
+        for i in range(len(self.robots)): self.robots[i].set_action(action[i])
         self.sim.step()
         obs = self._get_obs()
         done = False

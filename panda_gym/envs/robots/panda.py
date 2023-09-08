@@ -23,9 +23,11 @@ class Panda(PyBulletRobot):
         sim: PyBullet,
         block_gripper: bool = False,
         base_position: Optional[np.ndarray] = None,
+        base_orientation: Optional[np.ndarray] = None,
         control_type: str = "ee",
     ) -> None:
         base_position = base_position if base_position is not None else np.zeros(3)
+        self.base_orientation = base_orientation if base_orientation is not None else np.zeros(3)
         self.block_gripper = block_gripper
         self.control_type = control_type
         n_action = 3 if self.control_type == "ee" else 7  # control (x, y z) if "ee", else, control the 7 joints
@@ -36,6 +38,7 @@ class Panda(PyBulletRobot):
             body_name="panda",
             file_name="franka_panda/panda.urdf",
             base_position=base_position,
+            base_orientation=self.base_orientation,
             action_space=action_space,
             joint_indices=np.array([0, 1, 2, 3, 4, 5, 6, 9, 10]),
             joint_forces=np.array([87.0, 87.0, 87.0, 87.0, 12.0, 120.0, 120.0, 170.0, 170.0]),
@@ -116,6 +119,12 @@ class Panda(PyBulletRobot):
         target_arm_angles = self.inverse_kinematics(
             link=self.ee_link, position=target_ee_position, orientation=np.array([1.0, 0.0, 0.0, 0.0])
         )
+
+        # TODO:
+        # [1, 0, 0, 0] for normal gripper
+        # [0, 1, 0, 0] for reversed gripper
+        # NOTE: I think the x element received from the controller has to be made negative for the reversed gripper 
+
         target_arm_angles = target_arm_angles[:7]  # remove fingers angles
         return target_arm_angles
 

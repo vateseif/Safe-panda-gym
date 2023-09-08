@@ -8,7 +8,7 @@ from panda_gym.pybullet import PyBullet
 from panda_gym.utils import distance
 
 
-class CleanPlate(Task):
+class Sponge(Task):
     def __init__(
         self,
         sim : PyBullet,
@@ -25,7 +25,7 @@ class CleanPlate(Task):
 
     def _create_scene(self) -> None:
         self.sim.create_plane(z_offset=-0.4)
-        self.sim.create_table(length=1.1, width=0.7, height=0.4, x_offset=-0.3)
+        self.sim.create_table(length=2.2, width=0.7, height=0.4, x_offset=-0.3)
 
 
         self.sim.loadURDF(body_name="plate", fileName="/Users/seifboss/thesis/Safe-panda-gym/panda_gym/assets/urdf_models/models/blue_plate/model.urdf",

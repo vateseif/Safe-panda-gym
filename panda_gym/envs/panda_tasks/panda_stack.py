@@ -20,4 +20,4 @@ class PandaStackEnv(RobotTaskEnv):
         sim = PyBullet(render=render)
         robot = Panda(sim, block_gripper=False, base_position=np.array([-0.6, 0.0, 0.0]), control_type=control_type)
         task = Stack(sim, reward_type=reward_type)
-        super().__init__(robot, task)
+        super().__init__([robot], task)
