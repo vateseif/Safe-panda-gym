@@ -12,7 +12,7 @@ from panda_gym.envs.panda_tasks.panda_stack_pyramid import PandaStackPyramidEnv
 
 from panda_gym.envs.panda_tasks.panda_build_L import  PandaBuildLEnv
 from panda_gym.envs.panda_tasks.panda_rope import PandaRope
-
+from panda_gym.envs.panda_tasks.panda_clean_plate import PandaCleanPlate
 # safe env
 
 from panda_gym.envs.panda_tasks.panda_push_safe import PandaPushSafeEnv

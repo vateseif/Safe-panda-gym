@@ -119,6 +119,13 @@ for reward_type in ["sparse", "dense"]:
         )
 
         register(
+            id="PandaCleanPlate{}{}-v2".format(control_suffix, reward_suffix),
+            entry_point="panda_gym.envs:PandaCleanPlate",
+            kwargs=kwargs,
+            max_episode_steps=100000,
+        )
+
+        register(
             id="PandaFlip{}{}-v2".format(control_suffix, reward_suffix),
             entry_point="panda_gym.envs:PandaFlipEnv",
             kwargs=kwargs,
