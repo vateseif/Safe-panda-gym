@@ -1,1 +1,1 @@
-include panda_gym/assets/*
+recursive-include panda_gym/assets/*
