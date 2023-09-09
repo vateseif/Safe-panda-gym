@@ -15,7 +15,7 @@ setup(
     author_email="gallouedec.quentin@gmail.com",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/qgallouedec/panda-gym",
+    url="https://github.com/vateseif/Safe-panda-gym",
     packages=find_packages(),
     include_package_data=True,
     package_data={"panda_gym": ["version.txt"]},
