@@ -52,7 +52,7 @@ class MoveTable(Task):
         # load table URDF
         self.sim.loadURDF(body_name="movable_table", 
                         mass=2.0, 
-                        fileName="panda_gym/assets/urdf_models/models/table/table.urdf", 
+                        fileName="panda_gym/assets/table/table.urdf", 
                         basePosition=self._sample_objects(), 
                         globalScaling=0.3)
         
