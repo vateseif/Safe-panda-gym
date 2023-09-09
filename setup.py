@@ -18,7 +18,7 @@ setup(
     url="https://github.com/vateseif/Safe-panda-gym",
     packages=find_packages(),
     include_package_data=True,
-    package_data={"panda_gym": ["version.txt"]},
+    package_data={"panda_gym": ["version.txt", "*.urdf", "*.mtl", "*.png"]},
     version=__version__,
     install_requires=["gym>=0.22, <=0.23", "gym-robotics", "pybullet", "numpy", "scipy"],
     extras_require={
