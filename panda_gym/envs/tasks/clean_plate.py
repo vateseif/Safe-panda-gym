@@ -28,7 +28,7 @@ class CleanPlate(Task):
         self.sim.create_table(length=1.1, width=0.7, height=0.4, x_offset=-0.3)
 
 
-        self.sim.loadURDF(body_name="plate", fileName="/Users/seifboss/thesis/Safe-panda-gym/panda_gym/assets/urdf_models/models/blue_plate/model.urdf",
+        self.sim.loadURDF(body_name="plate", fileName="panda_gym/assets/blue_plate/model.urdf",
                             basePosition=np.array([0.0, 0.1, 0.01]),
                             useFixedBase=True) # plate cannot be moved
 
