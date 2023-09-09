@@ -221,44 +221,24 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         self.robots = robots
         self.task = task
         obs = self.reset()  # required for init; seed can be changed later
-        observation_shape = obs.shape
-
-        # achieved_goal_shape = obs["achieved_goal"].shape
-        # desired_goal_shape = obs["achieved_goal"].shape
-        # self.observation_space = gym.spaces.Dict(
-        #     dict(
-        #         observation=gym.spaces.Box(-10.0, 10.0, shape=observation_shape, dtype=np.float32),
-        #         desired_goal=gym.spaces.Box(-10.0, 10.0, shape=achieved_goal_shape, dtype=np.float32),
-        #         achieved_goal=gym.spaces.Box(-10.0, 10.0, shape=desired_goal_shape, dtype=np.float32),
-        #     )
-        # )
-
+        observation_shape = np.concatenate(list(obs.values())).shape
         self.observation_space = gym.spaces.Box(-10.0, 10.0, shape=observation_shape, dtype=np.float32)
-    
         self.action_space = [r.action_space for r in self.robots]
         self.compute_reward = self.task.compute_reward
         self._saved_goal = dict()
 
     def _get_obs(self) -> Dict[str, np.ndarray]:
-        robot_obs = np.concatenate([r.get_obs()  for r in self.robots])# robot state
+        robot_obs = {f"robot_{i}": r.get_obs() for i, r in enumerate(self.robots)} # robot state
         task_obs = self.task.get_obs()  # object position, velococity, unsafe state locations etc...
-        observation = np.concatenate([robot_obs, task_obs])
-        achieved_goal = self.task.get_achieved_goal()
-        # return  np.concatenate([observation,  achieved_goal, self.task.get_goal()])
-        return {
-            
-            "observation": np.concatenate([observation,  achieved_goal, self.task.get_goal()]),
-            # "observation": observation,
-            "achieved_goal": achieved_goal,
-            "desired_goal": self.task.get_goal(),
-        }
+        observation = robot_obs | task_obs
+        return observation
 
     def reset(self, seed: Optional[int] = None) -> Dict[str, np.ndarray]:
         self.task.np_random, seed = gym.utils.seeding.np_random(seed)
         with self.sim.no_rendering():
             for i in range(len(self.robots)): self.robots[i].reset()
             self.task.reset()
-        return self._get_obs()["observation"]
+        return self._get_obs()
 
     def save_state(self) -> int:
         state_id = self.sim.save_state()
@@ -278,10 +258,9 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         self.sim.step()
         obs = self._get_obs()
         done = False
-        info = {"is_success": self.task.is_success(obs["achieved_goal"], self.task.get_goal())}
-        reward = self.task.compute_reward(obs["achieved_goal"], self.task.get_goal(), info)
-        # assert isinstance(reward, float)  # needed for pytype cheking
-        return obs["observation"], reward, done, info
+        info = {"is_success": False} # hardcoded to False
+        reward = 0 # harcoded to 0
+        return obs, reward, done, info
 
     def close(self) -> None:
         self.sim.close()

@@ -29,8 +29,8 @@ class Sponge(Task):
 
 
         self.sim.loadURDF(body_name="plate", fileName="/Users/seifboss/thesis/Safe-panda-gym/panda_gym/assets/urdf_models/models/blue_plate/model.urdf",
-                            basePosition=np.array([0.0, 0.1, 0.01]),
-                            useFixedBase=True) # plate cannot be moved
+                            basePosition=np.array([0.0, 0.1, 0.05]),
+                            useFixedBase=False) # plate cannot be moved
 
         h, w, l = (0.03, 0.02, 0.02)
         self.sim.create_box(
@@ -40,70 +40,42 @@ class Sponge(Task):
             position=np.array([0.0, 0.0, l/2]),
             rgba_color=np.array([1, 1, 0, 1.0]),
         )
-
         
         self.sim.create_sink(base_position=np.array([0, -0.5, 0.]))
 
     def get_obs(self) -> np.ndarray:
-        # position, rotation of the object
-        plate_position = np.array(self.sim.get_base_position("plate"))
-        plate_rotation = np.array(self.sim.get_base_rotation("plate"))
-        plate_velocity = np.array(self.sim.get_base_velocity("plate"))
-        plate_angular_velocity = np.array(self.sim.get_base_angular_velocity("plate"))
-
-        observation = np.concatenate(
-            [
-                plate_position,
-                plate_rotation,
-                plate_velocity,
-                plate_angular_velocity,
-            ]
-        )
-        return observation
+        # position of objects
+        obs = {
+            "sink": np.array(self.sim.get_base_position("sink")),
+            "plate": np.array(self.sim.get_base_position("plate")),
+            "sponge": np.array(self.sim.get_base_position("sponge"))
+        }
+        return obs
 
     def get_achieved_goal(self) -> np.ndarray:
+        return np.zeros(1)
 
-        return np.array([10, 10, 10])
-
-    def reset(self) -> None:
-        self.goal = self._sample_goal()
-        
+    def reset(self) -> None:        
         #self.sim.set_base_pose("plate",   np.array([0.0, 0.1, 0.1]), np.array([0.0, 0.0, 0.0, 0.0]))
         self.sim.set_base_pose("sponge",   np.array([0.0, -0.1, 0.1]), np.array([0.0, 0.0, 0.0, 1.0]))
 
-
     def _sample_goal(self) -> np.ndarray:
-
-        return np.array([10, 10, 10])
+        return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        # 
         return 
 
     def _get_object_orietation(self):
-        
         return
 
-    def is_success(self, achieved_goal: np.ndarray, desired_goal: np.ndarray) -> Union[np.ndarray, float]:
-        # must be vectorized !!
-        d = distance(achieved_goal, desired_goal)
-        return np.array((d < self.distance_threshold), dtype=np.float64)
-    def compute_cost(self, achieved_goal: np.ndarray, desired_goal: np.ndarray, info: Dict[str, Any] = ...) -> Union[np.ndarray, float]:
-        
-        cost = np.array([1000, 1000, 1000])
+    def is_success(self):
+        # harcoded to False
+        return False
+    
+    def compute_cost(self):
+        # hardcoded to 0
+        return 0
 
-        if self.reward_type == "sparse":
-            cost_sparse = cost.copy()
-            for key in cost_sparse:
-                sparse_co = np.array((cost_sparse[key] > self.distance_threshold), dtype=np.float64)
-                cost_sparse[key] = sparse_co
-            return cost_sparse
-        else:
-            return cost 
-
-    def compute_reward(self, achieved_goal, desired_goal, info: Dict[str, Any]) -> Union[np.ndarray, float]:
-        d = distance(achieved_goal, desired_goal)
-        if self.reward_type == "sparse":
-            return -np.array(d > self.distance_threshold, dtype=np.float64)
-        else:
-            return -d
+    def compute_reward(self):
+        # harcoded to 0
+        return 0

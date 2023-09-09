@@ -36,65 +36,36 @@ class MoveTable(Task):
 
     def get_obs(self) -> np.ndarray:
         # position, rotation of the object
-        table_position = np.array(self.sim.get_base_position("movable_table"))
-        table_rotation = np.array(self.sim.get_base_rotation("movable_table"))
-        table_velocity = np.array(self.sim.get_base_velocity("movable_table"))
-        table_angular_velocity = np.array(self.sim.get_base_angular_velocity("movable_table"))
-
-        observation = np.concatenate(
-            [
-                table_position,
-                table_rotation,
-                table_velocity,
-                table_angular_velocity,
-            ]
-        )
-
-        return observation
+        obs = {
+            "table":  np.array(self.sim.get_base_position("movable_table"))
+        }
+        return obs
 
     def get_achieved_goal(self) -> np.ndarray:
+        return np.zeros(1)
 
-        return np.array([10, 10, 10])
-
-    def reset(self) -> None:
-        self.goal = self._sample_goal()
-        
-        # NOTE: for some reason set_base_pose of  the table causes it to disappear. You can't use reset() but have to run again the environment
+    def reset(self) -> None:        
+        # NOTE: for some reason set_base_pose of the table causes it to disappear. You can't use reset() but have to run again the environment
         #self.sim.set_base_pose("movable_table",   np.array([0.6, 0.1, 0.1]), np.array([0.0, 0.0, 0.0, 0.0]))
-
+        return
 
     def _sample_goal(self) -> np.ndarray:
-
-        return np.array([10, 10, 10])
+        return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        # 
         return 
 
     def _get_object_orietation(self):
-        
         return
 
-    def is_success(self, achieved_goal: np.ndarray, desired_goal: np.ndarray) -> Union[np.ndarray, float]:
-        # must be vectorized !!
-        d = distance(achieved_goal, desired_goal)
-        return np.array((d < self.distance_threshold), dtype=np.float64)
-    def compute_cost(self, achieved_goal: np.ndarray, desired_goal: np.ndarray, info: Dict[str, Any] = ...) -> Union[np.ndarray, float]:
-        
-        cost = np.array([1000, 1000, 1000])
+    def is_success(self):
+        # harcoded to False
+        return False
+    
+    def compute_cost(self):
+        # hardcoded to 0
+        return 0
 
-        if self.reward_type == "sparse":
-            cost_sparse = cost.copy()
-            for key in cost_sparse:
-                sparse_co = np.array((cost_sparse[key] > self.distance_threshold), dtype=np.float64)
-                cost_sparse[key] = sparse_co
-            return cost_sparse
-        else:
-            return cost 
-
-    def compute_reward(self, achieved_goal, desired_goal, info: Dict[str, Any]) -> Union[np.ndarray, float]:
-        d = distance(achieved_goal, desired_goal)
-        if self.reward_type == "sparse":
-            return -np.array(d > self.distance_threshold, dtype=np.float64)
-        else:
-            return -d
+    def compute_reward(self):
+        # harcoded to 0
+        return 0
