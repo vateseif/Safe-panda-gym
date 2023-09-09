@@ -14,6 +14,7 @@ from panda_gym.envs.panda_tasks.panda_build_L import  PandaBuildLEnv
 from panda_gym.envs.panda_tasks.panda_rope import PandaRope
 from panda_gym.envs.panda_tasks.panda_clean_plate import PandaCleanPlate
 from panda_gym.envs.panda_tasks.panda_sponge import PandaSponge
+from panda_gym.envs.panda_tasks.panda_move_table import PandaMoveTable
 # safe env
 
 from panda_gym.envs.panda_tasks.panda_push_safe import PandaPushSafeEnv

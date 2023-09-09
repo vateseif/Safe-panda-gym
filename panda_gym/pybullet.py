@@ -34,6 +34,7 @@ class PyBullet:
         self.physics_client = bc.BulletClient(connection_mode=self.connection_mode, options=options)
         self.physics_client.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
         self.physics_client.configureDebugVisualizer(p.COV_ENABLE_MOUSE_PICKING, 0)
+        self.physics_client.setPhysicsEngineParameter(enableFileCaching=0)
 
         self.n_substeps = n_substeps
         self.timestep = 1.0 / 500
@@ -385,13 +386,22 @@ class PyBullet:
         yield
         self.physics_client.configureDebugVisualizer(self.physics_client.COV_ENABLE_RENDERING, 1)
 
-    def loadURDF(self, body_name: str, **kwargs: Any) -> None:
+    def loadURDF(self, body_name: str, mass:Optional[float]=None, **kwargs: Any) -> None:
         """Load URDF file.
 
         Args:
             body_name (str): The name of the body. Must be unique in the sim.
+            mass (float): Mass of the body. Some URDFs have mass 0 which makes objects static.
         """
-        self._bodies_idx[body_name] = self.physics_client.loadURDF(**kwargs)
+        urdf =  self.physics_client.loadURDF(**kwargs)
+
+        # change mass of object is given
+        if mass is not None:
+            self.physics_client.changeDynamics(urdf, -1, mass=mass)
+
+        # create body
+        self._bodies_idx[body_name] = urdf
+        
 
     def create_box(
         self,
