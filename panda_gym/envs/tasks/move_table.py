@@ -1,13 +1,15 @@
 from fileinput import filename
 from typing import Any, Dict, Tuple, Union
 
+import os
 import numpy as np
 
+from panda_gym import BASE_DIR
 from panda_gym.envs.core_multi_task import Task
 from panda_gym.pybullet import PyBullet
 from panda_gym.utils import distance
 
-#
+
 class MoveTable(Task):
     def __init__(
         self,
@@ -52,7 +54,7 @@ class MoveTable(Task):
         # load table URDF
         self.sim.loadURDF(body_name="movable_table", 
                         mass=2.0, 
-                        fileName="panda_gym/assets/table/table.urdf", 
+                        fileName=os.path.join(BASE_DIR, "assets/table/table.urdf"), 
                         basePosition=self._sample_objects(), 
                         globalScaling=0.3)
         

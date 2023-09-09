@@ -2,7 +2,9 @@ import os
 
 from gym.envs.registration import register
 
-with open(os.path.join(os.path.dirname(__file__), "version.txt"), "r") as file_handler:
+BASE_DIR = os.path.dirname(__file__)
+
+with open(os.path.join(BASE_DIR, "version.txt"), "r") as file_handler:
     __version__ = file_handler.read().strip()
 
 for reward_type in ["sparse", "dense"]:

@@ -1,8 +1,10 @@
 from fileinput import filename
 from typing import Any, Dict, Tuple, Union
 
+import os
 import numpy as np
 
+from panda_gym import BASE_DIR
 from panda_gym.envs.core_multi_task import Task
 from panda_gym.pybullet import PyBullet
 from panda_gym.utils import distance
@@ -28,7 +30,7 @@ class Sponge(Task):
         self.sim.create_table(length=2.2, width=0.7, height=0.4, x_offset=-0.3)
 
 
-        self.sim.loadURDF(body_name="plate", fileName="panda_gym/assets/blue_plate/model.urdf",
+        self.sim.loadURDF(body_name="plate", fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"),
                             basePosition=np.array([0.0, 0.1, 0.05]),
                             useFixedBase=False) # plate cannot be moved
 
