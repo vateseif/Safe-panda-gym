@@ -1,0 +1,6 @@
+include *.urdf
+include *.stl
+include *.obj
+include *.mtl
+include *.png
+
