@@ -92,11 +92,11 @@ class  Cubes(Task):
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
         # while True:  # make sure that cubes are distant enough
-        object1_position = np.array([0.0, -0.3, self.object_size / 2])
-        object2_position = np.array([0.0, -0.1, self.object_size / 2])
-        object3_position = np.array([0.0, 0.1, self.object_size / 2])
-        object4_position = np.array([0.0, 0.3, self.object_size / 2])
-
+        object1_position = np.array([0.0, 0.3, self.object_size / 2])
+        object2_position = np.array([0.0, 0.1, self.object_size / 2])
+        object3_position = np.array([0.0, -0.1, self.object_size / 2])
+        object4_position = np.array([0.0, -0.3, self.object_size / 2])
+        
         #noise1 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
         #noise2 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
         #noise3 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
