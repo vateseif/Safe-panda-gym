@@ -117,7 +117,7 @@ class Panda(PyBulletRobot):
         # Clip the height target. For some reason, it has a great impact on learning
         target_ee_position[2] = np.max((0, target_ee_position[2]))
         # Convert rotation from Euler to Quaternions
-        target_ee_rotation = self.get_ee_orientation() + self.sim.physics_client.getQuaternionFromEuler(ee_rotation_euler)
+        target_ee_rotation = self.get_ee_orientation() + 0.05*self.sim.physics_client.getQuaternionFromEuler(ee_rotation_euler)
         # compute the new joint angles
         target_arm_angles = self.inverse_kinematics(
             link=self.ee_link, position=target_ee_position, orientation=target_ee_rotation
