@@ -31,7 +31,7 @@ class  Cubes(Task):
         self.sim.create_plane(z_offset=-0.4)
         self.sim.create_table(length=1.1, width=0.7, height=0.4, x_offset=-0.3)
         self.sim.create_box(
-            body_name="object1",
+            body_name="cube_1",
             half_extents=np.ones(3) * self.object_size / 2,
             mass=2.0,
             position=np.array([0.0, 0.0, self.object_size / 2]),
@@ -39,7 +39,7 @@ class  Cubes(Task):
         )
 
         self.sim.create_box(
-            body_name="object2",
+            body_name="cube_2",
             half_extents=np.ones(3) * self.object_size / 2,
             mass=1.0,
             position=np.array([0.5, 0.0, self.object_size / 2]),
@@ -47,7 +47,7 @@ class  Cubes(Task):
         )
 
         self.sim.create_box(
-            body_name="object3",
+            body_name="cube_3",
             half_extents=np.ones(3) * self.object_size / 2,
             mass=1.0,
             position=np.array([0.5, 0.0, self.object_size / 2]),
@@ -56,7 +56,7 @@ class  Cubes(Task):
 
 
         self.sim.create_box(
-            body_name="object4",
+            body_name="cube_4",
             half_extents=np.ones(3) * self.object_size / 2,
             mass=1.0,
             position=np.array([0.5, 0.0, self.object_size / 2]),
@@ -64,51 +64,13 @@ class  Cubes(Task):
         )
 
 
-        """
-        ## visualize right gripper constraint
-        radius = 0.048
-        self.sim.create_sphere(
-          body_name="cube1",
-          radius=radius,
-          mass=0.,
-          position=np.array([0.5, 0.0, 0.15]),
-          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
-          ghost=True
-        )
-        self.sim.create_sphere(
-          body_name="cube2",
-          radius=radius,
-          mass=0.,
-          position=np.array([0.5, 0.0, 0.15]),
-          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
-          ghost=True
-        )
-        self.sim.create_sphere(
-          body_name="cube3",
-          radius=radius,
-          mass=0.,
-          position=np.array([0.5, 0.0, 0.15]),
-          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
-          ghost=True
-        )
-        self.sim.create_sphere(
-          body_name="cube4",
-          radius=radius,
-          mass=0.,
-          position=np.array([0.5, 0.0, 0.15]),
-          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
-          ghost=True
-        )
-        """
-
-
     def get_obs(self) -> Dict[str, np.ndarray]:
         # position of objects
         obs = {
-            "cube_1": self.sim.get_base_position("object1"),
-            "cube_2": self.sim.get_base_position("object2"),
-            "cube_3": self.sim.get_base_position("object3"),
-            "cube_4": self.sim.get_base_position("object4"),
+            "cube_1": self.sim.get_base_position("cube_1"),
+            "cube_2": self.sim.get_base_position("cube_2"),
+            "cube_3": self.sim.get_base_position("cube_3"),
+            "cube_4": self.sim.get_base_position("cube_4"),
         }
 
         return obs
@@ -119,10 +81,10 @@ class  Cubes(Task):
     def reset(self) -> None:
         object1_position, object2_position, object3_position, object4_position = self._sample_objects()
         
-        self.sim.set_base_pose("object1",  object1_position, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("object2",  object2_position, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("object3",  object3_position, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("object4",  object4_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("cube_1",  object1_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("cube_2",  object2_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("cube_3",  object3_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("cube_4",  object4_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
     def _sample_goal(self) -> np.ndarray:
         # harcoded
@@ -144,10 +106,10 @@ class  Cubes(Task):
         return object1_position, object2_position, object3_position, object4_position
 
     def _get_object_orietation(self):
-        object1_rotation = np.array(self.sim.get_base_rotation("object1", "quaternion"))
-        object2_rotation = np.array(self.sim.get_base_rotation("object2", "quaternion"))
-        object3_rotation = np.array(self.sim.get_base_rotation("object3", "quaternion"))
-        object4_rotation = np.array(self.sim.get_base_rotation("object4", "quaternion"))
+        object1_rotation = np.array(self.sim.get_base_rotation("cube_1", "quaternion"))
+        object2_rotation = np.array(self.sim.get_base_rotation("cube_2", "quaternion"))
+        object3_rotation = np.array(self.sim.get_base_rotation("cube_3", "quaternion"))
+        object4_rotation = np.array(self.sim.get_base_rotation("cube_4", "quaternion"))
         return object1_rotation, object2_rotation, object3_rotation, object4_rotation
 
     def is_success(self):
