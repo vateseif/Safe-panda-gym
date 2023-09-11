@@ -7,7 +7,6 @@ import gym.utils.seeding
 import gym_robotics
 import numpy as np
 
-from pybullet import getQuaternionFromEuler
 from panda_gym.pybullet import PyBullet
 
 
@@ -49,7 +48,7 @@ class PyBulletRobot(ABC):
             base_position (np.ndarray): The position of the robot, as (x, y, z).
         """
         if len(base_orientation) == 3: 
-            base_orientation = getQuaternionFromEuler(base_orientation)
+            base_orientation = self.sim.physics_client.getQuaternionFromEuler(base_orientation)
         self.sim.loadURDF(
             body_name=self.body_name,
             fileName=file_name,
@@ -103,6 +102,19 @@ class PyBulletRobot(ABC):
             np.ndarray: Velocity as (vx, vy, vz)
         """
         return self.sim.get_link_velocity(self.body_name, link)
+
+    def get_link_orientation(self, link: int) -> np.ndarray:
+        """Get the orientation of the link of the body.
+
+        Args:
+            body (str): Body unique name.
+            link (int): Link index in the body.
+
+        Returns:
+            np.ndarray: The rotation, as (rx, ry, rz).
+        """
+        quat = self.sim.get_link_orientation(self.body_name, link)
+        return self.sim.physics_client.getEulerFromQuaternion(quat)
 
     def get_joint_angle(self, joint: int) -> float:
         """Returns the angle of a joint

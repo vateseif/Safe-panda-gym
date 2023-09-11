@@ -149,12 +149,13 @@ class Panda(PyBulletRobot):
         # end-effector position and velocity
         ee_position = np.array(self.get_ee_position())
         ee_velocity = np.array(self.get_ee_velocity())
+        ee_z_position = np.array(self.get_ee_orientation())
         # fingers opening
         if not self.block_gripper:
             fingers_width = self.get_fingers_width()
-            obs = np.concatenate((ee_position, ee_velocity, [fingers_width]))
+            obs = np.concatenate((ee_position, ee_z_position, ee_velocity, [fingers_width]))
         else:
-            obs = np.concatenate((ee_position, ee_velocity))
+            obs = np.concatenate((ee_position, ee_z_position, ee_velocity))
         return obs
 
     def reset(self) -> None:
@@ -177,3 +178,7 @@ class Panda(PyBulletRobot):
     def get_ee_velocity(self) -> np.ndarray:
         """Returns the velocity of the end-effector as (vx, vy, vz)"""
         return self.get_link_velocity(self.ee_link)
+
+    def get_ee_orientation(self) -> float:
+        """ Returns the Euler angles of the gripper """
+        return self.get_link_orientation(self.ee_link)
