@@ -333,7 +333,7 @@ class PyBullet:
             body (str): Body unique name.
             joints (np.ndarray): List of joint indices, as a list of ints.
             target_angles (np.ndarray): List of target angles, as a list of floats.
-            forces (np.ndarray): Forces to apply, as a list of floats.
+            forces (np.ndarray): Max forces that can be applied, as a list of floats.
         """
         self.physics_client.setJointMotorControlArray(
             self._bodies_idx[body],
