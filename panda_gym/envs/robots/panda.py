@@ -75,10 +75,11 @@ class Panda(PyBulletRobot):
 
     def set_action(self, action: np.ndarray) -> None:
         action = action.copy()  # ensure action don't change
-        action = np.clip(action, self.action_space.low, self.action_space.high)
+        #action = np.clip(action, self.action_space.low, self.action_space.high)
         if self.control_type == "ee":
             ee_displacement = action[:3]
-            target_arm_angles = self.ee_displacement_to_target_arm_angles(ee_displacement)
+            ee_rotation_euler = action[3:6]
+            target_arm_angles = self.ee_displacement_to_target_arm_angles(ee_displacement, ee_rotation_euler)
         else:
             arm_joint_ctrl = action[:7]
             target_arm_angles = self.arm_joint_ctrl_to_target_arm_angles(arm_joint_ctrl)
@@ -100,7 +101,7 @@ class Panda(PyBulletRobot):
         #self.sim.set_base_pose("gripper_right", ee_position + np.array([0, -offset, 0.0]), np.array([0.0, 0.0, 0.0, 1.0]))
         
 
-    def ee_displacement_to_target_arm_angles(self, ee_displacement: np.ndarray) -> np.ndarray:
+    def ee_displacement_to_target_arm_angles(self, ee_displacement: np.ndarray, ee_rotation_euler: np.ndarray) -> np.ndarray:
         """Compute the target arm angles from the end-effector displacement.
 
         Args:
@@ -115,11 +116,12 @@ class Panda(PyBulletRobot):
         target_ee_position = ee_position + ee_displacement
         # Clip the height target. For some reason, it has a great impact on learning
         target_ee_position[2] = np.max((0, target_ee_position[2]))
+        # Convert rotation from Euler to Quaternions
+        target_ee_rotation = self.sim.physics_client.getQuaternionFromEuler(ee_rotation_euler)
         # compute the new joint angles
         target_arm_angles = self.inverse_kinematics(
-            link=self.ee_link, position=target_ee_position, orientation=np.array([1.0, 0.0, 0.0, 0.0])
+            link=self.ee_link, position=target_ee_position, orientation=target_ee_rotation
         )
-
         # TODO:
         # [1, 0, 0, 0] for normal gripper
         # [0, 1, 0, 0] for reversed gripper
