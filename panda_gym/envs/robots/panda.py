@@ -41,7 +41,7 @@ class Panda(PyBulletRobot):
             base_orientation=self.base_orientation,
             action_space=action_space,
             joint_indices=np.array([0, 1, 2, 3, 4, 5, 6, 9, 10]),
-            joint_forces=np.array([87.0, 87.0, 87.0, 87.0, 12.0, 120.0, 120.0, 1700.0, 1700.0]), # last 2 are the finger forces (default is 170)
+            joint_forces=np.array([87.0, 87.0, 87.0, 87.0, 12.0, 120.0, 120.0, 170.0, 170.0]), # last 2 are the finger forces (default is 170)
         )
 
         self.fingers_indices = np.array([9, 10])
