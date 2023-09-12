@@ -3,3 +3,4 @@ gym-robotics
 pybullet
 numpy
 scipy
+matplotlib

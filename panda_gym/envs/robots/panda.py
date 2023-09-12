@@ -35,7 +35,7 @@ class Panda(PyBulletRobot):
         action_space = spaces.Box(-1.0, 1.0, shape=(n_action,), dtype=np.float32)
         super().__init__(
             sim,
-            body_name="panda",
+            body_name="panda", # TODO when multiple robots you must change this
             file_name="franka_panda/panda.urdf",
             base_position=base_position,
             base_orientation=self.base_orientation,
