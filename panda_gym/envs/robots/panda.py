@@ -25,6 +25,7 @@ class Panda(PyBulletRobot):
         base_position: Optional[np.ndarray] = None,
         base_orientation: Optional[np.ndarray] = None,
         control_type: str = "ee",
+        body_name: str = "panda"
     ) -> None:
         base_position = base_position if base_position is not None else np.zeros(3)
         self.base_orientation = base_orientation if base_orientation is not None else np.zeros(3)
@@ -35,7 +36,7 @@ class Panda(PyBulletRobot):
         action_space = spaces.Box(-1.0, 1.0, shape=(n_action,), dtype=np.float32)
         super().__init__(
             sim,
-            body_name="panda", # TODO when multiple robots you must change this
+            body_name=body_name, # TODO when multiple robots you must change this
             file_name="franka_panda/panda.urdf",
             base_position=base_position,
             base_orientation=self.base_orientation,

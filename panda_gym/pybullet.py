@@ -10,6 +10,7 @@ import pybullet_data
 import pybullet_utils.bullet_client as bc
 
 import panda_gym.assets
+from panda_gym import BASE_DIR
 
 
 class PyBullet:
@@ -646,10 +647,9 @@ class PyBullet:
         )
 
     def create_sink(self, base_position:np.ndarray):
-
         sink_shape = p.createVisualShape(
             shapeType=p.GEOM_MESH,
-            fileName="/Users/seifboss/thesis/Safe-panda-gym/panda_gym/assets/sink/faucet.stl",
+            fileName=os.path.join(BASE_DIR, "assets/sink/faucet.stl"),
             meshScale=np.ones(3)*0.5
         )
         sink = p.createMultiBody(
@@ -659,6 +659,50 @@ class PyBullet:
         )
 
         self._bodies_idx["sink"] = sink
+
+    def create_handle(self, name:str, base_position:np.ndarray):
+        handle_collision_shape = p.createCollisionShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, "assets/handle/handle.stl"),
+            meshScale=np.ones(3)*0.3
+        )
+        handle_visual_shape = p.createVisualShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, "assets/handle/handle.stl"),
+            meshScale=np.ones(3)*0.3
+        )
+        handle = p.createMultiBody(
+            baseCollisionShapeIndex=handle_collision_shape,
+            baseVisualShapeIndex=handle_visual_shape,
+            basePosition=base_position,
+            baseOrientation=(0, 1, -1, 0),
+        )
+        self.physics_client.changeDynamics(handle, -1, mass=.1) # TODO: change mass value
+        self._bodies_idx[name] = handle
+        return
+
+    def create_fixed_constraint(
+        self, 
+        parent_name:str, 
+        child_name:str, 
+        parent_pos: np.ndarray, 
+        child_pos: np.ndarray, 
+        parent_orientation: np.ndarray, 
+        child_orientation: np.ndarray):
+
+        # Create the fixed joint (constraint)
+        self.physics_client.createConstraint(
+            self._bodies_idx[parent_name],
+            -1,  # Use -1 to indicate the base link of object1
+            self._bodies_idx[child_name],
+            -1,  # Use -1 to indicate the base link of object2
+            self.physics_client.JOINT_FIXED,
+            [0, 0, 0],  # Joint axis (not used for a fixed joint)
+            parentFramePosition=parent_pos,
+            childFramePosition=child_pos,  # Relative position of the second object's base to its center
+            parentFrameOrientation=parent_orientation,
+            childFrameOrientation=child_orientation  # Quaternion representing no rotation
+        )
 
 
     def set_lateral_friction(self, body: str, link: int, lateral_friction: float) -> None:

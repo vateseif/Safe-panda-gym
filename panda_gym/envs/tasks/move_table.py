@@ -1,5 +1,4 @@
-from fileinput import filename
-from typing import Any, Dict, Tuple, Union
+from typing import Tuple
 
 import os
 import numpy as np
@@ -29,27 +28,7 @@ class MoveTable(Task):
         self.sim.create_plane(z_offset=-0.4)
         self.sim.create_table(length=2.2, width=0.7, height=0.4, x_offset=-0.3)
 
-        self.table_offset = [np.array([-0.225, 0.0, 0.18]), np.array([0.225, 0.0, 0.18])]
-
-        # sphere for visualization
-        radius = 0.015
-        self.sim.create_sphere(
-          body_name="table_left",
-          radius=radius,
-          mass=0.,
-          position=self._sample_objects()+self.table_offset[0],
-          rgba_color=np.array([0.1, 0.9, 0.1, 0.6]),
-          ghost=True
-        )
-
-        self.sim.create_sphere(
-          body_name="table_right",
-          radius=radius,
-          mass=0.,
-          position=self._sample_objects()+self.table_offset[1],
-          rgba_color=np.array([0.1, 0.9, 0.1, 0.6]),
-          ghost=True
-        )
+        self.table_offset = [np.array([-0.21, 0.0, 0.19]), np.array([0.21, 0.0, 0.19])]
 
         # load table URDF
         self.sim.loadURDF(body_name="movable_table", 
@@ -57,43 +36,52 @@ class MoveTable(Task):
                         fileName=os.path.join(BASE_DIR, "assets/table/table.urdf"), 
                         basePosition=self._sample_objects(), 
                         globalScaling=0.3)
-        
 
+        # load handle 
+        self.sim.create_handle("handle_left", base_position=self._sample_objects()+self.table_offset[0])
+        self.sim.create_handle("handle_right", base_position=self._sample_objects()+self.table_offset[1])
+
+        # create constraints between handles and table
+        self.sim.create_fixed_constraint("movable_table", 
+                                        "handle_left", 
+                                        self.table_offset[0], 
+                                        np.zeros(3), 
+                                        np.zeros(3), 
+                                        np.array([0., -1., 1., 0.]))
+
+        self.sim.create_fixed_constraint("movable_table", 
+                                        "handle_right", 
+                                        self.table_offset[1], 
+                                        np.zeros(3), 
+                                        np.zeros(3), 
+                                        np.array([0., -1., 1., 0.]))
+
+
+        #self.sim._bodies_idx["handle_table_joint"] = fixed_joint
 
     def get_obs(self) -> np.ndarray:
         # position, rotation of the object
-        table_position = np.array(self.sim.get_base_position("movable_table"))
         obs = {
-            "table":  table_position,
-            "table_left": table_position+self.table_offset[0],
-            "table_right": table_position+self.table_offset[1]
+            "table":  np.array(self.sim.get_base_position("movable_table")),
+            "handle_left": np.array(self.sim.get_base_position("handle_left")),
+            "handle_right": np.array(self.sim.get_base_position("handle_right")),
         }
 
-        self._update_visualizations(table_position)
         return obs
     
-    def _update_visualizations(self, ref_position:np.ndarray):
-        self.sim.set_base_pose("table_left", ref_position+self.table_offset[0], np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("table_right", ref_position+self.table_offset[1], np.array([0.0, 0.0, 0.0, 1.0]))
-        return
-
     def get_achieved_goal(self) -> np.ndarray:
         return np.zeros(1)
 
     def reset(self) -> None:        
         # NOTE: for some reason set_base_pose of the table causes it to disappear. You can't use reset() but have to run again the environment
         #self.sim.set_base_pose("movable_table",   np.array([0.6, 0.1, 0.1]), np.array([0.0, 0.0, 0.0, 0.0]))
-        
-        self.sim.set_base_pose("table_left", self._sample_objects()+self.table_offset[0], np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("table_right", self._sample_objects()+self.table_offset[1], np.array([0.0, 0.0, 0.0, 1.0]))
-
         return
 
     def _sample_goal(self) -> np.ndarray:
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        return np.array([0.4, 0.1, 0.1])
+        return np.array([0.1, 0.1, 0.])
 
     def _get_object_orietation(self):
         return
