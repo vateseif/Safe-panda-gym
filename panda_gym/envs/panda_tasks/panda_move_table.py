@@ -18,8 +18,8 @@ class PandaMoveTable(RobotTaskEnv):
 
     def __init__(self, render: bool = False, reward_type: str = "sparse", control_type: str = "ee") -> None:
         sim = PyBullet(render=render)
-        robot1 = Panda(sim, block_gripper=False, base_position=np.array([-0.8, 0.0, 0.0]), base_orientation=np.array([0, 0, -0.5]), control_type=control_type, body_name="panda1")
-        robot2 = Panda(sim, block_gripper=False, base_position=np.array([0.5, 0.0, 0.0]), base_orientation=np.array([0, 0, 2.6]), control_type=control_type, body_name="panda2")
+        robot1 = Panda(sim, block_gripper=False, base_position=np.array([-0.8, 0.0, 0.0]), base_orientation=np.array([0, 0, -0.5]), control_type=control_type, body_name="_left")
+        robot2 = Panda(sim, block_gripper=False, base_position=np.array([0.5, 0.0, 0.0]), base_orientation=np.array([0, 0, 2.6]), control_type=control_type, body_name="_right")
         robots = [robot1, robot2]
         task = MoveTable(sim, reward_type=reward_type)
         super().__init__(robots, task)

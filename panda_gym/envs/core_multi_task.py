@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union, List
 
 import gym
 import gym.spaces
@@ -215,7 +215,7 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
 
     metadata = {"render.modes": ["human", "rgb_array"]}
 
-    def __init__(self, robots: PyBulletRobot, task: Task) -> None:
+    def __init__(self, robots: List[PyBulletRobot], task: Task) -> None:
         assert robots[0].sim == task.sim, "The robot and the task must belong to the same simulation."
         self.sim = robots[0].sim
         self.robots = robots
@@ -228,7 +228,7 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         self._saved_goal = dict()
 
     def _get_obs(self) -> Dict[str, np.ndarray]:
-        robot_obs = {f"robot_{i}": r.get_obs() for i, r in enumerate(self.robots)} # robot state
+        robot_obs = {f"robot{r.body_name}": r.get_obs() for r in self.robots} # robot state
         task_obs = self.task.get_obs()  # object position, velococity, unsafe state locations etc...
         observation = robot_obs | task_obs
         return observation
