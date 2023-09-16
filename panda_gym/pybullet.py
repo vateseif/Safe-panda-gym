@@ -675,7 +675,7 @@ class PyBullet:
             baseCollisionShapeIndex=handle_collision_shape,
             baseVisualShapeIndex=handle_visual_shape,
             basePosition=base_position,
-            baseOrientation=(0, 1, -1, 0),
+            baseOrientation=(-1, 1, -1, 1),
         )
         self.physics_client.changeDynamics(handle, -1, mass=.1) # TODO: change mass value
         self._bodies_idx[name] = handle

@@ -35,11 +35,12 @@ class MoveTable(Task):
                         mass=2.0, 
                         fileName=os.path.join(BASE_DIR, "assets/table/table.urdf"), 
                         basePosition=self._sample_objects(), 
+                        baseOrientation=[0,0,1,1],
                         globalScaling=0.3)
 
         # load handle 
-        self.sim.create_handle("handle_left", base_position=self._sample_objects()+self.table_offset[0])
-        self.sim.create_handle("handle_right", base_position=self._sample_objects()+self.table_offset[1])
+        self.sim.create_handle("handle_left", base_position=self._sample_objects()+np.array([0.0,-0.21, 0.19]))
+        self.sim.create_handle("handle_right", base_position=self._sample_objects()+np.array([0.0, 0.21, 0.19]))
 
         # create constraints between handles and table
         self.sim.create_fixed_constraint("movable_table", 
@@ -81,7 +82,7 @@ class MoveTable(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        return np.array([0.1, 0.1, 0.])
+        return np.array([0.1, 0.0, 0.])
 
     def _get_object_orietation(self):
         return
