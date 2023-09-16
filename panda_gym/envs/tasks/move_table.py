@@ -82,7 +82,7 @@ class MoveTable(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        return np.array([0.1, 0.0, 0.])
+        return np.array([-0.1, 0.0, 0.])
 
     def _get_object_orietation(self):
         return
