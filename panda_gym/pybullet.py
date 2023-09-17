@@ -24,7 +24,7 @@ class PyBullet:
     """
 
     def __init__(self, render: bool = False, n_substeps: int = 20, background_color: Optional[np.ndarray] = None) -> None:
-        background_color = background_color if background_color is not None else np.array([223.0, 54.0, 45.0])
+        background_color = background_color if background_color is not None else np.array([75, 83, 107])
         self.background_color = background_color.astype(np.float64) / 255
         options = "--background_color_red={} \
                     --background_color_green={} \
@@ -615,7 +615,7 @@ class PyBullet:
             mass=0.0,
             position=np.array([0.0, 0.0, z_offset - 0.01]),
             specular_color=np.zeros(3),
-            rgba_color=np.array([0.15, 0.15, 0.15, 1.0]),
+            rgba_color=np.array([218/255, 219/255, 224/255, 1.0]),
         )
 
     def create_table(
@@ -645,7 +645,7 @@ class PyBullet:
             mass=0.0,
             position=np.array([x_offset, 0.0, -height / 2]),
             specular_color=np.zeros(3),
-            rgba_color=np.array([0.95, 0.95, 0.95, 1]),
+            rgba_color=np.array([189/255, 174/255, 153/255, 1]),
             lateral_friction=lateral_friction,
             spinning_friction=spinning_friction,
         )
@@ -654,7 +654,8 @@ class PyBullet:
         sink_shape = p.createVisualShape(
             shapeType=p.GEOM_MESH,
             fileName=os.path.join(BASE_DIR, "assets/sink/faucet.stl"),
-            meshScale=np.ones(3)*0.5
+            meshScale=np.ones(3)*0.5,
+            rgbaColor=np.array([0.456, 0.456, 0.456, 1.])
         )
         sink = p.createMultiBody(
             baseVisualShapeIndex=sink_shape,

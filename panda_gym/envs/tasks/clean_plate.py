@@ -21,6 +21,8 @@ class CleanPlate(Task):
         self.reward_type = reward_type
         self.distance_threshold = distance_threshold
 
+        self.h, self.w, self.l = (0.03, 0.02, 0.015)
+
         with self.sim.no_rendering():
             self._create_scene()
             self.sim.place_visualizer(target_position=np.zeros(3), distance=0.9, yaw=45, pitch=-30)
@@ -34,14 +36,32 @@ class CleanPlate(Task):
                             basePosition=np.array([0.0, 0.1, 0.01]),
                             useFixedBase=True) # plate cannot be moved
 
-        l, w, h = (0.03, 0.02, 0.02)
+        sponge_position, sponge_scrub_offset = self._sample_objects()   
+
         self.sim.create_box(
             body_name="sponge",
-            half_extents= np.array([l, w, h]),
+            half_extents= np.array([self.h, self.w, self.l]),
             mass=1.0,
-            position=np.array([0.0, 0.0, h/2]),
-            rgba_color=np.array([1, 1, 0, 1.0]),
+            position=sponge_position,
+            rgba_color=np.array([1, 1, 0, 1.0])
         )
+
+        # sponge scrub
+        self.sim.create_box(
+            body_name="sponge_scrub",
+            half_extents= np.array([self.h, self.w, self.l/3]),
+            mass=1.0,
+            position=sponge_position+sponge_scrub_offset, 
+            rgba_color=np.array([1/255, 50/255, 32/255, 1.0])
+        )
+
+        # create constraint between sponge and sponge scrub
+        self.sim.create_fixed_constraint("sponge", 
+                                        "sponge_scrub", 
+                                        sponge_scrub_offset, 
+                                        np.zeros(3), 
+                                        np.zeros(3), 
+                                        np.zeros(3))
 
     def get_obs(self) -> np.ndarray:
         # position of objects
@@ -54,14 +74,17 @@ class CleanPlate(Task):
     def get_achieved_goal(self) -> np.ndarray:
         return np.zeros(1)
 
-    def reset(self) -> None:        
-        self.sim.set_base_pose("sponge",   np.array([0.0, -0.1, 0.1]), np.array([0.0, 0.0, 0.0, 1.0]))
+    def reset(self) -> None:   
+        sponge_position, _ = self._sample_objects()   
+        self.sim.set_base_pose("sponge", sponge_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
     def _sample_goal(self) -> np.ndarray:
         return np.array([10, 10, 10])
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        return 
+        sponge_position = np.array([0.0, -0.1, 0.1])
+        sponge_scrub_offset = np.array([0.,0.,self.l*(1+1/3)])
+        return sponge_position, sponge_scrub_offset
 
     def _get_object_orietation(self):
         return

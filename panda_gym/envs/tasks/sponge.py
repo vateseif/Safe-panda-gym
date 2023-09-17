@@ -22,7 +22,7 @@ class Sponge(Task):
         self.distance_threshold = distance_threshold
 
         # sponge dimensions
-        self.h, self.w, self.l = (0.03, 0.02, 0.02)
+        self.h, self.w, self.l = (0.03, 0.02, 0.015)
 
         with self.sim.no_rendering():
             self._create_scene()
@@ -46,15 +46,15 @@ class Sponge(Task):
             mass=0.01,
             position=plate_position+plate_handle_offset,
             orientation=plate_handle_orientation,
-            rgba_color=np.array([0.1, 0.2, 0.7, 1.0])
+            rgba_color=np.array([96/255, 59/255, 42/255, 1.0])
         )
         # pedestal
         self.sim.create_box(
             body_name="pedestal",
             half_extents= np.array([0.1, 0.1, plate_position[2]/2]),
             mass=0,
-            position=plate_position - np.array([0., 0., plate_position[2]-0.01]), 
-            rgba_color=np.array([1, 1, 1, 1.0]),
+            position=plate_position - np.array([0., 0., plate_position[2]]), 
+            rgba_color=np.array([189/255, 174/255, 153/255, 1]),
         )
         # sponge
         self.sim.create_box(
@@ -63,6 +63,14 @@ class Sponge(Task):
             mass=1.0,
             position=sponge_position, 
             rgba_color=np.array([1, 1, 0, 1.0]),
+        )
+        # sponge scrub
+        self.sim.create_box(
+            body_name="sponge_scrub",
+            half_extents= np.array([self.h, self.w, self.l/3]),
+            mass=1.0,
+            position=sponge_position+np.array([0.,0.,self.l*(1+1/3)]), 
+            rgba_color=np.array([1/255, 50/255, 32/255, 1.0])
         )
         # sink
         self.sim.create_sink(base_position=sink_position)
@@ -73,7 +81,15 @@ class Sponge(Task):
                                         plate_handle_offset, 
                                         np.zeros(3), 
                                         np.zeros(3), 
-                                        plate_handle_orientation)
+                                        [0, -1, 0, 1])
+
+        # create constraint between sponge and sponge scrub
+        self.sim.create_fixed_constraint("sponge", 
+                                        "sponge_scrub", 
+                                        np.array([0.,0.,self.l*(1+1/3)]), 
+                                        np.zeros(3), 
+                                        np.zeros(3), 
+                                        np.zeros(3))
 
     def get_obs(self) -> np.ndarray:
         # position of objects
@@ -96,9 +112,9 @@ class Sponge(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        plate_position = np.array([0.0, 0.18, 0.05])
-        plate_handle_offset = np.array([0.148, 0.0, 0.015])
-        sponge_position = np.array([0.0, -0.1, 0.1])
+        plate_position = np.array([0.0, -0.1, 0.03])
+        plate_handle_offset = np.array([0.14, 0.0, 0.007])
+        sponge_position = np.array([0.0, 0.15, 0.1])
         sink_position = np.array([0, -0.5, 0.])
         plate_handle_orientation = np.array([0., 1., 0., 1.])
         return plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position 
