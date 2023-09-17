@@ -24,11 +24,13 @@ class Panda(PyBulletRobot):
         block_gripper: bool = False,
         base_position: Optional[np.ndarray] = None,
         base_orientation: Optional[np.ndarray] = None,
+        base_gripper_orientation = np.array([np.pi,0,0]),
         control_type: str = "ee",
         body_name: str = "panda"
     ) -> None:
         base_position = base_position if base_position is not None else np.zeros(3)
         self.base_orientation = base_orientation if base_orientation is not None else np.zeros(3)
+        self.base_gripper_orientation = base_gripper_orientation
         self.block_gripper = block_gripper
         self.control_type = control_type
         n_action = 3 if self.control_type == "ee" else 7  # control (x, y z) if "ee", else, control the 7 joints
@@ -158,6 +160,13 @@ class Panda(PyBulletRobot):
         else:
             obs = np.concatenate((ee_position, ee_orientation, ee_velocity))
         return obs
+
+    def get_info(self):
+        info = {}
+        info['name'] = self.body_name
+        info['x0'] =  np.array(self.get_ee_position())
+        info['euler0'] = self.base_gripper_orientation
+        return info
 
     def reset(self) -> None:
         self.set_joint_neutral()

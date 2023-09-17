@@ -219,7 +219,7 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         assert robots[0].sim == task.sim, "The robot and the task must belong to the same simulation."
         self.sim = robots[0].sim
         self.robots = robots
-        self.robot_names = [r.body_name for r in robots]
+        self.robots_info = [r.get_info() for r in robots]
         self.task = task
         obs = self.reset()  # required for init; seed can be changed later
         observation_shape = np.concatenate(list(obs.values())).shape
