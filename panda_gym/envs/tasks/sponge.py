@@ -21,6 +21,9 @@ class Sponge(Task):
         self.reward_type = reward_type
         self.distance_threshold = distance_threshold
 
+        # sponge dimensions
+        self.h, self.w, self.l = (0.03, 0.02, 0.02)
+
         with self.sim.no_rendering():
             self._create_scene()
             self.sim.place_visualizer(target_position=np.zeros(3), distance=0.9, yaw=45, pitch=-30)
@@ -29,21 +32,48 @@ class Sponge(Task):
         self.sim.create_plane(z_offset=-0.4)
         self.sim.create_table(length=2.2, width=0.7, height=0.4, x_offset=-0.3)
 
-
-        self.sim.loadURDF(body_name="plate", fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"),
-                            basePosition=np.array([0.0, 0.1, 0.05]),
+        # get object positions
+        plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position  = self._sample_objects()
+        # plate
+        self.sim.loadURDF(body_name="plate", mass=1., fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"),
+                            basePosition=plate_position,
                             useFixedBase=False) # plate cannot be moved
-
-        h, w, l = (0.03, 0.02, 0.02)
+        # plate handle
+        self.sim.create_cylinder(
+            body_name="plate_handle",
+            radius=0.01,
+            height=0.1,
+            mass=0.01,
+            position=plate_position+plate_handle_offset,
+            orientation=plate_handle_orientation,
+            rgba_color=np.array([0.1, 0.2, 0.7, 1.0])
+        )
+        # pedestal
+        self.sim.create_box(
+            body_name="pedestal",
+            half_extents= np.array([0.1, 0.1, plate_position[2]/2]),
+            mass=0,
+            position=plate_position - np.array([0., 0., plate_position[2]-0.01]), 
+            rgba_color=np.array([1, 1, 1, 1.0]),
+        )
+        # sponge
         self.sim.create_box(
             body_name="sponge",
-            half_extents= np.array([h, w, l]),
+            half_extents= np.array([self.h, self.w, self.l]),
             mass=1.0,
-            position=np.array([0.0, 0.0, l/2]),
+            position=sponge_position, 
             rgba_color=np.array([1, 1, 0, 1.0]),
         )
-        
-        self.sim.create_sink(base_position=np.array([0, -0.5, 0.]))
+        # sink
+        self.sim.create_sink(base_position=sink_position)
+
+        # create constraint between plate and handle
+        self.sim.create_fixed_constraint("plate", 
+                                        "plate_handle", 
+                                        plate_handle_offset, 
+                                        np.zeros(3), 
+                                        np.zeros(3), 
+                                        plate_handle_orientation)
 
     def get_obs(self) -> np.ndarray:
         # position of objects
@@ -57,15 +87,21 @@ class Sponge(Task):
     def get_achieved_goal(self) -> np.ndarray:
         return np.zeros(1)
 
-    def reset(self) -> None:        
+    def reset(self) -> None:  
+        plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position  = self._sample_objects()       
         #self.sim.set_base_pose("plate",   np.array([0.0, 0.1, 0.1]), np.array([0.0, 0.0, 0.0, 0.0]))
-        self.sim.set_base_pose("sponge",   np.array([0.0, -0.1, 0.1]), np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("sponge",  sponge_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
     def _sample_goal(self) -> np.ndarray:
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        return 
+        plate_position = np.array([0.0, 0.18, 0.05])
+        plate_handle_offset = np.array([0.148, 0.0, 0.015])
+        sponge_position = np.array([0.0, -0.1, 0.1])
+        sink_position = np.array([0, -0.5, 0.])
+        plate_handle_orientation = np.array([0., 1., 0., 1.])
+        return plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position 
 
     def _get_object_orietation(self):
         return

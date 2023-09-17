@@ -464,6 +464,7 @@ class PyBullet:
         height: float,
         mass: float,
         position: np.ndarray,
+        orientation: Optional[np.ndarray] = None,
         rgba_color: Optional[np.ndarray] = None,
         specular_color: Optional[np.ndarray] = None,
         ghost: bool = False,
@@ -500,6 +501,7 @@ class PyBullet:
             geom_type=self.physics_client.GEOM_CYLINDER,
             mass=mass,
             position=position,
+            orientation=orientation,
             ghost=ghost,
             lateral_friction=lateral_friction,
             spinning_friction=spinning_friction,
@@ -560,6 +562,7 @@ class PyBullet:
         geom_type: int,
         mass: float = 0.0,
         position: Optional[np.ndarray] = None,
+        orientation: Optional[np.ndarray] = None,
         ghost: bool = False,
         lateral_friction: Optional[float] = None,
         spinning_friction: Optional[float] = None,
@@ -592,6 +595,7 @@ class PyBullet:
             baseCollisionShapeIndex=baseCollisionShapeIndex,
             baseMass=mass,
             basePosition=position,
+            baseOrientation=orientation
         )
 
         if lateral_friction is not None:
