@@ -453,7 +453,7 @@ class PyBullet:
             collision_kwargs=collision_kwargs,
         )
         if texture is not None:
-            texture_path = os.path.join(panda_gym.assets.get_data_path(), texture)
+            texture_path = os.path.join(BASE_DIR, 'assets/textures/marble.png')
             texture_uid = self.physics_client.loadTexture(texture_path)
             self.physics_client.changeVisualShape(self._bodies_idx[body_name], -1, textureUniqueId=texture_uid)
 
@@ -645,16 +645,17 @@ class PyBullet:
             mass=0.0,
             position=np.array([x_offset, 0.0, -height / 2]),
             specular_color=np.zeros(3),
-            rgba_color=np.array([189/255, 174/255, 153/255, 1]),
+            rgba_color=np.array([220/255, 220/255, 220/255, 1]),
             lateral_friction=lateral_friction,
             spinning_friction=spinning_friction,
+            texture='assets/textures/marble.png'
         )
 
     def create_sink(self, base_position:np.ndarray):
         sink_shape = p.createVisualShape(
             shapeType=p.GEOM_MESH,
             fileName=os.path.join(BASE_DIR, "assets/sink/faucet.stl"),
-            meshScale=np.ones(3)*0.5,
+            meshScale=np.array([0., 0.5, 0.5]),
             rgbaColor=np.array([0.456, 0.456, 0.456, 1.])
         )
         sink = p.createMultiBody(
@@ -674,7 +675,8 @@ class PyBullet:
         handle_visual_shape = p.createVisualShape(
             shapeType=p.GEOM_MESH,
             fileName=os.path.join(BASE_DIR, "assets/handle/handle.stl"),
-            meshScale=np.ones(3)*0.3
+            meshScale=np.ones(3)*0.3,
+            rgbaColor=np.array([61/255, 62/255, 63/255, 1.])
         )
         handle = p.createMultiBody(
             baseCollisionShapeIndex=handle_collision_shape,
