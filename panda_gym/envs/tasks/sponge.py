@@ -52,7 +52,7 @@ class Sponge(Task):
         #)
         self.sim.create_box(
             body_name='pan_handle',
-            half_extents=np.array([0.05, 0.01, 0.01]),
+            half_extents=np.array([0.05, 0.016, 0.016]),
             mass=0.0001,
             position=pan_position+pan_handle_offset,
             rgba_color=np.array([96/255, 59/255, 42/255, 1.0])
