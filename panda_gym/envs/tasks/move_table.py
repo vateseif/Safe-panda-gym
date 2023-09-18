@@ -26,9 +26,9 @@ class MoveTable(Task):
 
     def _create_scene(self) -> None:
         self.sim.create_plane(z_offset=-0.4)
-        self.sim.create_table(length=2.2, width=0.7, height=0.4, x_offset=-0.3)
+        self.sim.create_table(length=1.8, width=0.9, height=0.4, x_offset=0.)
 
-        self.table_offset = [np.array([-0.21, 0.0, 0.19]), np.array([0.21, 0.0, 0.19])]
+        self.table_offset = [np.array([-0.168, 0.0, 0.152]), np.array([0.168, 0.0, 0.152])]
 
         # load table URDF
         self.sim.loadURDF(body_name="movable_table", 
@@ -36,11 +36,22 @@ class MoveTable(Task):
                         fileName=os.path.join(BASE_DIR, "assets/table/table.urdf"), 
                         basePosition=self._sample_objects(), 
                         baseOrientation=[0,0,1,1],
-                        globalScaling=0.3)
+                        globalScaling=0.24)
 
         # load handle 
-        self.sim.create_handle("handle_left", base_position=self._sample_objects()+np.array([0.0,-0.21, 0.19]))
-        self.sim.create_handle("handle_right", base_position=self._sample_objects()+np.array([0.0, 0.21, 0.19]))
+        self.sim.create_handle("handle_left", base_position=self._sample_objects()+np.array([0.0,-0.168, 0.152]))
+        self.sim.create_handle("handle_right", base_position=self._sample_objects()+np.array([0.0, 0.168, 0.152]))
+
+        # create obstacle to be surpassed
+        self.sim.create_cylinder(
+          body_name='obstacle',
+          radius=0.07,
+          height=0.89,
+          mass=0,
+          position=np.array([0.0,0.,0.]),
+          orientation=np.array([1., 0, 0., 1.]),
+          rgba_color=np.array([61/255, 62/255, 63/255, 1.])
+        )
 
         # create constraints between handles and table
         self.sim.create_fixed_constraint("movable_table", 
@@ -82,7 +93,7 @@ class MoveTable(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        return np.array([-0.1, 0.0, 0.])
+        return np.array([0.25, 0.0, 0.])
 
     def _get_object_orietation(self):
         return
