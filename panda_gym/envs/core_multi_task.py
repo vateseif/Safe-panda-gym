@@ -274,8 +274,8 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
     def render(
         self,
         mode: str,
-        width: int = 720,
-        height: int = 480,
+        width: int = 1920,
+        height: int = 1920,
         target_position: Optional[np.ndarray] = None,
         distance: float = 1.4,
         yaw: float = 45,

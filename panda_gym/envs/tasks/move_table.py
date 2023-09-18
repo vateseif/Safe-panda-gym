@@ -26,7 +26,7 @@ class MoveTable(Task):
 
     def _create_scene(self) -> None:
         self.sim.create_plane(z_offset=-0.4)
-        self.sim.create_table(length=1.8, width=0.9, height=0.4, x_offset=0.)
+        self.sim.create_table(length=1.8, width=0.9, height=0.4, x_offset=-0.15)
 
         self.table_offset = [np.array([-0.168, 0.0, 0.152]), np.array([0.168, 0.0, 0.152])]
 
@@ -48,7 +48,7 @@ class MoveTable(Task):
           radius=0.07,
           height=0.89,
           mass=0,
-          position=np.array([0.0,0.,0.]),
+          position=np.array([-0.15,0.,0.]),
           orientation=np.array([1., 0, 0., 1.]),
           rgba_color=np.array([61/255, 62/255, 63/255, 1.])
         )
@@ -94,7 +94,7 @@ class MoveTable(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        return np.array([0.25, 0.0, 0.])
+        return np.array([0.1, 0.0, 0.])
 
     def _get_object_orietation(self):
         return

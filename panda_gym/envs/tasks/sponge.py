@@ -30,10 +30,10 @@ class Sponge(Task):
 
     def _create_scene(self) -> None:
         self.sim.create_plane(z_offset=-0.4)
-        self.sim.create_table(body_name="table",length=1.8, width=0.7, height=0.4, x_offset=-0., y_offset=0.07)
-        self.sim.create_table(body_name="table_1",length=0.68, width=0.3, height=0.4, x_offset=0.56, y_offset=-0.43)
-        self.sim.create_table(body_name="table_2",length=0.68, width=0.3, height=0.4, x_offset=-0.56, y_offset=-0.43)
-        self.sim.create_table(body_name="table_3",length=0.44, width=0.06, height=0.4, x_offset=0., y_offset=-0.55)
+        self.sim.create_table(body_name="table",length=1.8, width=0.7, height=0.4, x_offset=-0.15, y_offset=0.07)
+        self.sim.create_table(body_name="table_1",length=0.68, width=0.3, height=0.4, x_offset=0.41, y_offset=-0.43)
+        self.sim.create_table(body_name="table_2",length=0.68, width=0.3, height=0.4, x_offset=-0.71, y_offset=-0.43)
+        self.sim.create_table(body_name="table_3",length=0.44, width=0.06, height=0.4, x_offset=-0.15, y_offset=-0.55)
         # get object positions
         container_position, container_handle_offset, container_handle_orientation, sponge_position, sink_position, faucet_position  = self._sample_objects()
         # container
@@ -116,10 +116,10 @@ class Sponge(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        container_position = np.array([0.0, 0., 0.03])
+        container_position = np.array([0., 0., 0.03])
         container_handle_offset = np.array([0.14, 0.0, 0.002])
-        sponge_position = np.array([0.0, 0.25, 0.1])
-        sink_position = np.array([0., -0.4, -0.05])
+        sponge_position = np.array([-0.2, 0.25, 0.1])
+        sink_position = np.array([-0.15, -0.4, -0.05])
         container_handle_orientation = np.array([0., 1., 0., 1.])
         faucet_position = sink_position + np.array([-0.036, -0.11, 0.05])
         return container_position, container_handle_offset, container_handle_orientation, sponge_position, sink_position, faucet_position

@@ -18,8 +18,8 @@ class PandaSponge(RobotTaskEnv):
 
     def __init__(self, render: bool = False, reward_type: str = "sparse", control_type: str = "ee") -> None:
         sim = PyBullet(render=render)
-        robot1 = Panda(sim, block_gripper=False, base_position=np.array([-0.7, 0.0, 0.0]), base_orientation=np.array([0, 0, 0]), control_type=control_type, body_name="_left")
-        robot2 = Panda(sim, block_gripper=False, base_position=np.array([0.7, 0.0, 0.0]), base_orientation=np.array([0, 0, np.pi]), control_type=control_type, body_name="_right", base_gripper_orientation=np.array([np.pi,0.,np.pi]))
+        robot1 = Panda(sim, block_gripper=False, base_position=np.array([-0.85, 0.0, 0.0]), base_orientation=np.array([0, 0, 0]), control_type=control_type, body_name="_left")
+        robot2 = Panda(sim, block_gripper=False, base_position=np.array([0.55, 0.0, 0.0]), base_orientation=np.array([0, 0, np.pi]), control_type=control_type, body_name="_right", base_gripper_orientation=np.array([np.pi,0.,np.pi]))
         robots = [robot1, robot2]
         task = Sponge(sim, reward_type=reward_type)
         super().__init__(robots, task)
