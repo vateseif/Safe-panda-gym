@@ -35,27 +35,27 @@ class Sponge(Task):
         self.sim.create_table(body_name="table_2",length=0.68, width=0.3, height=0.4, x_offset=-0.56, y_offset=-0.43)
         self.sim.create_table(body_name="table_3",length=0.44, width=0.06, height=0.4, x_offset=0., y_offset=-0.55)
         # get object positions
-        plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position, faucet_position  = self._sample_objects()
-        # plate
-        self.sim.loadURDF(body_name="plate", mass=1., fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"),
-                            basePosition=plate_position,
-                            useFixedBase=False) # plate cannot be moved
-        # plate handle
+        pan_position, pan_handle_offset, pan_handle_orientation, sponge_position, sink_position, faucet_position  = self._sample_objects()
+        # pan
+        self.sim.loadURDF(body_name="pan", mass=1., fileName=os.path.join(BASE_DIR, "assets/blue_pan/model.urdf"),
+                            basePosition=pan_position,
+                            useFixedBase=False) # pan cannot be moved
+        # pan handle
         self.sim.create_cylinder(
-            body_name="plate_handle",
+            body_name="pan_handle",
             radius=0.01,
             height=0.1,
             mass=0.01,
-            position=plate_position+plate_handle_offset,
-            orientation=plate_handle_orientation,
+            position=pan_position+pan_handle_offset,
+            orientation=pan_handle_orientation,
             rgba_color=np.array([96/255, 59/255, 42/255, 1.0])
         )
         # pedestal
         self.sim.create_box(
             body_name="pedestal",
-            half_extents= np.array([0.1, 0.1, plate_position[2]/2]),
+            half_extents= np.array([0.1, 0.1, pan_position[2]/2]),
             mass=0,
-            position=plate_position - np.array([0., 0., plate_position[2]]), 
+            position=pan_position - np.array([0., 0., pan_position[2]]), 
             rgba_color=np.array([220/255, 220/255, 220/255, 1]),
             texture='assets/textures/marble.png'
         )
@@ -80,10 +80,10 @@ class Sponge(Task):
         #faucet
         self.sim.create_faucet(base_position=faucet_position)
 
-        # create constraint between plate and handle
-        self.sim.create_fixed_constraint("plate", 
-                                        "plate_handle", 
-                                        plate_handle_offset, 
+        # create constraint between pan and handle
+        self.sim.create_fixed_constraint("pan", 
+                                        "pan_handle", 
+                                        pan_handle_offset, 
                                         np.zeros(3), 
                                         np.zeros(3), 
                                         [0, -1, 0, 1])
@@ -100,9 +100,9 @@ class Sponge(Task):
         # position of objects
         obs = {
             "sink": np.array(self.sim.get_base_position("sink")),
-            "plate": np.array(self.sim.get_base_position("plate")),
+            "pan": np.array(self.sim.get_base_position("pan")),
             "sponge": np.array(self.sim.get_base_position("sponge")),
-            "plate_handle": np.array(self.sim.get_base_position("plate_handle")),
+            "pan_handle": np.array(self.sim.get_base_position("pan_handle")),
         }
         return obs
 
@@ -111,20 +111,20 @@ class Sponge(Task):
 
     def reset(self) -> None:  
         _, _, _, sponge_position, _, _  = self._sample_objects()       
-        #self.sim.set_base_pose("plate",   np.array([0.0, 0.1, 0.1]), np.array([0.0, 0.0, 0.0, 0.0]))
+        #self.sim.set_base_pose("pan",   np.array([0.0, 0.1, 0.1]), np.array([0.0, 0.0, 0.0, 0.0]))
         self.sim.set_base_pose("sponge",  sponge_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
     def _sample_goal(self) -> np.ndarray:
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        plate_position = np.array([0.0, 0., 0.03])
-        plate_handle_offset = np.array([0.14, 0.0, 0.007])
+        pan_position = np.array([0.0, 0., 0.03])
+        pan_handle_offset = np.array([0.14, 0.0, 0.007])
         sponge_position = np.array([0.0, 0.25, 0.1])
         sink_position = np.array([0., -0.4, -0.05])
-        plate_handle_orientation = np.array([0., 1., 0., 1.])
+        pan_handle_orientation = np.array([0., 1., 0., 1.])
         faucet_position = sink_position + np.array([-0.036, -0.11, 0.05])
-        return plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position, faucet_position
+        return pan_position, pan_handle_offset, pan_handle_orientation, sponge_position, sink_position, faucet_position
 
     def _get_object_orietation(self):
         return
