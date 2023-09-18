@@ -37,30 +37,21 @@ class Sponge(Task):
         # get object positions
         pan_position, pan_handle_offset, pan_handle_orientation, sponge_position, sink_position, faucet_position  = self._sample_objects()
         # pan
-        self.sim.loadURDF(body_name="pan", mass=.1, fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"),
+        self.sim.loadURDF(body_name="pan", mass=0.01, fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"),
                             basePosition=pan_position,
                             useFixedBase=False) # pan cannot be moved
         # pan handle
-        #self.sim.create_cylinder(
-        #    body_name="pan_handle",
-        #    radius=0.01,
-        #    height=0.1,
-        #    mass=0.01,
-        #    position=pan_position+pan_handle_offset,
-        #    orientation=pan_handle_orientation,
-        #    rgba_color=np.array([96/255, 59/255, 42/255, 1.0])
-        #)
         self.sim.create_box(
             body_name='pan_handle',
-            half_extents=np.array([0.05, 0.016, 0.016]),
-            mass=0.0001,
+            half_extents=np.array([0.05, 0.01, 0.014]),
+            mass=1,
             position=pan_position+pan_handle_offset,
             rgba_color=np.array([96/255, 59/255, 42/255, 1.0])
         )
         # pedestal
         self.sim.create_box(
             body_name="pedestal",
-            half_extents= np.array([0.1, 0.1, pan_position[2]/2]),
+            half_extents= np.array([0.1, 0.1, 0.]),#pan_position[2]/2]),
             mass=0,
             position=pan_position - np.array([0., 0., pan_position[2]]), 
             rgba_color=np.array([220/255, 220/255, 220/255, 1]),
@@ -70,7 +61,7 @@ class Sponge(Task):
         self.sim.create_box(
             body_name="sponge",
             half_extents= np.array([self.h, self.w, self.l]),
-            mass=0.05,
+            mass=1,
             position=sponge_position, 
             rgba_color=np.array([1, 1, 0, 1.0]),
         )
@@ -126,7 +117,7 @@ class Sponge(Task):
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
         pan_position = np.array([0.0, 0., 0.03])
-        pan_handle_offset = np.array([0.14, 0.0, 0.007])
+        pan_handle_offset = np.array([0.14, 0.0, 0.002])
         sponge_position = np.array([0.0, 0.25, 0.1])
         sink_position = np.array([0., -0.4, -0.05])
         pan_handle_orientation = np.array([0., 1., 0., 1.])
