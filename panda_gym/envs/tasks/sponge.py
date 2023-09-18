@@ -37,7 +37,7 @@ class Sponge(Task):
         # get object positions
         pan_position, pan_handle_offset, pan_handle_orientation, sponge_position, sink_position, faucet_position  = self._sample_objects()
         # pan
-        self.sim.loadURDF(body_name="pan", mass=1., fileName=os.path.join(BASE_DIR, "assets/blue_pan/model.urdf"),
+        self.sim.loadURDF(body_name="pan", mass=1., fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"),
                             basePosition=pan_position,
                             useFixedBase=False) # pan cannot be moved
         # pan handle
