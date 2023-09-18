@@ -21,13 +21,6 @@ for reward_type in ["sparse", "dense"]:
         )
 
         register(
-            id="PandaRope{}{}-v2".format(control_suffix, reward_suffix),
-            entry_point="panda_gym.envs:PandaRope",
-            kwargs=kwargs,
-            max_episode_steps=100000,
-        )
-
-        register(
             id="PandaCleanPlate{}{}-v2".format(control_suffix, reward_suffix),
             entry_point="panda_gym.envs:PandaCleanPlate",
             kwargs=kwargs,

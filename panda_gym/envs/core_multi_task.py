@@ -238,8 +238,13 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         with self.sim.no_rendering():
             for i in range(len(self.robots)): self.robots[i].reset()
             self.task.reset()
+        # get observation
+        obs = self._get_obs()
+        # get information about robots
         self.robots_info = [r.get_info() for r in self.robots]
-        return self._get_obs()
+        # get information about objects
+        self.objects_info = [{'name': o} for o in list(obs.keys())[len(self.robots_info):]]
+        return obs
 
     def save_state(self) -> int:
         state_id = self.sim.save_state()
