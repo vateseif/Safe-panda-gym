@@ -655,7 +655,7 @@ class PyBullet:
         sink_shape = p.createVisualShape(
             shapeType=p.GEOM_MESH,
             fileName=os.path.join(BASE_DIR, "assets/sink/faucet.stl"),
-            meshScale=np.array([0., 0.5, 0.5]),
+            meshScale=np.array([0.5, 0.5, 0.5]),
             rgbaColor=np.array([0.456, 0.456, 0.456, 1.])
         )
         sink = p.createMultiBody(
