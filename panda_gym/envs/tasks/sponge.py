@@ -37,17 +37,24 @@ class Sponge(Task):
         # get object positions
         pan_position, pan_handle_offset, pan_handle_orientation, sponge_position, sink_position, faucet_position  = self._sample_objects()
         # pan
-        self.sim.loadURDF(body_name="pan", mass=1., fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"),
+        self.sim.loadURDF(body_name="pan", mass=.1, fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"),
                             basePosition=pan_position,
                             useFixedBase=False) # pan cannot be moved
         # pan handle
-        self.sim.create_cylinder(
-            body_name="pan_handle",
-            radius=0.01,
-            height=0.1,
-            mass=0.01,
+        #self.sim.create_cylinder(
+        #    body_name="pan_handle",
+        #    radius=0.01,
+        #    height=0.1,
+        #    mass=0.01,
+        #    position=pan_position+pan_handle_offset,
+        #    orientation=pan_handle_orientation,
+        #    rgba_color=np.array([96/255, 59/255, 42/255, 1.0])
+        #)
+        self.sim.create_box(
+            body_name='pan_handle',
+            half_extents=np.array([0.05, 0.01, 0.01]),
+            mass=0.0001,
             position=pan_position+pan_handle_offset,
-            orientation=pan_handle_orientation,
             rgba_color=np.array([96/255, 59/255, 42/255, 1.0])
         )
         # pedestal
@@ -63,7 +70,7 @@ class Sponge(Task):
         self.sim.create_box(
             body_name="sponge",
             half_extents= np.array([self.h, self.w, self.l]),
-            mass=1.0,
+            mass=0.05,
             position=sponge_position, 
             rgba_color=np.array([1, 1, 0, 1.0]),
         )
@@ -71,7 +78,7 @@ class Sponge(Task):
         self.sim.create_box(
             body_name="sponge_scrub",
             half_extents= np.array([self.h, self.w, self.l/3]),
-            mass=1.0,
+            mass=0.05,
             position=sponge_position+np.array([0.,0.,self.l*(1+1/3)]), 
             rgba_color=np.array([1/255, 50/255, 32/255, 1.0])        
         )
@@ -86,7 +93,7 @@ class Sponge(Task):
                                         pan_handle_offset, 
                                         np.zeros(3), 
                                         np.zeros(3), 
-                                        [0, -1, 0, 1])
+                                        [0, 0, 0, 1])
 
         # create constraint between sponge and sponge scrub
         self.sim.create_fixed_constraint("sponge", 
