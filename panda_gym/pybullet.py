@@ -624,6 +624,8 @@ class PyBullet:
         width: float,
         height: float,
         x_offset: float = 0.0,
+        y_offset: float = 0.0,
+        body_name="table",
         lateral_friction: Optional[float] = None,
         spinning_friction: Optional[float] = None,
     ) -> None:
@@ -640,10 +642,10 @@ class PyBullet:
                 value. Defaults to None.
         """
         self.create_box(
-            body_name="table",
+            body_name=body_name,
             half_extents=np.array([length, width, height]) / 2,
             mass=0.0,
-            position=np.array([x_offset, 0.0, -height / 2]),
+            position=np.array([x_offset, y_offset, -height / 2]),
             specular_color=np.zeros(3),
             rgba_color=np.array([220/255, 220/255, 220/255, 1]),
             lateral_friction=lateral_friction,
@@ -654,9 +656,9 @@ class PyBullet:
     def create_sink(self, base_position:np.ndarray):
         sink_shape = p.createVisualShape(
             shapeType=p.GEOM_MESH,
-            fileName=os.path.join(BASE_DIR, "assets/sink/faucet.stl"),
+            fileName=os.path.join(BASE_DIR, "assets/sink/sink.stl"),
             meshScale=np.array([0.5, 0.5, 0.5]),
-            rgbaColor=np.array([0.456, 0.456, 0.456, 1.])
+            rgbaColor=np.array([0.306, 0.306, 0.306, 1.])
         )
         sink = p.createMultiBody(
             baseVisualShapeIndex=sink_shape,
@@ -665,6 +667,21 @@ class PyBullet:
         )
 
         self._bodies_idx["sink"] = sink
+
+    def create_faucet(self, base_position:np.ndarray):
+        faucet_shape = p.createVisualShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, "assets/faucet/faucet.obj"),
+            meshScale=np.array([0.011, 0.011, 0.011]),
+            rgbaColor=np.array([0.306, 0.306, 0.306, 1.])
+        )
+        faucet = p.createMultiBody(
+            baseVisualShapeIndex=faucet_shape,
+            basePosition=base_position,
+            baseOrientation=( 0, 1, 1, 0),
+        )
+
+        self._bodies_idx["faucet"] = faucet
 
     def create_handle(self, name:str, base_position:np.ndarray):
         handle_collision_shape = p.createCollisionShape(

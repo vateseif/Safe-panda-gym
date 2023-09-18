@@ -30,10 +30,12 @@ class Sponge(Task):
 
     def _create_scene(self) -> None:
         self.sim.create_plane(z_offset=-0.4)
-        self.sim.create_table(length=2.2, width=0.7, height=0.4, x_offset=-0.3)
-
+        self.sim.create_table(body_name="table",length=1.8, width=0.7, height=0.4, x_offset=-0., y_offset=0.07)
+        self.sim.create_table(body_name="table_1",length=0.68, width=0.3, height=0.4, x_offset=0.56, y_offset=-0.43)
+        self.sim.create_table(body_name="table_2",length=0.68, width=0.3, height=0.4, x_offset=-0.56, y_offset=-0.43)
+        self.sim.create_table(body_name="table_3",length=0.44, width=0.06, height=0.4, x_offset=0., y_offset=-0.55)
         # get object positions
-        plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position  = self._sample_objects()
+        plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position, faucet_position  = self._sample_objects()
         # plate
         self.sim.loadURDF(body_name="plate", mass=1., fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"),
                             basePosition=plate_position,
@@ -54,7 +56,8 @@ class Sponge(Task):
             half_extents= np.array([0.1, 0.1, plate_position[2]/2]),
             mass=0,
             position=plate_position - np.array([0., 0., plate_position[2]]), 
-            rgba_color=np.array([189/255, 174/255, 153/255, 1]),
+            rgba_color=np.array([220/255, 220/255, 220/255, 1]),
+            texture='assets/textures/marble.png'
         )
         # sponge
         self.sim.create_box(
@@ -70,10 +73,12 @@ class Sponge(Task):
             half_extents= np.array([self.h, self.w, self.l/3]),
             mass=1.0,
             position=sponge_position+np.array([0.,0.,self.l*(1+1/3)]), 
-            rgba_color=np.array([1/255, 50/255, 32/255, 1.0])
+            rgba_color=np.array([1/255, 50/255, 32/255, 1.0])        
         )
         # sink
         self.sim.create_sink(base_position=sink_position)
+        #faucet
+        self.sim.create_faucet(base_position=faucet_position)
 
         # create constraint between plate and handle
         self.sim.create_fixed_constraint("plate", 
@@ -96,7 +101,8 @@ class Sponge(Task):
         obs = {
             "sink": np.array(self.sim.get_base_position("sink")),
             "plate": np.array(self.sim.get_base_position("plate")),
-            "sponge": np.array(self.sim.get_base_position("sponge"))
+            "sponge": np.array(self.sim.get_base_position("sponge")),
+            "plate_handle": np.array(self.sim.get_base_position("plate_handle")),
         }
         return obs
 
@@ -104,7 +110,7 @@ class Sponge(Task):
         return np.zeros(1)
 
     def reset(self) -> None:  
-        plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position  = self._sample_objects()       
+        _, _, _, sponge_position, _, _  = self._sample_objects()       
         #self.sim.set_base_pose("plate",   np.array([0.0, 0.1, 0.1]), np.array([0.0, 0.0, 0.0, 0.0]))
         self.sim.set_base_pose("sponge",  sponge_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
@@ -112,12 +118,13 @@ class Sponge(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        plate_position = np.array([0.0, -0.1, 0.03])
+        plate_position = np.array([0.0, 0., 0.03])
         plate_handle_offset = np.array([0.14, 0.0, 0.007])
-        sponge_position = np.array([0.0, 0.15, 0.1])
-        sink_position = np.array([0, -0.5, 0.])
+        sponge_position = np.array([0.0, 0.25, 0.1])
+        sink_position = np.array([0., -0.4, -0.05])
         plate_handle_orientation = np.array([0., 1., 0., 1.])
-        return plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position 
+        faucet_position = sink_position + np.array([-0.036, -0.11, 0.05])
+        return plate_position, plate_handle_offset, plate_handle_orientation, sponge_position, sink_position, faucet_position
 
     def _get_object_orietation(self):
         return
