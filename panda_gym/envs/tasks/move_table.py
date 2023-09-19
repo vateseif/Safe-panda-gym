@@ -75,8 +75,8 @@ class MoveTable(Task):
         # position, rotation of the object
         obs = {
             "table":  np.array(self.sim.get_base_position("movable_table")),
-            "handle_left": np.array(self.sim.get_base_position("handle_left")),
-            "handle_right": np.array(self.sim.get_base_position("handle_right")),
+            "handle_left": np.array(self.sim.get_base_position("handle_left")) + np.array([0,0,0.02]),
+            "handle_right": np.array(self.sim.get_base_position("handle_right")) + np.array([0,0,0.02]),
             "obstacle": np.array(self.sim.get_base_position("obstacle"))
         }
 
