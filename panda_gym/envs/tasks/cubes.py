@@ -71,6 +71,10 @@ class  Cubes(Task):
             "cube_2": self.sim.get_base_position("cube_2"),
             "cube_3": self.sim.get_base_position("cube_3"),
             "cube_4": self.sim.get_base_position("cube_4"),
+            "cube_1_orientation": self.sim.get_base_orientation("cube_1"),
+            "cube_2_orientation": self.sim.get_base_orientation("cube_2"),
+            "cube_3_orientation": self.sim.get_base_orientation("cube_3"),
+            "cube_4_orientation": self.sim.get_base_orientation("cube_4")
         }
 
         return obs
