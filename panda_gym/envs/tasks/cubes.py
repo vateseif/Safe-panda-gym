@@ -29,7 +29,7 @@ class  Cubes(Task):
 
     def _create_scene(self) -> None:
         self.sim.create_plane(z_offset=-0.4)
-        self.sim.create_table(length=1.1, width=0.7, height=0.4, x_offset=-0.3)
+        self.sim.create_table(length=1.1, width=1.5, height=0.4, x_offset=-0.3)
         self.sim.create_box(
             body_name="cube_1",
             half_extents=np.ones(3) * self.object_size / 2,
