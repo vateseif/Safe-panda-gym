@@ -21,6 +21,7 @@ class Panda(PyBulletRobot):
     def __init__(
         self,
         sim: PyBullet,
+        debug: bool = False,
         block_gripper: bool = False,
         base_position: Optional[np.ndarray] = None,
         base_orientation: Optional[np.ndarray] = None,
@@ -28,6 +29,7 @@ class Panda(PyBulletRobot):
         control_type: str = "ee",
         body_name: str = "panda"
     ) -> None:
+        self.debug = debug
         base_position = base_position if base_position is not None else np.zeros(3)
         self.base_orientation = base_orientation if base_orientation is not None else np.zeros(3)
         self.base_gripper_orientation = base_gripper_orientation
@@ -54,27 +56,77 @@ class Panda(PyBulletRobot):
         self.sim.set_lateral_friction(self.body_name, self.fingers_indices[1], lateral_friction=1.0)
         self.sim.set_spinning_friction(self.body_name, self.fingers_indices[0], spinning_friction=0.001)
         self.sim.set_spinning_friction(self.body_name, self.fingers_indices[1], spinning_friction=0.001)
+        
+        if self.debug:
+            self._create_visuals()
 
+    def _create_visuals(self) -> None:
         # visualize right gripper constraint
-        #radius = 0.05
-        #self.sim.create_sphere(
-        #  body_name="gripper_right",
-        #  radius=radius,
-        #  mass=0.,
-        #  position=np.array([0.5, 0.0, 0.15]),
-        #  rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
-        #  ghost=True
-        #)
-#
+        radius_finger = 0.0135
+        self.sim.create_sphere(
+          body_name="gripper_right",
+          radius=radius_finger,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
+
         ## visualize left gripper constraint
-        #self.sim.create_sphere(
-        #  body_name="gripper_left",
-        #  radius=radius,
-        #  mass=0.,
-        #  position=np.array([0.5, 0.0, 0.15]),
-        #  rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
-        #  ghost=True
-        #)
+        self.sim.create_sphere(
+          body_name="gripper_left",
+          radius=radius_finger,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
+
+        radius_hand = 0.025
+        self.sim.create_sphere(
+          body_name="hand_1",
+          radius=radius_hand,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
+
+        self.sim.create_sphere(
+          body_name="hand_2",
+          radius=radius_hand,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
+
+        self.sim.create_sphere(
+          body_name="hand_3",
+          radius=radius_hand,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
+
+        self.sim.create_sphere(
+          body_name="hand_4",
+          radius=radius_hand,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
+
+        self.sim.create_sphere(
+          body_name="hand_5",
+          radius=radius_hand,
+          mass=0.,
+          position=np.array([0.5, 0.0, 0.15]),
+          rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+          ghost=True
+        )
 
     def set_action(self, action: np.ndarray) -> None:
         action = action.copy()  # ensure action don't change
@@ -97,12 +149,23 @@ class Panda(PyBulletRobot):
         target_angles = np.concatenate((target_arm_angles, [target_fingers_width / 2, target_fingers_width / 2]))
         self.control_joints(target_angles=target_angles)
 
+        if self.debug:
+            self._update_visuals()
+
+    def _update_visuals(self) -> None:
         # update position of custome sphere
-        #ee_position = np.array(self.get_ee_position())
-        #offset = 0.048
-        #self.sim.set_base_pose("gripper_left", ee_position + np.array([0., offset, 0.0]), np.array([0.0, 0.0, 0.0, 1.0]))
-        #self.sim.set_base_pose("gripper_right", ee_position + np.array([0, -offset, 0.0]), np.array([0.0, 0.0, 0.0, 1.0]))
-        
+        ee_position = np.array(self.get_ee_position())
+        offset_finger = 0.048
+        self.sim.set_base_pose("gripper_left", ee_position + np.array([0., offset_finger, 0.003]), np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("gripper_right", ee_position + np.array([0, -offset_finger, 0.003]), np.array([0.0, 0.0, 0.0, 1.0]))
+
+        offset_hand = 0.09
+        self.sim.set_base_pose("hand_1", ee_position + np.array([0., 0, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("hand_2", ee_position + np.array([0., offset_hand, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("hand_3", ee_position + np.array([0., -offset_hand, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("hand_4", ee_position + np.array([0., offset_hand/2, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("hand_5", ee_position + np.array([0., -offset_hand/2, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))        
+
 
     def ee_displacement_to_target_arm_angles(self, ee_displacement: np.ndarray, ee_rotation_euler: np.ndarray) -> np.ndarray:
         """Compute the target arm angles from the end-effector displacement.

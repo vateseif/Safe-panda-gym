@@ -267,6 +267,9 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         info = {"is_success": False} # hardcoded to False
         reward = 0 # harcoded to 0
         return obs, reward, done, info
+    
+    def visualize_trajectory(self, trajectory: np.ndarray) -> None:
+        self.sim.visualize_trajectory(trajectory)
 
     def close(self) -> None:
         self.sim.close()

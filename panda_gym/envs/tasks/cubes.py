@@ -10,17 +10,12 @@ class  Cubes(Task):
     def __init__(
         self,
         sim : PyBullet,
-        reward_type="sparse",
-        distance_threshold=0.1,
-        goal_xy_range=0.3,
+        debug: bool = False,
         obj_xy_range=0.3,
     ) -> None:
         super().__init__(sim)
-        self.reward_type = reward_type
-        self.distance_threshold = distance_threshold
+        self.debug = debug
         self.object_size = 0.04
-        self.goal_range_low = np.array([-goal_xy_range / 2, -goal_xy_range / 2, 0])
-        self.goal_range_high = np.array([goal_xy_range / 2, goal_xy_range / 2, 0])
         self.obj_range_low = np.array([-obj_xy_range / 2, -obj_xy_range / 2, 0])
         self.obj_range_high = np.array([obj_xy_range / 2, obj_xy_range / 2, 0])
         with self.sim.no_rendering():
@@ -62,17 +57,49 @@ class  Cubes(Task):
             position=np.array([0.5, 0.0, self.object_size / 2]),
             rgba_color=np.array([0.9, 0.1, 0.1, 1.0]),
         )
-        """
+        
+        if self.debug:
+            self._create_visuals()
+
+    def _create_visuals(self) -> None:
         radius = 0.03
+
         self.sim.create_sphere(
-            body_name="cube_sphere",
+            body_name="blue_cube_sphere",
             radius=radius,
             mass=0.,
             position=np.array([0.5, 0.0, self.object_size / 2]),
             rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
             ghost=True
         )
-        """
+
+        self.sim.create_sphere(
+            body_name="green_cube_sphere",
+            radius=radius,
+            mass=0.,
+            position=np.array([0.5, 0.0, self.object_size / 2]),
+            rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+            ghost=True
+        )
+
+        self.sim.create_sphere(
+            body_name="yellow_cube_sphere",
+            radius=radius,
+            mass=0.,
+            position=np.array([0.5, 0.0, self.object_size / 2]),
+            rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+            ghost=True
+        )
+
+        self.sim.create_sphere(
+            body_name="red_cube_sphere",
+            radius=radius,
+            mass=0.,
+            position=np.array([0.5, 0.0, self.object_size / 2]),
+            rgba_color=np.array([0.9, 0.1, 0.1, 0.3]),
+            ghost=True
+        )
+        
 
     def get_obs(self) -> Dict[str, np.ndarray]:
         # position of objects
@@ -87,7 +114,16 @@ class  Cubes(Task):
             "red_cube_orientation": self.sim.get_base_orientation("red_cube")
         }
 
+        if self.debug:
+            self._update_visuals()
+
         return obs
+    
+    def _update_visuals(self) -> None:
+        self.sim.set_base_pose("blue_cube_sphere", self.sim.get_base_position("blue_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("green_cube_sphere", self.sim.get_base_position("green_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("yellow_cube_sphere", self.sim.get_base_position("yellow_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("red_cube_sphere", self.sim.get_base_position("red_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
 
     def get_achieved_goal(self) -> np.ndarray:
         return np.zeros(1)
@@ -99,7 +135,6 @@ class  Cubes(Task):
         self.sim.set_base_pose("green_cube",  object2_position, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("yellow_cube",  object3_position, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("red_cube",  object4_position, np.array([0.0, 0.0, 0.0, 1.0]))
-        #self.sim.set_base_pose("cube_sphere", object1_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
     def _sample_goal(self) -> np.ndarray:
         # harcoded

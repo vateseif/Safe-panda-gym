@@ -704,6 +704,22 @@ class PyBullet:
         self.physics_client.changeDynamics(handle, -1, mass=.1) # TODO: change mass value
         self._bodies_idx[name] = handle
         return
+    
+    def visualize_trajectory(self, trajectory: np.ndarray) -> None:
+        """ Visualize each trajecory point (xyz) as a sphere"""
+        for i, point in enumerate(trajectory):
+            if not self._bodies_idx.get(f"trajectory{i}"):
+                self.create_sphere(
+                    body_name=f"trajectory{i}",
+                    radius=0.0075,
+                    mass=0.,
+                    position=point,
+                    rgba_color=np.array([0.1, 0.1, 0.9, 0.3]),
+                    ghost=True
+                )
+            else:
+                self.set_base_pose(f"trajectory{i}", point, np.array([0, 0, 0, 1]))
+
 
     def create_fixed_constraint(
         self, 
