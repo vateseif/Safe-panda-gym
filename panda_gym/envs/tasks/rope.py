@@ -11,6 +11,7 @@ class Rope(Task):
     def __init__(
         self,
         sim : PyBullet,
+        debug: bool = False,
         reward_type="sparse",
         distance_threshold=0.1,
         goal_xy_range=0.3,
