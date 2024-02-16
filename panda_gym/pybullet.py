@@ -24,7 +24,7 @@ class PyBullet:
     """
 
     def __init__(self, render: bool = False, n_substeps: int = 20, background_color: Optional[np.ndarray] = None) -> None:
-        background_color = background_color if background_color is not None else np.array([75, 83, 107])
+        background_color = background_color if background_color is not None else np.array([0, 0, 0])
         self.background_color = background_color.astype(np.float64) / 255
         options = "--background_color_red={} \
                     --background_color_green={} \
@@ -615,7 +615,7 @@ class PyBullet:
             mass=0.0,
             position=np.array([0.0, 0.0, z_offset - 0.01]),
             specular_color=np.zeros(3),
-            rgba_color=np.array([218/255, 219/255, 224/255, 1.0]),
+            rgba_color=np.array([0/255, 0/255, 0/255, 1.0]),
         )
 
     def create_table(

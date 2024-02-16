@@ -11,7 +11,7 @@ class  Cubes(Task):
         self,
         sim : PyBullet,
         debug: bool = False,
-        obj_xy_range=0.3,
+        obj_xy_range=0.2,
     ) -> None:
         super().__init__(sim)
         self.debug = debug
@@ -42,11 +42,11 @@ class  Cubes(Task):
         )
 
         self.sim.create_box(
-            body_name="yellow_cube",
+            body_name="orange_cube",
             half_extents=np.ones(3) * self.object_size / 2,
             mass=1.0,
             position=np.array([0.5, 0.0, self.object_size / 2]),
-            rgba_color=np.array([0.9, 0.9, 0.1, 1.0]),
+            rgba_color=np.array([255/255, 165/255, 0., 1.0]),
         )
 
 
@@ -83,7 +83,7 @@ class  Cubes(Task):
         )
 
         self.sim.create_sphere(
-            body_name="yellow_cube_sphere",
+            body_name="orange_cube_sphere",
             radius=radius,
             mass=0.,
             position=np.array([0.5, 0.0, self.object_size / 2]),
@@ -106,11 +106,11 @@ class  Cubes(Task):
         obs = {
             "blue_cube": self.sim.get_base_position("blue_cube"),
             "green_cube": self.sim.get_base_position("green_cube"),
-            "yellow_cube": self.sim.get_base_position("yellow_cube"),
+            "orange_cube": self.sim.get_base_position("orange_cube"),
             "red_cube": self.sim.get_base_position("red_cube"),
             "blue_cube_orientation": self.sim.get_base_orientation("blue_cube"),
             "green_cube_orientation": self.sim.get_base_orientation("green_cube"),
-            "yellow_cube_orientation": self.sim.get_base_orientation("yellow_cube"),
+            "orange_cube_orientation": self.sim.get_base_orientation("orange_cube"),
             "red_cube_orientation": self.sim.get_base_orientation("red_cube")
         }
 
@@ -120,10 +120,13 @@ class  Cubes(Task):
         return obs
     
     def _update_visuals(self) -> None:
-        self.sim.set_base_pose("blue_cube_sphere", self.sim.get_base_position("blue_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("green_cube_sphere", self.sim.get_base_position("green_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("yellow_cube_sphere", self.sim.get_base_position("yellow_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("red_cube_sphere", self.sim.get_base_position("red_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
+        try:
+            self.sim.set_base_pose("blue_cube_sphere", self.sim.get_base_position("blue_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("green_cube_sphere", self.sim.get_base_position("green_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("orange_cube_sphere", self.sim.get_base_position("orange_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("red_cube_sphere", self.sim.get_base_position("red_cube"), np.array([0.0, 0.0, 0.0, 1.0]))
+        except:
+            pass
 
     def get_achieved_goal(self) -> np.ndarray:
         return np.zeros(1)
@@ -133,7 +136,7 @@ class  Cubes(Task):
         
         self.sim.set_base_pose("blue_cube",  object1_position, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("green_cube",  object2_position, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("yellow_cube",  object3_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("orange_cube",  object3_position, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("red_cube",  object4_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
     def _sample_goal(self) -> np.ndarray:
@@ -142,23 +145,23 @@ class  Cubes(Task):
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
         # while True:  # make sure that cubes are distant enough
-        object1_position = np.array([0.0, 0.3, self.object_size / 2])
-        object2_position = np.array([0.0, 0.1, self.object_size / 2])
-        object3_position = np.array([0.0, -0.1, self.object_size / 2])
-        object4_position = np.array([0.0, -0.3, self.object_size / 2])
+        object1_position = np.array([-0.05, 0.3, self.object_size / 2])
+        object2_position = np.array([-0.05, 0.1, self.object_size / 2])
+        object3_position = np.array([-0.05, -0.1, self.object_size / 2])
+        object4_position = np.array([-0.05, -0.3, self.object_size / 2])
         
-        #noise1 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
-        #noise2 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
-        #noise3 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
-        #noise4 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
+        noise1 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
+        noise2 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
+        noise3 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
+        noise4 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
         
         # if distance(object1_position, object2_position) > 0.1:
-        return object1_position, object2_position, object3_position, object4_position
+        return object1_position+noise1, object2_position+noise2, object3_position+noise3, object4_position+noise4
 
     def _get_object_orietation(self):
         object1_rotation = np.array(self.sim.get_base_rotation("blue_cube", "quaternion"))
         object2_rotation = np.array(self.sim.get_base_rotation("green_cube", "quaternion"))
-        object3_rotation = np.array(self.sim.get_base_rotation("yellow_cube", "quaternion"))
+        object3_rotation = np.array(self.sim.get_base_rotation("orange_cube", "quaternion"))
         object4_rotation = np.array(self.sim.get_base_rotation("red_cube", "quaternion"))
         return object1_rotation, object2_rotation, object3_rotation, object4_rotation
 

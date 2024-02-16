@@ -154,17 +154,21 @@ class Panda(PyBulletRobot):
 
     def _update_visuals(self) -> None:
         # update position of custome sphere
-        ee_position = np.array(self.get_ee_position())
-        offset_finger = 0.048
-        self.sim.set_base_pose("gripper_left", ee_position + np.array([0., offset_finger, 0.003]), np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("gripper_right", ee_position + np.array([0, -offset_finger, 0.003]), np.array([0.0, 0.0, 0.0, 1.0]))
+        try:    
+            ee_position = np.array(self.get_ee_position())
+            offset_finger = 0.048
+            self.sim.set_base_pose("gripper_left", ee_position + np.array([0., offset_finger, 0.003]), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("gripper_right", ee_position + np.array([0, -offset_finger, 0.003]), np.array([0.0, 0.0, 0.0, 1.0]))
 
-        offset_hand = 0.09
-        self.sim.set_base_pose("hand_1", ee_position + np.array([0., 0, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("hand_2", ee_position + np.array([0., offset_hand, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("hand_3", ee_position + np.array([0., -offset_hand, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("hand_4", ee_position + np.array([0., offset_hand/2, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sim.set_base_pose("hand_5", ee_position + np.array([0., -offset_hand/2, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))        
+            offset_hand = 0.09
+            self.sim.set_base_pose("hand_1", ee_position + np.array([0., 0, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("hand_2", ee_position + np.array([0., offset_hand, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("hand_3", ee_position + np.array([0., -offset_hand, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("hand_4", ee_position + np.array([0., offset_hand/2, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("hand_5", ee_position + np.array([0., -offset_hand/2, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
+        
+        except:
+            pass        
 
 
     def ee_displacement_to_target_arm_angles(self, ee_displacement: np.ndarray, ee_rotation_euler: np.ndarray) -> np.ndarray:
