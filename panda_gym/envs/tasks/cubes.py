@@ -62,7 +62,7 @@ class  Cubes(Task):
             self._create_visuals()
 
     def _create_visuals(self) -> None:
-        radius = 0.03
+        radius = 0.035
 
         self.sim.create_sphere(
             body_name="blue_cube_sphere",
@@ -104,14 +104,26 @@ class  Cubes(Task):
     def get_obs(self) -> Dict[str, np.ndarray]:
         # position of objects
         obs = {
-            "blue_cube": self.sim.get_base_position("blue_cube"),
-            "green_cube": self.sim.get_base_position("green_cube"),
-            "orange_cube": self.sim.get_base_position("orange_cube"),
-            "red_cube": self.sim.get_base_position("red_cube"),
-            "blue_cube_orientation": self.sim.get_base_orientation("blue_cube"),
-            "green_cube_orientation": self.sim.get_base_orientation("green_cube"),
-            "orange_cube_orientation": self.sim.get_base_orientation("orange_cube"),
-            "red_cube_orientation": self.sim.get_base_orientation("red_cube")
+            "blue_cube": {
+                "position": self.sim.get_base_position("blue_cube"),
+                "orientation": self.sim.get_base_orientation("blue_cube"),
+                "size": self.object_size
+            },
+            "green_cube": {
+                "position": self.sim.get_base_position("green_cube"),
+                "orientation": self.sim.get_base_orientation("green_cube"),
+                "size": self.object_size
+            },
+            "orange_cube": {
+                "position": self.sim.get_base_position("orange_cube"),
+                "orientation": self.sim.get_base_orientation("orange_cube"),
+                "size": self.object_size
+            },
+            "red_cube": {
+                "position": self.sim.get_base_position("red_cube"),
+                "orientation": self.sim.get_base_orientation("red_cube"),
+                "size": self.object_size
+            }
         }
 
         if self.debug:

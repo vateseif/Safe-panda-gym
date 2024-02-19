@@ -221,8 +221,8 @@ class RobotTaskEnv(gym_robotics.GoalEnv):
         self.robots = robots
         self.task = task
         obs = self.reset()  # required for init; seed can be changed later
-        observation_shape = np.concatenate(list(obs.values())).shape
-        self.observation_space = gym.spaces.Box(-10.0, 10.0, shape=observation_shape, dtype=np.float32)
+        #observation_shape = np.concatenate(list(obs.values())).shape
+        #self.observation_space = gym.spaces.Box(-10.0, 10.0, shape=observation_shape, dtype=np.float32)
         self.action_space = [r.action_space for r in self.robots]
         self.compute_reward = self.task.compute_reward
         self._saved_goal = dict()

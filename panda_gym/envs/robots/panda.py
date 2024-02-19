@@ -62,7 +62,7 @@ class Panda(PyBulletRobot):
 
     def _create_visuals(self) -> None:
         # visualize right gripper constraint
-        radius_finger = 0.0135
+        radius_finger = 0.013
         self.sim.create_sphere(
           body_name="gripper_right",
           radius=radius_finger,
@@ -161,11 +161,11 @@ class Panda(PyBulletRobot):
             self.sim.set_base_pose("gripper_right", ee_position + np.array([0, -offset_finger, 0.003]), np.array([0.0, 0.0, 0.0, 1.0]))
 
             offset_hand = 0.09
-            self.sim.set_base_pose("hand_1", ee_position + np.array([0., 0, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
-            self.sim.set_base_pose("hand_2", ee_position + np.array([0., offset_hand, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
-            self.sim.set_base_pose("hand_3", ee_position + np.array([0., -offset_hand, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
-            self.sim.set_base_pose("hand_4", ee_position + np.array([0., offset_hand/2, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
-            self.sim.set_base_pose("hand_5", ee_position + np.array([0., -offset_hand/2, 0.055]), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("hand_1", ee_position + np.array([0., 0, 0.06]), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("hand_2", ee_position + np.array([0., offset_hand, 0.06]), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("hand_3", ee_position + np.array([0., -offset_hand, 0.06]), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("hand_4", ee_position + np.array([0., offset_hand/2, 0.06]), np.array([0.0, 0.0, 0.0, 1.0]))
+            self.sim.set_base_pose("hand_5", ee_position + np.array([0., -offset_hand/2, 0.06]), np.array([0.0, 0.0, 0.0, 1.0]))
         
         except:
             pass        
