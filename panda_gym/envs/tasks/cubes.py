@@ -24,7 +24,7 @@ class  Cubes(Task):
 
     def _create_scene(self) -> None:
         self.sim.create_plane(z_offset=-0.4)
-        self.sim.create_table(length=1.1, width=1.5, height=0.4, x_offset=-0.3)
+        self.sim.create_table(length=1.2, width=1.5, height=0.4, x_offset=-0.3)
         self.sim.create_box(
             body_name="blue_cube",
             half_extents=np.ones(3) * self.object_size / 2,
@@ -166,9 +166,21 @@ class  Cubes(Task):
         noise2 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
         noise3 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
         noise4 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
+
+        object1_position += noise1
+        object2_position += noise2
+        object3_position += noise3
+        object4_position += noise4
         
-        # if distance(object1_position, object2_position) > 0.1:
-        return object1_position+noise1, object2_position+noise2, object3_position+noise3, object4_position+noise4
+        # check if any object is too close to the others and update their positions
+        if np.linalg.norm(object1_position - object2_position) <= 0.1:
+            object2_position += np.array([0.08, -0.08, 0.0])
+        if np.linalg.norm(object2_position - object3_position) <= 0.1:
+            object3_position += np.array([0.08, -0.08, 0.0])
+        if np.linalg.norm(object3_position - object4_position) <= 0.1:
+            object4_position += np.array([0.08, -0.08, 0.0])
+
+        return object1_position, object2_position, object3_position, object4_position
 
     def _get_object_orietation(self):
         object1_rotation = np.array(self.sim.get_base_rotation("blue_cube", "quaternion"))
