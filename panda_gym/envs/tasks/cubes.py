@@ -1,6 +1,7 @@
 from typing import Any, Dict, Tuple, Union
 
 import numpy as np
+from random import sample
 
 from panda_gym.envs.core_multi_task import Task
 from panda_gym.pybullet import PyBullet
@@ -11,7 +12,7 @@ class  Cubes(Task):
         self,
         sim : PyBullet,
         debug: bool = False,
-        obj_xy_range=0.2,
+        obj_xy_range=0.12,
     ) -> None:
         super().__init__(sim)
         self.debug = debug
@@ -157,10 +158,10 @@ class  Cubes(Task):
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
         # while True:  # make sure that cubes are distant enough
-        object1_position = np.array([-0.05, 0.3, self.object_size / 2])
-        object2_position = np.array([-0.05, 0.1, self.object_size / 2])
-        object3_position = np.array([-0.05, -0.1, self.object_size / 2])
-        object4_position = np.array([-0.05, -0.3, self.object_size / 2])
+        object1_position = np.array([-0.1, 0.3, self.object_size / 2])
+        object2_position = np.array([-0.1, 0.1, self.object_size / 2])
+        object3_position = np.array([-0.1, -0.1, self.object_size / 2])
+        object4_position = np.array([-0.1, -0.3, self.object_size / 2])
         
         noise1 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
         noise2 = self.np_random.uniform(self.obj_range_low, self.obj_range_high)
@@ -173,14 +174,14 @@ class  Cubes(Task):
         object4_position += noise4
         
         # check if any object is too close to the others and update their positions
-        if np.linalg.norm(object1_position - object2_position) <= 0.1:
-            object2_position += np.array([0.08, -0.08, 0.0])
-        if np.linalg.norm(object2_position - object3_position) <= 0.1:
-            object3_position += np.array([0.08, -0.08, 0.0])
-        if np.linalg.norm(object3_position - object4_position) <= 0.1:
-            object4_position += np.array([0.08, -0.08, 0.0])
+        if np.linalg.norm(object1_position - object2_position) <= 0.12:
+            object2_position += np.array([0.1, -0.1, 0.0])
+        if np.linalg.norm(object2_position - object3_position) <= 0.12:
+            object3_position += np.array([0.1, -0.1, 0.0])
+        if np.linalg.norm(object3_position - object4_position) <= 0.12:
+            object4_position += np.array([0.1, -0.1, 0.0])
 
-        return object1_position, object2_position, object3_position, object4_position
+        return sample([object1_position, object2_position, object3_position, object4_position], 4)
 
     def _get_object_orietation(self):
         object1_rotation = np.array(self.sim.get_base_rotation("blue_cube", "quaternion"))
