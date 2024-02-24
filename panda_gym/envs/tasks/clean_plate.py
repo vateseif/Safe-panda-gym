@@ -74,7 +74,7 @@ class CleanPlate(Task):
             "sponge": {
                 "position": np.array(self.sim.get_base_position("sponge")),
                 "orientation": np.array(self.sim.get_base_orientation("sponge")),
-                "size": self.h
+                "size": self.l
             }
         }
         return obs
