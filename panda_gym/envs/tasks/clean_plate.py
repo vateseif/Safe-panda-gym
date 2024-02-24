@@ -83,8 +83,16 @@ class CleanPlate(Task):
         return np.zeros(1)
 
     def reset(self) -> None:   
-        sponge_position, _ = self._sample_objects()   
+        sponge_position, sponge_scrub_offset = self._sample_objects()   
         self.sim.set_base_pose("sponge", sponge_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("sponge_scrub", sponge_position+sponge_scrub_offset, np.array([0.0, 0.0, 0.0, 1.0]))
+        # create constraint between sponge and sponge scrub
+        self.sim.create_fixed_constraint("sponge", 
+                                        "sponge_scrub", 
+                                        sponge_scrub_offset, 
+                                        np.zeros(3), 
+                                        np.zeros(3), 
+                                        np.zeros(3))
 
     def _sample_goal(self) -> np.ndarray:
         return np.array([10, 10, 10])
