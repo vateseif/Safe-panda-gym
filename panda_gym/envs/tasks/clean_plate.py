@@ -66,8 +66,16 @@ class CleanPlate(Task):
     def get_obs(self) -> np.ndarray:
         # position of objects
         obs = {
-            "plate": np.array(self.sim.get_base_position("plate")),
-            "sponge": np.array(self.sim.get_base_position("sponge"))
+            "plate": {
+                "position": np.array(self.sim.get_base_position("plate")),
+                "orientation": np.array(self.sim.get_base_orientation("plate")),
+                "size": self.h
+            },
+            "sponge": {
+                "position": np.array(self.sim.get_base_position("sponge")),
+                "orientation": np.array(self.sim.get_base_orientation("sponge")),
+                "size": self.h
+            }
         }
         return obs
 
