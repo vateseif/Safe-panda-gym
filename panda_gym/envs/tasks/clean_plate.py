@@ -98,7 +98,7 @@ class CleanPlate(Task):
         return np.array([10, 10, 10])
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        sponge_position = np.array([0.0, -0.1, 0.1])
+        sponge_position = np.array([0.0, -0.1, 0.01])
         sponge_scrub_offset = np.array([0.,0.,self.l*(1+1/3)])
         return sponge_position, sponge_scrub_offset
 
