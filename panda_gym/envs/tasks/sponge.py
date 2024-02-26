@@ -98,10 +98,26 @@ class Sponge(Task):
     def get_obs(self) -> np.ndarray:
         # position of objects
         obs = {
-            "sink": np.array(self.sim.get_base_position("sink")),
-            "container": np.array(self.sim.get_base_position("container")),
-            "sponge": np.array(self.sim.get_base_position("sponge")),
-            "container_handle": np.array(self.sim.get_base_position("container_handle")),
+            "sink": {
+                "position": np.array(self.sim.get_base_position("sink")),
+                "orientation": np.array(self.sim.get_base_orientation("sink")),
+                "size": 0.
+            },
+            "container": {
+                "position": np.array(self.sim.get_base_position("container")),
+                "orientation": np.array(self.sim.get_base_orientation("container")),
+                "size": self.h
+            },
+            "sponge": {
+                "position": np.array(self.sim.get_base_position("sponge")),
+                "orientation": np.array(self.sim.get_base_orientation("sponge")),
+                "size": self.h
+            },
+            "container_handle": {
+                "position": np.array(self.sim.get_base_position("container_handle")),
+                "orientation": np.array(self.sim.get_base_orientation("container_handle")),
+                "size": 0.05
+            }
         }
         return obs
 
@@ -109,9 +125,21 @@ class Sponge(Task):
         return np.zeros(1)
 
     def reset(self) -> None:  
-        _, _, _, sponge_position, _, _  = self._sample_objects()       
+        container_position, container_handle_offset, container_handle_orientation, sponge_position, _, _ = self._sample_objects()       
         #self.sim.set_base_pose("container",   np.array([0.0, 0.1, 0.1]), np.array([0.0, 0.0, 0.0, 0.0]))
+        self.sim.set_base_pose("container", container_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("container_handle", container_position+container_handle_offset, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sim.set_base_pose("sponge",  sponge_position, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sim.set_base_pose("sponge_scrub",  sponge_position+np.array([0.,0.,self.l*(1+1/3)]), np.array([0.0, 0.0, 0.0, 1.0]))
+        
+        # create constraint between sponge and sponge scrub
+        self.sim.create_fixed_constraint("sponge", 
+                                        "sponge_scrub", 
+                                        np.array([0.,0.,self.l*(1+1/3)]), 
+                                        np.zeros(3), 
+                                        np.zeros(3), 
+                                        np.zeros(3))
+        
 
     def _sample_goal(self) -> np.ndarray:
         return np.zeros(1)
