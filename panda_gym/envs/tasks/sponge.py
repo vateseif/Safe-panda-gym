@@ -99,14 +99,14 @@ class Sponge(Task):
         # position of objects
         obs = {
             "sink": {
-                "position": np.array(self.sim.get_base_position("sink")),
+                "position": np.array(self.sim.get_base_position("sink")) + np.array([0., 0., 0.15]),
                 "orientation": np.array(self.sim.get_base_orientation("sink")),
-                "size": 0.
+                "size": 0.1
             },
             "container": {
                 "position": np.array(self.sim.get_base_position("container")),
                 "orientation": np.array(self.sim.get_base_orientation("container")),
-                "size": self.h
+                "size": self.h * 2
             },
             "sponge": {
                 "position": np.array(self.sim.get_base_position("sponge")),
@@ -116,7 +116,7 @@ class Sponge(Task):
             "container_handle": {
                 "position": np.array(self.sim.get_base_position("container_handle")),
                 "orientation": np.array(self.sim.get_base_orientation("container_handle")),
-                "size": 0.05
+                "size": self.l
             }
         }
         return obs
@@ -147,7 +147,7 @@ class Sponge(Task):
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
         container_position = np.array([0., 0., 0.03])
         container_handle_offset = np.array([0.14, 0.0, 0.002])
-        sponge_position = np.array([-0.2, 0.25, 0.1])
+        sponge_position = np.array([-0.2, 0.15, 0.1])
         sink_position = np.array([-0.15, -0.4, -0.05])
         container_handle_orientation = np.array([0., 1., 0., 1.])
         faucet_position = sink_position + np.array([-0.036, -0.11, 0.05])
