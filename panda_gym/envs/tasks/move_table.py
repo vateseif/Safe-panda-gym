@@ -75,10 +75,26 @@ class MoveTable(Task):
     def get_obs(self) -> np.ndarray:
         # position, rotation of the object
         obs = {
-            "table":  np.array(self.sim.get_base_position("movable_table")),
-            "handle_left": np.array(self.sim.get_base_position("handle_left")) + np.array([0,0,0.02]),
-            "handle_right": np.array(self.sim.get_base_position("handle_right")) + np.array([0,0,0.02]),
-            "obstacle": np.array(self.sim.get_base_position("obstacle"))
+            "table": {
+                "position": np.array(self.sim.get_base_position("movable_table")),
+                "orientation": np.array(self.sim.get_base_orientation("movable_table")),
+                "size": 0.336
+            },
+            "table_handle_left": {
+                "position": np.array(self.sim.get_base_position("handle_left")) + np.array([0.0, 0.0, 0.015]),
+                "orientation": np.array(self.sim.get_base_orientation("handle_left")),
+                "size": 0.0
+            },
+            "table_handle_right": {
+                "position": np.array(self.sim.get_base_position("handle_right")) + np.array([0.0, 0.0, 0.015]),
+                "orientation": np.array(self.sim.get_base_orientation("handle_right")),
+                "size": 0.0
+            },
+            "obstacle": {
+                "position": np.array(self.sim.get_base_position("obstacle")),
+                "orientation": np.array(self.sim.get_base_orientation("obstacle")),
+                "size": 0.07
+            }
         }
 
         return obs
@@ -88,7 +104,30 @@ class MoveTable(Task):
 
     def reset(self) -> None:        
         # NOTE: for some reason set_base_pose of the table causes it to disappear. You can't use reset() but have to run again the environment
-        #self.sim.set_base_pose("movable_table",   np.array([0.6, 0.1, 0.1]), np.array([0.0, 0.0, 0.0, 0.0]))
+        table_position = self._sample_objects()
+
+        self.sim.set_base_pose("handle_left", table_position+np.array([0.0,-0.168, 0.152]), np.array([-1, 1, -1, 1]))
+        self.sim.set_base_pose("handle_right", table_position+np.array([0.0, 0.168, 0.152]), np.array([-1, 1, -1, 1]))
+
+        self.sim.set_base_pose("movable_table", table_position, np.array([0.0, 0.0, 1.0, 1.0]))
+
+        
+
+        # create constraints between handles and table
+        self.sim.create_fixed_constraint("movable_table", 
+                                        "handle_left", 
+                                        self.table_offset[0], 
+                                        np.zeros(3), 
+                                        np.zeros(3), 
+                                        np.array([0., -1., 1., 0.]))
+
+        self.sim.create_fixed_constraint("movable_table", 
+                                        "handle_right", 
+                                        self.table_offset[1], 
+                                        np.zeros(3), 
+                                        np.zeros(3), 
+                                        np.array([0., -1., 1., 0.]))
+
         return
 
     def _sample_goal(self) -> np.ndarray:

@@ -147,7 +147,7 @@ class Sponge(Task):
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
         container_position = np.array([0., 0., 0.03])
         container_handle_offset = np.array([0.14, 0.0, 0.002])
-        sponge_position = np.array([-0.2, 0.15, 0.1])
+        sponge_position = np.array([-0.2, 0.15, 0.01])
         sink_position = np.array([-0.15, -0.4, -0.05])
         container_handle_orientation = np.array([0., 1., 0., 1.])
         faucet_position = sink_position + np.array([-0.036, -0.11, 0.05])
