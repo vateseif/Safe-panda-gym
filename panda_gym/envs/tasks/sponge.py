@@ -50,14 +50,14 @@ class Sponge(Task):
             rgba_color=np.array([96/255, 59/255, 42/255, 1.0])
         )
         # pedestal
-        self.sim.create_box(
-            body_name="pedestal",
-            half_extents= np.array([0.1, 0.1, 0.]),#container_position[2]/2]),
-            mass=0,
-            position=container_position - np.array([0., 0., container_position[2]]), 
-            rgba_color=np.array([220/255, 220/255, 220/255, 1]),
-            texture='assets/textures/marble.png'
-        )
+        #self.sim.create_box(
+        #    body_name="pedestal",
+        #    half_extents= np.array([0.1, 0.1, 0.]),#container_position[2]/2]),
+        #    mass=0,
+        #    position=container_position - np.array([0., 0., container_position[2]]), 
+        #    rgba_color=np.array([220/255, 220/255, 220/255, 1]),
+        #    texture='assets/textures/marble.png'
+        #)
         # sponge
         self.sim.create_box(
             body_name="sponge",
@@ -114,7 +114,7 @@ class Sponge(Task):
                 "size": self.h
             },
             "container_handle": {
-                "position": np.array(self.sim.get_base_position("container_handle")),
+                "position": np.array(self.sim.get_base_position("container_handle")) - np.array([0., 0., 0.01]) ,
                 "orientation": np.array(self.sim.get_base_orientation("container_handle")),
                 "size": self.l
             }
@@ -145,7 +145,7 @@ class Sponge(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        container_position = np.array([0., 0., 0.03])
+        container_position = np.array([0., 0., 0.008])
         container_handle_offset = np.array([0.14, 0.0, 0.002])
         sponge_position = np.array([-0.2, 0.15, 0.01])
         sink_position = np.array([-0.15, -0.4, -0.05])
