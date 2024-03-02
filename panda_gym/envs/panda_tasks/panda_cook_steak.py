@@ -2,11 +2,11 @@ import numpy as np
 
 from panda_gym.envs.core_multi_task import RobotTaskEnv
 from panda_gym.envs.robots.panda import Panda
-from panda_gym.envs.tasks.move_table import MoveTable
+from panda_gym.envs.tasks.cook_steak import CookSteak
 from panda_gym.pybullet import PyBullet
 
 
-class PandaMoveTable(RobotTaskEnv):
+class PandaCookSteak(RobotTaskEnv):
     """Stack task wih Panda robot.
 
     Args:
@@ -21,5 +21,5 @@ class PandaMoveTable(RobotTaskEnv):
         robot1 = Panda(sim, block_gripper=False, base_position=np.array([-0.65, -0.1, 0.0]), base_orientation=np.array([0, 0, -0.5]), control_type=control_type, body_name="_left")
         robot2 = Panda(sim, block_gripper=False, base_position=np.array([0.35, -0.1, 0.0]), base_orientation=np.array([0, 0, 2.8]), control_type=control_type, body_name="_right", base_gripper_orientation=np.array([np.pi,0.,np.pi]))
         robots = [robot1, robot2]
-        task = MoveTable(sim, debug=debug, reward_type=reward_type)
+        task = CookSteak(sim, debug=debug, reward_type=reward_type)
         super().__init__(robots, task)

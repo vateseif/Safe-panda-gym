@@ -9,7 +9,7 @@ from panda_gym.pybullet import PyBullet
 from panda_gym.utils import distance
 
 
-class MoveTable(Task):
+class CookSteak(Task):
     def __init__(
         self,
         sim : PyBullet,
@@ -29,62 +29,59 @@ class MoveTable(Task):
         self.sim.create_plane(z_offset=-0.4)
         self.sim.create_table(length=1.8, width=0.4, height=0.4, x_offset=-0.15, y_offset=-0.1)
 
-        self.table_offset = [np.array([-0.15, 0.0, 0.02]), np.array([0.15, 0.0, 0.02])]
+        self.handle_offsets = [np.array([-0.15, 0.0, 0.02]), np.array([0.15, 0.0, 0.02])]
+
+        pan_position, oven_position, steak_position = self._sample_objects()
 
         # load table URDF
-        self.sim.loadURDF(body_name="movable_table", 
+        self.sim.loadURDF(body_name="pan", 
                         mass=2.0, 
                         fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"), 
-                        basePosition=self._sample_objects(), 
+                        basePosition=pan_position, 
                         baseOrientation=[0,0,1,1],
                         globalScaling=1.5)
 
         # load handle 
-        self.sim.create_handle("handle_left", base_position=self._sample_objects()+ np.array([0.0, self.table_offset[0][0], self.table_offset[0][2]]))
-        self.sim.create_handle("handle_right", base_position=self._sample_objects()+ np.array([0.0, self.table_offset[1][0], self.table_offset[1][2]]))
+        self.sim.create_handle("pan_handle_left", base_position=pan_position+ np.array([0.0, self.handle_offsets[0][0], self.handle_offsets[0][2]]))
+        self.sim.create_handle("pan_handle_right", base_position=pan_position+ np.array([0.0, self.handle_offsets[1][0], self.handle_offsets[1][2]]))
 
-        self.sim.create_oven("oven", base_position=np.array([-0.15, 0.6, -0.4]))
-
-        # create obstacle to be surpassed
-        #self.sim.create_cylinder(
-        #  body_name='obstacle',
-        #  radius=0.07,
-        #  height=0.89,
-        #  mass=0,
-        #  position=np.array([-0.15,0.,0.]),
-        #  orientation=np.array([1., 0, 0., 1.]),
-        #  rgba_color=np.array([61/255, 62/255, 63/255, 1.])
-        #)
+        # load oven
+        self.sim.create_oven("oven", base_position=oven_position)
+        # load steak
+        self.sim.create_steak("steak", base_position=steak_position)
 
         # create constraints between handles and table
-        self.sim.create_fixed_constraint("movable_table", 
-                                        "handle_left", 
-                                        self.table_offset[0], 
+        self.sim.create_fixed_constraint("pan", 
+                                        "pan_handle_left", 
+                                        self.handle_offsets[0], 
                                         np.zeros(3), 
                                         np.zeros(3), 
                                         np.array([0., -1., 1., 0.]))
 
-        self.sim.create_fixed_constraint("movable_table", 
-                                        "handle_right", 
-                                        self.table_offset[1], 
+        self.sim.create_fixed_constraint("pan", 
+                                        "pan_handle_right", 
+                                        self.handle_offsets[1], 
                                         np.zeros(3), 
                                         np.zeros(3), 
                                         np.array([0., -1., 1., 0.]))
 
-
-        #self.sim._bodies_idx["handle_table_joint"] = fixed_joint
 
     def get_obs(self) -> np.ndarray:
         # position, rotation of the object
         obs = {
-            "table_handle_left": {
-                "position": np.array(self.sim.get_base_position("handle_left")) + np.array([0.0, 0.0, 0.015]),
-                "orientation": np.array(self.sim.get_base_orientation("handle_left")),
+            "pan": {
+                "position": np.array(self.sim.get_base_position("pan")),
+                "orientation": np.array(self.sim.get_base_orientation("pan")),
+                "size": 0.06
+            },
+            "pan_handle_left": {
+                "position": np.array(self.sim.get_base_position("pan_handle_left")) + np.array([0.0, 0.0, 0.015]),
+                "orientation": np.array(self.sim.get_base_orientation("pan_handle_left")),
                 "size": 0.0
             },
-            "table_handle_right": {
-                "position": np.array(self.sim.get_base_position("handle_right")) + np.array([0.0, 0.0, 0.015]),
-                "orientation": np.array(self.sim.get_base_orientation("handle_right")),
+            "pan_handle_right": {
+                "position": np.array(self.sim.get_base_position("pan_handle_right")) + np.array([0.0, 0.0, 0.015]),
+                "orientation": np.array(self.sim.get_base_orientation("pan_handle_right")),
                 "size": 0.0
             },
             "oven": {
@@ -92,10 +89,15 @@ class MoveTable(Task):
                 "orientation": np.array(self.sim.get_base_orientation("oven")),
                 "size": 0.65
             },
-            "oven_top": {
+            "burner_plate": {
                 "position": np.array(self.sim.get_base_position("oven")) + np.array([-0.05, -0.27, 0.7]),
                 "orientation": np.array(self.sim.get_base_orientation("oven")),
                 "size": 0.0
+            },
+            "steak": {
+                "position": np.array(self.sim.get_base_position("steak")),
+                "orientation": np.array(self.sim.get_base_orientation("steak")),
+                "size": 0.035
             }
         }
 
@@ -106,26 +108,26 @@ class MoveTable(Task):
 
     def reset(self) -> None:        
         # NOTE: for some reason set_base_pose of the table causes it to disappear. You can't use reset() but have to run again the environment
-        table_position = self._sample_objects()
+        pan_position, _, steak_position = self._sample_objects()
 
-        self.sim.set_base_pose("handle_left", table_position+np.array([0.0, self.table_offset[0][0], self.table_offset[0][2]]), np.array([-1, 1, -1, 1]))
-        self.sim.set_base_pose("handle_right", table_position+np.array([0.0, self.table_offset[1][0], self.table_offset[1][2]]), np.array([-1, 1, -1, 1]))
+        self.sim.set_base_pose("pan_handle_left", pan_position+np.array([0.0, self.handle_offsets[0][0], self.handle_offsets[0][2]]), np.array([-1, 1, -1, 1]))
+        self.sim.set_base_pose("pan_handle_right", pan_position+np.array([0.0, self.handle_offsets[1][0], self.handle_offsets[1][2]]), np.array([-1, 1, -1, 1]))
 
-        self.sim.set_base_pose("movable_table", table_position, np.array([0.0, 0.0, 1.0, 1.0]))
+        self.sim.set_base_pose("pan", pan_position, np.array([0.0, 0.0, 1.0, 1.0]))
 
-        
+        self.sim.set_base_pose("steak", steak_position, np.array([0.0, 0.0, 1.0, 0.0]))
 
         # create constraints between handles and table
-        self.sim.create_fixed_constraint("movable_table", 
-                                        "handle_left", 
-                                        self.table_offset[0], 
+        self.sim.create_fixed_constraint("pan", 
+                                        "pan_handle_left", 
+                                        self.handle_offsets[0], 
                                         np.zeros(3), 
                                         np.zeros(3), 
                                         np.array([0., -1., 1., 0.]))
 
-        self.sim.create_fixed_constraint("movable_table", 
-                                        "handle_right", 
-                                        self.table_offset[1], 
+        self.sim.create_fixed_constraint("pan", 
+                                        "pan_handle_right", 
+                                        self.handle_offsets[1], 
                                         np.zeros(3), 
                                         np.zeros(3), 
                                         np.array([0., -1., 1., 0.]))
@@ -136,7 +138,10 @@ class MoveTable(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        return np.array([-0.1, -0.1, 0.])
+        pan_position = np.array([-0.1, -0.1, 0.])
+        oven_position = np.array([-0.15, 0.6, -0.4])
+        steak_position = np.array([-0.35, -0.1, 0.05])
+        return pan_position, oven_position, steak_position# np.array([-0.1, -0.1, 0.])
 
     def _get_object_orietation(self):
         return

@@ -35,8 +35,8 @@ for reward_type in ["sparse", "dense"]:
         )
 
         register(
-            id="PandaMoveTable{}{}-v2".format(control_suffix, reward_suffix),
-            entry_point="panda_gym.envs:PandaMoveTable",
+            id="PandaCookSteak{}{}-v2".format(control_suffix, reward_suffix),
+            entry_point="panda_gym.envs:PandaCookSteak",
             kwargs=kwargs,
             max_episode_steps=100000,
         )

@@ -705,6 +705,32 @@ class PyBullet:
         self._bodies_idx[name] = handle
         return
     
+    def create_steak(self, name:str, base_position:np.ndarray, texture:str='assets/textures/steak3.jpg'):
+        steak_collision_shape = p.createCollisionShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, "assets/steak/steak.stl"),
+            meshScale=np.array([0.1, 0.07, 0.13])
+        )
+        steak_visual_shape = p.createVisualShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, "assets/steak/steak.stl"),
+            meshScale=np.array([0.1, 0.07, 0.13])
+            #rgbaColor=np.array([61/255, 62/255, 63/255, 1.])
+        )
+        steak = p.createMultiBody(
+            baseCollisionShapeIndex=steak_collision_shape,
+            baseVisualShapeIndex=steak_visual_shape,
+            basePosition=base_position,
+            baseOrientation=(0, 0, 1, 0),
+        )
+        self.physics_client.changeDynamics(steak, -1, mass=.1) # TODO: change mass value
+        self._bodies_idx[name] = steak
+
+        texture_path = os.path.join(BASE_DIR, texture)
+        texture_uid = self.physics_client.loadTexture(texture_path)
+        self.physics_client.changeVisualShape(self._bodies_idx[name], -1, textureUniqueId=texture_uid)
+        return
+    
     def create_oven(self, name:str, base_position:np.ndarray, texture:Optional[str]='assets/textures/metal.png'):
 
         oven_collision_shape = p.createCollisionShape(
