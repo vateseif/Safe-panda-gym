@@ -27,32 +27,34 @@ class MoveTable(Task):
 
     def _create_scene(self) -> None:
         self.sim.create_plane(z_offset=-0.4)
-        self.sim.create_table(length=1.8, width=0.9, height=0.4, x_offset=-0.15)
+        self.sim.create_table(length=1.8, width=0.4, height=0.4, x_offset=-0.15, y_offset=-0.1)
 
-        self.table_offset = [np.array([-0.168, 0.0, 0.152]), np.array([0.168, 0.0, 0.152])]
+        self.table_offset = [np.array([-0.15, 0.0, 0.02]), np.array([0.15, 0.0, 0.02])]
 
         # load table URDF
         self.sim.loadURDF(body_name="movable_table", 
                         mass=2.0, 
-                        fileName=os.path.join(BASE_DIR, "assets/table/table.urdf"), 
+                        fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"), 
                         basePosition=self._sample_objects(), 
                         baseOrientation=[0,0,1,1],
-                        globalScaling=0.24)
+                        globalScaling=1.5)
 
         # load handle 
-        self.sim.create_handle("handle_left", base_position=self._sample_objects()+np.array([0.0,-0.168, 0.152]))
-        self.sim.create_handle("handle_right", base_position=self._sample_objects()+np.array([0.0, 0.168, 0.152]))
+        self.sim.create_handle("handle_left", base_position=self._sample_objects()+ np.array([0.0, self.table_offset[0][0], self.table_offset[0][2]]))
+        self.sim.create_handle("handle_right", base_position=self._sample_objects()+ np.array([0.0, self.table_offset[1][0], self.table_offset[1][2]]))
+
+        self.sim.create_oven("oven", base_position=np.array([-0.15, 0.6, -0.4]))
 
         # create obstacle to be surpassed
-        self.sim.create_cylinder(
-          body_name='obstacle',
-          radius=0.07,
-          height=0.89,
-          mass=0,
-          position=np.array([-0.15,0.,0.]),
-          orientation=np.array([1., 0, 0., 1.]),
-          rgba_color=np.array([61/255, 62/255, 63/255, 1.])
-        )
+        #self.sim.create_cylinder(
+        #  body_name='obstacle',
+        #  radius=0.07,
+        #  height=0.89,
+        #  mass=0,
+        #  position=np.array([-0.15,0.,0.]),
+        #  orientation=np.array([1., 0, 0., 1.]),
+        #  rgba_color=np.array([61/255, 62/255, 63/255, 1.])
+        #)
 
         # create constraints between handles and table
         self.sim.create_fixed_constraint("movable_table", 
@@ -75,11 +77,6 @@ class MoveTable(Task):
     def get_obs(self) -> np.ndarray:
         # position, rotation of the object
         obs = {
-            "table": {
-                "position": np.array(self.sim.get_base_position("movable_table")),
-                "orientation": np.array(self.sim.get_base_orientation("movable_table")),
-                "size": 0.336
-            },
             "table_handle_left": {
                 "position": np.array(self.sim.get_base_position("handle_left")) + np.array([0.0, 0.0, 0.015]),
                 "orientation": np.array(self.sim.get_base_orientation("handle_left")),
@@ -90,10 +87,15 @@ class MoveTable(Task):
                 "orientation": np.array(self.sim.get_base_orientation("handle_right")),
                 "size": 0.0
             },
-            "obstacle": {
-                "position": np.array(self.sim.get_base_position("obstacle")),
-                "orientation": np.array(self.sim.get_base_orientation("obstacle")),
-                "size": 0.07
+            "oven": {
+                "position": np.array(self.sim.get_base_position("oven")),
+                "orientation": np.array(self.sim.get_base_orientation("oven")),
+                "size": 0.65
+            },
+            "oven_top": {
+                "position": np.array(self.sim.get_base_position("oven")) + np.array([-0.05, -0.27, 0.7]),
+                "orientation": np.array(self.sim.get_base_orientation("oven")),
+                "size": 0.0
             }
         }
 
@@ -106,8 +108,8 @@ class MoveTable(Task):
         # NOTE: for some reason set_base_pose of the table causes it to disappear. You can't use reset() but have to run again the environment
         table_position = self._sample_objects()
 
-        self.sim.set_base_pose("handle_left", table_position+np.array([0.0,-0.168, 0.152]), np.array([-1, 1, -1, 1]))
-        self.sim.set_base_pose("handle_right", table_position+np.array([0.0, 0.168, 0.152]), np.array([-1, 1, -1, 1]))
+        self.sim.set_base_pose("handle_left", table_position+np.array([0.0, self.table_offset[0][0], self.table_offset[0][2]]), np.array([-1, 1, -1, 1]))
+        self.sim.set_base_pose("handle_right", table_position+np.array([0.0, self.table_offset[1][0], self.table_offset[1][2]]), np.array([-1, 1, -1, 1]))
 
         self.sim.set_base_pose("movable_table", table_position, np.array([0.0, 0.0, 1.0, 1.0]))
 
@@ -134,7 +136,7 @@ class MoveTable(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        return np.array([0.1, 0.0, 0.])
+        return np.array([-0.1, -0.1, 0.])
 
     def _get_object_orietation(self):
         return

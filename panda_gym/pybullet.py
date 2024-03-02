@@ -705,6 +705,51 @@ class PyBullet:
         self._bodies_idx[name] = handle
         return
     
+    def create_oven(self, name:str, base_position:np.ndarray, texture:Optional[str]='assets/textures/metal.png'):
+
+        oven_collision_shape = p.createCollisionShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, "assets/oven/oven.stl"),
+            meshScale=np.array([0.6, 0.6, 0.35])
+        )
+        oven_shape = p.createVisualShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, "assets/oven/oven.stl"),
+            meshScale=np.array([0.6, 0.6, 0.35]),
+            #rgbaColor=np.array([0.306, 0.306, 0.306, 1.])
+        )
+        oven = p.createMultiBody(
+            baseCollisionShapeIndex=oven_collision_shape,
+            baseVisualShapeIndex=oven_shape,
+            basePosition=base_position,
+            baseOrientation=(0, 0, 0, 1),
+        )
+
+        oven_top_collision_shape = p.createCollisionShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, "assets/oven/oventop.stl"),
+            meshScale=np.array([0.6, 0.6, 0.35])
+        )
+        oven_top_shape = p.createVisualShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, "assets/oven/oventop.stl"),
+            meshScale=np.array([0.6, 0.6, 0.35]),
+            rgbaColor=np.array([0.306, 0.306, 0.306, 1.])
+        )
+        oven_top = p.createMultiBody(
+            baseCollisionShapeIndex=oven_top_collision_shape,
+            baseVisualShapeIndex=oven_top_shape,
+            basePosition=base_position + np.array([0.06, -0.015, 0.555]),
+            baseOrientation=(0, 0, 0, 1),
+        )
+
+        self._bodies_idx[name] = oven
+        self._bodies_idx[name+"_top"] = oven_top
+
+        texture_path = os.path.join(BASE_DIR, texture)
+        texture_uid = self.physics_client.loadTexture(texture_path)
+        self.physics_client.changeVisualShape(self._bodies_idx[name], -1, textureUniqueId=texture_uid)
+    
     def visualize_trajectory(self, trajectory: np.ndarray) -> None:
         """ Visualize each trajecory point (xyz) as a sphere"""
         for i, point in enumerate(trajectory):
