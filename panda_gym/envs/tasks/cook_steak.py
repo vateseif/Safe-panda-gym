@@ -77,12 +77,12 @@ class CookSteak(Task):
             "pan_handle_left": {
                 "position": np.array(self.sim.get_base_position("pan_handle_left")) + np.array([0.0, 0.0, 0.015]),
                 "orientation": np.array(self.sim.get_base_orientation("pan_handle_left")),
-                "size": 0.0
+                "size": 0.035
             },
             "pan_handle_right": {
                 "position": np.array(self.sim.get_base_position("pan_handle_right")) + np.array([0.0, 0.0, 0.015]),
                 "orientation": np.array(self.sim.get_base_orientation("pan_handle_right")),
-                "size": 0.0
+                "size": 0.035
             },
             "oven": {
                 "position": np.array(self.sim.get_base_position("oven")),
@@ -92,7 +92,7 @@ class CookSteak(Task):
             "burner_plate": {
                 "position": np.array(self.sim.get_base_position("oven")) + np.array([-0.05, -0.27, 0.7]),
                 "orientation": np.array(self.sim.get_base_orientation("oven")),
-                "size": 0.0
+                "size": 0.01
             },
             "steak": {
                 "position": np.array(self.sim.get_base_position("steak")),
@@ -138,9 +138,9 @@ class CookSteak(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        pan_position = np.array([-0.1, -0.1, 0.])
+        pan_position = np.array([-0.0, -0.1, 0.])
         oven_position = np.array([-0.15, 0.6, -0.4])
-        steak_position = np.array([-0.35, -0.1, 0.05])
+        steak_position = np.array([0., -0.36, 0.05])
         return pan_position, oven_position, steak_position# np.array([-0.1, -0.1, 0.])
 
     def _get_object_orietation(self):
