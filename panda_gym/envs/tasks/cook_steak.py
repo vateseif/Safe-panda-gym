@@ -27,7 +27,7 @@ class CookSteak(Task):
 
     def _create_scene(self) -> None:
         self.sim.create_plane(z_offset=-0.4)
-        self.sim.create_table(length=1.8, width=0.4, height=0.4, x_offset=-0.15, y_offset=-0.1)
+        self.sim.create_table(length=1.8, width=0.6, height=0.4, x_offset=-0.15, y_offset=-0.2)
 
         self.handle_offsets = [np.array([-0.15, 0.0, 0.02]), np.array([0.15, 0.0, 0.02])]
 
@@ -115,7 +115,7 @@ class CookSteak(Task):
 
         self.sim.set_base_pose("pan", pan_position, np.array([0.0, 0.0, 1.0, 1.0]))
 
-        self.sim.set_base_pose("steak", steak_position, np.array([0.0, 0.0, 1.0, 0.0]))
+        self.sim.set_base_pose("steak", steak_position, np.array([0.0, 0.0, 0.0, 1.0]))
 
         # create constraints between handles and table
         self.sim.create_fixed_constraint("pan", 

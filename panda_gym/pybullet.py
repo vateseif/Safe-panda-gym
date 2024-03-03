@@ -705,23 +705,23 @@ class PyBullet:
         self._bodies_idx[name] = handle
         return
     
-    def create_steak(self, name:str, base_position:np.ndarray, texture:str='assets/textures/steak3.jpg'):
+    def create_steak(self, name:str, base_position:np.ndarray, texture:str='assets/textures/steak5.jpg'):
         steak_collision_shape = p.createCollisionShape(
             shapeType=p.GEOM_MESH,
-            fileName=os.path.join(BASE_DIR, "assets/steak/steak.stl"),
-            meshScale=np.array([0.1, 0.07, 0.13])
+            fileName=os.path.join(BASE_DIR, "assets/steak/steak5.obj"),
+            meshScale=np.array([0.1, 0.09, 0.13])
         )
         steak_visual_shape = p.createVisualShape(
             shapeType=p.GEOM_MESH,
-            fileName=os.path.join(BASE_DIR, "assets/steak/steak.stl"),
-            meshScale=np.array([0.1, 0.07, 0.13])
+            fileName=os.path.join(BASE_DIR, "assets/steak/steak5.obj"),
+            meshScale=np.array([0.1, 0.09, 0.13])
             #rgbaColor=np.array([61/255, 62/255, 63/255, 1.])
         )
         steak = p.createMultiBody(
             baseCollisionShapeIndex=steak_collision_shape,
             baseVisualShapeIndex=steak_visual_shape,
             basePosition=base_position,
-            baseOrientation=(0, 0, 1, 0),
+            baseOrientation=(0, 0, 0, 1),
         )
         self.physics_client.changeDynamics(steak, -1, mass=.1) # TODO: change mass value
         self._bodies_idx[name] = steak
@@ -769,8 +769,29 @@ class PyBullet:
             baseOrientation=(0, 0, 0, 1),
         )
 
+        for i, off in enumerate([np.array([-0.075, -0.25, 0.57]), np.array([0.195, -0.25, 0.57]), np.array([0.195, 0.015, 0.57]), np.array([-0.075, 0.015, 0.57])]):
+            plate_top_collision_shape = p.createCollisionShape(
+                shapeType=p.GEOM_MESH,
+                fileName=os.path.join(BASE_DIR, "assets/oven/burnerplate.stl"),
+                meshScale=np.array([0.67, 0.67, 0.45])
+            )
+            plate_top_shape = p.createVisualShape(
+                shapeType=p.GEOM_MESH,
+                fileName=os.path.join(BASE_DIR, "assets/oven/burnerplate.stl"),
+                meshScale=np.array([0.67, 0.67, 0.45]),
+                rgbaColor=np.array([0.506, 0.506, 0.506, 1.])
+            )
+            plate_top = p.createMultiBody(
+                baseCollisionShapeIndex=plate_top_collision_shape,
+                baseVisualShapeIndex=plate_top_shape,
+                basePosition=base_position + off,
+                baseOrientation=(0, 0, 0, 1)
+            )
+            self._bodies_idx[name+f"_plate{i}"] = plate_top
+
         self._bodies_idx[name] = oven
         self._bodies_idx[name+"_top"] = oven_top
+        self._bodies_idx[name+"_plate"] = plate_top
 
         texture_path = os.path.join(BASE_DIR, texture)
         texture_uid = self.physics_client.loadTexture(texture_path)
