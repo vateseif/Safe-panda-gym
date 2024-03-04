@@ -1,0 +1,407 @@
+<!--Copyright 2020 Google LLC-->
+
+<!--Licensed under the Apache License, Version 2.0 (the "License");-->
+<!--you may not use this file except in compliance with the License.-->
+<!--You may obtain a copy of the License at-->
+
+<!--https://www.apache.org/licenses/LICENSE-2.0-->
+
+<!--Unless required by applicable law or agreed to in writing, software-->
+<!--distributed under the License is distributed on an "AS IS" BASIS,-->
+<!--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.-->
+<!--See the License for the specific language governing permissions and-->
+<!--limitations under the License.-->
+<mujoco model="franka_kitchen">
+
+    <compiler angle="radian"/>
+    <option timestep="0.002" cone="elliptic" impratio="2" noslip_iterations="20"/>
+    <!-- <option timestep="0.002"/> -->
+    <size njmax='1000' nconmax='1000'/>
+
+    <!-- <include file="franka/actuator0.xml"/>
+    <include file="franka/franka_panda_headers.xml"/> -->
+
+    <include file="objects/oven_asset.xml"/>
+    <include file="objects/counters_asset.xml"/>
+    <include file="objects/backwall_asset.xml"/>
+    <include file="objects/slidecabinet_asset.xml"/>
+    <include file="objects/hingecabinet_asset.xml"/>
+    <include file="objects/microwave_asset.xml"/>
+    <include file="objects/kettle_asset.xml"/>
+
+    <!-- change this if you want to render at higher resolutions -->
+    <visual>
+        <!-- <global offwidth="2560" offheight="1920" /> -->
+        <!-- <quality shadowsize="4096" offsamples="8" /> -->
+
+        <global offwidth="640" offheight="480" />
+        <quality shadowsize="1024" offsamples="4" />
+
+        <!-- <map force="0.1" fogend="5" /> -->
+    </visual>
+
+    <!-- from adept_models/scenes/basic_scene.xml -->
+    <asset>
+        <!-- <texture name="skybox" type="skybox" builtin="gradient" rgb1=".08 .09 .10" rgb2="0 0 0" width="800" height="800" mark="random" markrgb=".8 .8 .8"/> -->
+
+        <!-- <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512" markrgb='.1 .1 .1' mark='random' random='.05'/> -->
+        <texture name="texplane" type="2d" height="1" width="1" file="textures/white_marble_tile2.png"/>
+        <material name='MatPlane' reflectance='0.05' texture="texplane" texrepeat="4 4" texuniform="true"/>
+    </asset>
+
+    <compiler inertiafromgeom='auto' inertiagrouprange='3 5' angle="radian"/>
+
+    <worldbody>
+        <!-- from adept_models/scenes/basic_scene.xml-->
+        <light directional='true' diffuse='.3 .3 .3' specular='0.3 0.3 0.3' pos='-1 -1 1' dir='1 1 -1'/>
+        <light directional='true' diffuse='.3 .3 .3' specular='0.3 0.3 0.3' pos='1 -1 1' dir='-1 1 -1'/>
+        <light directional='true' diffuse='.3 .3 .3' specular='0.3 0.3 0.3' pos='0 1 1' dir='0 -1 -1'/>
+        <geom name='floor' pos='0 0 0' size='5 5 .1' conaffinity='1' contype='1' type='plane' material="MatPlane" condim='3'/>
+        <site name='xaxis' pos='.5 0 0' size='.005 .5' type='capsule' rgba='1 0 0 .25' euler='0 1.57 0' group='3'/>
+        <site name='yaxis' pos='0 .5 0' size='.005 .5' type='capsule' rgba='0 1 0 .25' euler='1.57 0 0' group='3'/>
+
+        <!-- Robot -->
+        <!-- <body pos='0. 0 1.8' euler='0 0 1.57'>
+            <geom type='cylinder' size='.120 .90' pos='-.04 0 -0.90' class='panda_viz'/>
+            <include file="franka/franka_panda.xml"/>
+        </body> -->
+
+        <!-- <body pos='0. 0 1.8' euler='0 0 1.57'>
+            <geom type='cylinder' size='.120 .90' pos='-.04 0 -0.90' class='xarm_viz'/>
+            <include file="xarm7/xarm7.xml"/>
+        </body> -->
+
+        <body name='desk' pos='-0.1 0.75 0'>
+            <body name="counters1" pos="0 0 0">
+                <body name="counters" childclass="counters">
+                    <geom material="counter_blue" type="mesh" mesh="cabinetbase"/>
+                        <geom material="counter_marble" type="mesh" mesh="countertop"/>
+                        <geom material="counter_marble" pos="-0.855 -0.508 1.57" size="0.463 1.08 0.03" type="box"/>
+                        <geom type="mesh" mesh="faucet" pos="0.904 -0.172 1.511"/>
+                        <geom pos="0.9 0.085 1.83" size="0.035 0.05" type="cylinder"/>
+                        <geom pos="0.9 0.085 1.92" size="0.025 0.08" type="capsule"/>
+                        <geom euler="1.57 0 0" pos="0.9 0.2 2" size="0.025 0.11" type="capsule"/>
+                        <geom pos="0.9 0.317 1.8" size="0.025 0.2" type="capsule"/>
+                        <geom pos="0.9 0.317 1.67" size="0.032 0.07" type="cylinder"/>
+                        <geom pos="0.947 0.318 1.68" euler="0 1.57 0" size="0.029 0.03" type="cylinder"/>
+                        <geom pos="0.99 0.318 1.68" euler="0 1.57 0" size="0.035 0.013 " type="cylinder"/>
+                        <geom euler="1.57 0 0" pos="0.99 0.26 1.68" size="0.01 0.03" type="capsule"/>
+                        <geom euler="0 1.57 0" pos="0.909 -0.695 1.39" size="0.022 0.28" type="cylinder"/>
+                        <geom euler="1.57 0 0" pos="0.71 -0.665 1.39" size="0.018 0.03" type="cylinder"/>
+                        <geom euler="1.57 0 0" pos="1.108 -0.665 1.39" size="0.018 0.03" type="cylinder"/>
+                        <geom euler="0 1.57 0" pos="0.909 -0.695 1.14" size="0.022 0.28" type="cylinder"/>
+                        <geom euler="1.57 0 0" pos="0.71 -0.665 1.14" size="0.018 0.03" type="cylinder"/>
+                        <geom euler="1.57 0 0" pos="1.108 -0.665 1.14" size="0.018 0.03" type="cylinder"/>
+
+                        <geom class="counter_collision" euler="0 1.57 0" pos="0.909 -0.695 1.39" size="0.022 0.28" type="cylinder" mass=".1"/>
+                        <geom class="counter_collision" euler="1.57 0 0" pos="0.71 -0.665 1.39" size="0.018 0.03" type="cylinder" mass=".02"/>
+                        <geom class="counter_collision" euler="1.57 0 0" pos="1.108 -0.665 1.39" size="0.018 0.03" type="cylinder" mass=".02"/>
+                        <geom class="counter_collision" euler="0 1.57 0" pos="0.909 -0.695 1.14" size="0.022 0.28" type="cylinder" mass=".1"/>
+                        <geom class="counter_collision" euler="1.57 0 0" pos="0.71 -0.665 1.14" size="0.018 0.03" type="cylinder" mass=".02"/>
+                        <geom class="counter_collision" euler="1.57 0 0" pos="1.108 -0.665 1.14" size="0.018 0.03" type="cylinder" mass=".02"/>
+                        <geom class="counter_collision" pos="-0.86 -0.5 0.78" size="0.46 1.07 0.777" type="box" mass="5"/>
+                        <geom class="counter_collision" pos="0.907 -0.045 0.71" size="0.304 0.606 0.71" type="box" mass="3"/>
+                        <geom class="counter_collision" pos="-0.855 -0.508 1.57" size="0.463 1.08 0.03" type="box" mass=".5"/>
+                        <geom class="counter_collision" pos="1.159 -0.045 1.57" size="0.051 0.611 0.03" type="box" mass=".2"/>
+                        <geom class="counter_collision" pos="0.649 -0.045 1.57" size="0.051 0.611 0.03" type="box" mass=".2"/>
+                        <geom class="counter_collision" pos="0.904 0.4 1.57" size="0.204 0.165 0.03" type="box" mass=".2"/>
+                        <geom class="counter_collision" pos="0.904 -0.617 1.57" size="0.204 0.039 0.03" type="box" mass=".2"/>
+                        <geom class="counter_collision" pos="1.158 -0.04 1.47" size="0.05 0.61 0.076" type="box" mass=".2"/>
+                        <geom class="counter_collision" pos="0.652 -0.04 1.47" size="0.05 0.61 0.076" type="box" mass=".2"/>
+                        <geom class="counter_collision" pos="0.904 0.401 1.47" size="0.204 0.166 0.076" type="box" mass=".2"/>
+                        <geom class="counter_collision" pos="0.904 -0.611 1.47" size="0.206 0.034 0.076" type="box" mass=".2"/>
+                        <geom class="counter_collision" pos="0.9 0.085 1.83" size="0.035 0.05" type="cylinder" mass=".02"/>
+                        <geom class="counter_collision" pos="0.9 0.085 1.92" size="0.025 0.08" type="capsule" mass=".02"/>
+                        <geom class="counter_collision" euler="1.57 0 0" pos="0.9 0.2 2" size="0.025 0.11" type="capsule" mass=".02"/>
+                        <geom class="counter_collision" pos="0.9 0.317 1.8" size="0.025 0.2" type="capsule" mass=".02"/>
+                        <geom class="counter_collision" pos="0.9 0.317 1.67" size="0.032 0.07" type="cylinder" mass=".02"/>
+                        <geom class="counter_collision" pos="0.947 0.318 1.68" euler="0 1.57 0" size="0.029 0.03" type="cylinder" mass=".02"/>
+                        <geom class="counter_collision" pos="0.99 0.318 1.68" euler="0 1.57 0" size="0.035 0.013 " type="cylinder" mass=".02"/>
+                        <geom class="counter_collision" euler="1.57 0 0" pos="0.99 0.26 1.68" size="0.01 0.03" type="capsule" mass=".02"/>
+                    </body>
+                    </body>
+                    <body name="oven" pos="0 0 0">
+                        <body name="ovenroot" childclass="oven" pos="0.115 -0.2921 0.9834">
+                <geom material="oven_black" type="mesh" mesh="burnerplate" pos="-0.24 -0.119 0.629"/>
+                <geom material="oven_black" type="mesh" mesh="burnerplate" pos="-0.237 0.322 0.629"/>
+                <geom material="oven_black" type="mesh" mesh="burnerplate" pos="0.206 -0.119 0.629"/>
+                <geom material="oven_black" type="mesh" mesh="burnerplate" pos="0.204 0.322 0.629"/>
+                <geom material="oven_black" euler="1.57 0 0" pos="-.215 -0.36 -0.682" size="0.018 0.03" type="cylinder"/>
+                <geom material="oven_black" euler="1.57 0 0" pos=".184 -0.36 -0.682" size="0.018 0.03" type="cylinder"/>
+                <geom material="oven_black" euler="0 1.57 0" pos="-0.015 -0.39 -0.682" size="0.022 0.28" type="cylinder"/>
+                <geom material="oven_black" euler="1.57 0 0" pos="-.215 -0.36 0.254" size="0.018 0.03" type="cylinder"/>
+                <geom material="oven_black" euler="1.57 0 0" pos=".184 -0.36 0.254" size="0.018 0.03" type="cylinder"/>
+                <geom material="oven_black" euler="0 1.57 0" pos="-0.015 -0.39 0.254" size="0.022 0.28" type="cylinder"/>
+                <geom material="oven_black" type="mesh" mesh="oventop" pos="-0.017 0.275 0.607"/>
+                <geom material="oven_black" type="mesh" mesh="ovenwindow" pos="0.9793 0.2921 -1.1877"/>
+                <geom material="oven_black" pos="-0.011 -.327 -.05" size="0.35 0.016 0.22" type="box"/>
+                <geom type="mesh" mesh="stoverim" pos="0.203 0.323 0.619"/>
+                <geom type="mesh" mesh="stoverim" pos="-0.24 -0.12 0.619"/>
+                <geom type="mesh" mesh="stoverim" pos="-0.237 0.323 0.619"/>
+                <geom type="mesh" mesh="stoverim" pos="0.207 -0.12 0.619"/>
+                <geom pos="-0.017 -.326 .455" size="0.5 0.016 0.12" type="box"/>
+                <geom pos="-0.017 -.326 -.795" size="0.5 0.016 0.185" type="box"/>
+                <geom pos="-0.017 -.326 -.14" size="0.5 0.016 0.465" type="box"/>
+                <geom pos="-0.017 0.295 -0.2" size="0.5 0.602 0.78" type="box"/>
+
+                <geom class="oven_collision" pos="-0.017 0.28 -0.175" size="0.5 0.625 0.81" type="box" mass="5"/>
+                <geom class="oven_collision" euler="1.57 0 0" pos="-.215 -0.36 -0.682" size="0.018 0.03" type="cylinder" mass=".2"/>
+                <geom class="oven_collision" euler="1.57 0 0" pos=".184 -0.36 -0.682" size="0.018 0.03" type="cylinder" mass=".2"/>
+                <geom class="oven_collision" euler="0 1.57 0" pos="-0.015 -0.39 -0.682" size="0.022 0.28" type="cylinder" mass=".2"/>
+                <geom class="oven_collision" euler="1.57 0 0" pos="-.215 -0.36 0.254" size="0.018 0.03" type="cylinder" mass=".2"/>
+                <geom class="oven_collision" euler="1.57 0 0" pos=".184 -0.36 0.254" size="0.018 0.03" type="cylinder" mass=".2"/>
+                <geom class="oven_collision" euler="0 1.57 0" pos="-0.015 -0.39 0.254" size="0.022 0.28" type="cylinder" mass=".2"/>
+
+                <body name="Burner 1" pos="0.206 -0.119 0.61">
+                    <inertial pos="0 0 0" mass=".01" diaginertia="0.001 0.001 0.001"/>
+                    <joint name="burner_Joint_1" axis="0 0 -1" type="slide" limited="true" range="-.009 0"/>
+                    <geom material="oven_burner" size="0.1 0.01" type="cylinder"/>
+                </body>
+                <body name="Burner 2" pos="-0.24 -0.119 0.61">
+                    <inertial pos="0 0 0" mass=".01" diaginertia="0.001 0.001 0.001"/>
+                    <joint name="burner_Joint_2" axis="0 0 -1" type="slide" limited="true" stiffness="1" range="-.009 0"/>
+                    <geom material="oven_burner" size="0.1 0.01" type="cylinder" group="1"/>
+                </body>
+                <body name="Burner 3" pos="0.204 0.322 0.61">
+                    <inertial pos="0 0 0" mass=".01" diaginertia="0.001 0.001 0.001"/>
+                    <joint name="burner_Joint_3" axis="0 0 -1" type="slide" limited="true" stiffness="1" range="-.009 0"/>
+                    <geom material="oven_burner" size="0.1 0.01" type="cylinder" group="1"/>
+                </body>
+                <body name="Burner 4" pos="-0.237 0.322 0.61">
+                    <inertial pos="0 0 0" mass=".01" diaginertia="0.001 0.001 0.001"/>
+                    <joint name="burner_Joint_4" axis="0 0 -1" type="slide" limited="true" stiffness="1" range="-.009 0"/>
+                    <geom material="oven_burner" size="0.1 0.01" type="cylinder" group="1"/>
+                </body>
+            </body>
+            </body>
+            <body name="ovenhood" pos="0 0 0">
+                <body name="hoodroot" pos="0.1 0.188 2.33" childclass="oven">
+                <light name="ovenlight" pos="-0.1 0.012 -0.08" dir="0 -.02 -.1" attenuation="0.05 0.05 0.05" cutoff="75" diffuse=".7 .65 .65" specular=".3 .3 .3" directional="false" castshadow="true" exponent="25"/>
+
+                <!-- try to center ovenlight more -->
+                <!-- <light name="ovenlight" pos="0 -0.1 -0.08" dir="0 -0.02 -.1" attenuation="0.07 0.07 0.07" cutoff="75" diffuse=".7 .6 .65" specular=".3 .3 .3" directional="false" castshadow="true" exponent="25"/> -->
+
+                <geom material="oven_black" type="mesh" mesh="hood" pos="-0.1 -0.2896 -2.329"/>
+                <geom class="oven_collision" pos="0 0.073 -0.046" size="0.502 0.336 0.12" type="box" mass="2"/>
+
+                <!-- bot right -->
+                <body name="knob 1" euler="1.57 0 0" pos="-0.133 -0.2601 -0.1036">
+                    <joint name="knob_Joint_1" axis="0 0 1" type="hinge" limited="true" range="-1.57 0"/>
+                    <geom type="box" pos="0 0 .038" size=".014 .048 .018"/>
+                    <geom type="cylinder" pos="0 0 .013" size=".05 .008"/>
+                    <geom type="cylinder" pos="0 0.048 .037" size=".014 .018" rgba="1 0 0 1"/>
+
+                    <geom class="oven_collision" type="box" pos="0 0 .038" size=".014 .048 .018" mass=".01"/>
+                    <geom class="oven_collision" type="cylinder" pos="0 0 .013" size=".05 .008" mass=".01"/>
+                    <site type="sphere" name="knob1_site" pos="0 0 .038" size=".01" group="3" rgba="1 1 0 1"/>
+                </body>
+
+                <!-- bot left -->
+                <body name="knob 2" euler="1.57 0 0" pos="-0.256 -0.2601 -0.1036">
+                    <joint name="knob_Joint_2" axis="0 0 1" type="hinge" limited="true" range="-1.57 0"/>
+                    <geom type="box" pos="0 0 .038" size=".014 .048 .018"/>
+                    <geom type="cylinder" pos="0 0 .013" size=".05 .008"/>
+                    <geom type="cylinder" pos="0 0.048 .037" size=".014 .018" rgba="1 0 0 1"/>
+
+                    <geom class="oven_collision" type="box" pos="0 0 .038" size=".014 .048 .018" mass=".01"/>
+                    <geom class="oven_collision" type="cylinder" pos="0 0 .013" size=".05 .008" mass=".01"/>
+                    <site type="sphere" name="knob2_site" pos="0 0 .038" size=".01" group="3" rgba="0 0 1 1"/>
+                </body>
+
+                <!-- top right -->
+                <body name="knob 3" euler="1.57 0 0" pos="-0.133 -0.2601 0.0104">
+                    <joint name="knob_Joint_3" axis="0 0 1" type="hinge" limited="true" range="-1.57 0"/>
+                    <geom type="box" pos="0 0 .038" size=".014 .048 .018"/>
+                    <geom type="cylinder" pos="0 0 .013" size=".05 .008"/>
+                    <geom type="cylinder" pos="0 0.048 .037" size=".014 .018" rgba="1 0 0 1"/>
+
+                    <geom class="oven_collision" type="box" pos="0 0 .038" size=".014 .048 .018" mass=".01"/>
+                    <geom class="oven_collision" type="cylinder" pos="0 0 .013" size=".05 .008" mass=".01"/>
+                    <site type="sphere" name="knob3_site" pos="0 0 .038" size=".01" group="3" rgba="0 1 0 1"/>
+                </body>
+
+                <!-- top left -->
+                <body name="knob 4" euler="1.57 0 0" pos="-0.256 -0.2601 0.0104">
+                    <joint name="knob_Joint_4" axis="0 0 1" type="hinge" limited="true" range="-1.57 0"/>
+                    <geom type="box" pos="0 0 .038" size=".014 .048 .018"/>
+                    <geom type="cylinder" pos="0 0 .013" size=".05 .008"/>
+                    <geom type="cylinder" pos="0 0.048 .037" size=".014 .018" rgba="1 0 0 1"/>
+
+                    <geom class="oven_collision" type="box" pos="0 0 .038" size=".014 .048 .018" mass=".01"/>
+                    <geom class="oven_collision" type="cylinder" pos="0 0 .013" size=".05 .008" mass=".01"/>
+                    <site type="sphere" name="knob4_site" pos="0 0 .038" size=".01" group="3" rgba="1 0 0 1"/>
+                </body>
+
+                <body name="lightswitchbaseroot" pos="-0.4 -0.2473 -0.05">
+                    <geom type="mesh" mesh="lightswitchbase" pos="0 -0.0123 0" euler="-1.57 0 0"/>
+                    <body name="lightswitchroot">
+                        <inertial pos="-0.0046 0.35 0.0131" mass=".1" diaginertia="0.001 0.001 0.001"/>
+                        <joint type="hinge" axis="0 0 1" limited="true" name="lightswitch_joint" frictionloss="1" range="-.7 0"/>
+                        <geom pos="0.0252 -0.06 0" euler="-1.57 -.4 0" size="0.02 0.035" type="capsule"/>
+                        <geom class="oven_collision" euler="-1.57 -.4 0" pos="0.0263 -0.065 0" size="0.021 0.03" type="capsule" mass=".01"/>
+                        <site type="sphere" name="light_site" pos="0.0315 -0.075 0" size=".01" group="3" rgba="1 0 0 1"/>
+                    </body>
+                </body>
+                <body name="lightblock_hinge" pos="-0.0044 -0.3 -0.1361">
+                    <inertial pos="-0.0046 0.35 0.0131" mass=".01" diaginertia="0.001 0.001 0.001"/>
+                    <joint axis="0 0 -1" type="slide" limited="true" name="light_joint" frictionloss="1" range="-.05 0"/>
+                    <geom material="oven_block" pos="-0.008 0.4 -0.01" size="0.4 0.3 0.015" type="box"/>
+                </body>
+            </body>
+            </body>
+            <body name="backwall" pos="0 0 0">
+                <body name="wallroot" childclass="backwall" pos="0.059 0.584 1.587">
+                    <geom pos="-.11 0.06 .6" size="1.26 0.07 0.6" type="box"/>
+                    <geom material="wall_white" pos="-0.11 0.06 0.145" size="1.26 0.08 0.145" type="box"/>
+
+                    <geom class="wall_collision" pos="-.11 0.06 .6" size="1.26 0.07 0.6" type="box" mass=".2"/>
+                    <geom class="wall_collision" pos="-0.11 0.06 0.145" size="1.26 0.08 0.145" type="box" mass=".2"/>
+                </body>
+                <body euler="0 0 1.57" name="wall2" childclass="backwall" pos="-1.305 -0.546 1.587">
+                    <geom pos="0.044 .06 0.6" size="1.079 0.07 0.6" type="box"/>
+                    <geom material="wall_white" pos="0.044 .06 0.145" size="1.079 0.08 0.145" type="box"/>
+
+                    <geom class="wall_collision" pos="0.044 .06 0.6" size="1.079 0.07 0.6" type="box" mass=".2"/>
+                    <geom class="wall_collision" pos="0.044 .06 0.145" size="1.079 0.08 0.145" type="box" mass=".2"/>
+                </body>
+            </body>
+            <body name="slidecabinet" pos="0.4 0.3 2.6">
+                <body name="slide" childclass="slidecabinet">
+                    <geom pos="-0.225 0 -0.18" size="0.223 0.3 0.02" type="box"/>
+                    <geom pos="0.224 0 0" size="0.226 0.3 0.2" type="box"/>
+                    <geom pos="-0.225 0 0.18" size="0.223 0.3 0.02" type="box"/>
+                    <geom pos="-0.426 0 0" size="0.022 0.3 0.16" type="box"/>
+                    <geom pos="-0.2 0.276 0.0" size="0.21 0.024 0.16" type="box"/>
+
+                    <geom class="slide_collision" pos="-0.225 0 -0.18" size="0.223 0.3 0.02" type="box" mass=".2"/>
+                    <geom class="slide_collision" pos="0.224 0 0" size="0.226 0.3 0.2" type="box" mass="1"/>
+                    <geom class="slide_collision" pos="-0.225 0 0.18" size="0.223 0.3 0.02" type="box" mass=".2"/>
+                    <geom class="slide_collision" pos="-0.426 0 0" size="0.022 0.3 0.16" type="box" mass=".2"/>
+                    <geom class="slide_collision" pos="-0.2 0.276 0" size="0.2 0.024 0.16" type="box" mass=".2"/>
+                    <body name="slidelink" pos="-0.225 -0.32 0">
+                        <joint name="slidedoor_joint" axis="1 0 0" type="slide" range="0 .44"/>
+                        <geom material="M_slide_metal" euler="1.57 0 0" pos="-0.183 -0.06 -0.114" size="0.019 0.053 0.019" type="cylinder"/>
+                        <geom material="M_slide_metal" euler="1.57 0 0" pos="-0.183 -0.06 0.114" size="0.019 0.053 0.019" type="cylinder"/>
+                        <geom material="M_slide_metal" pos="-0.183 -0.123 0" size="0.022 0.159" type="cylinder"/>
+                        <geom pos="0 -.02 0" size="0.225 0.03 0.195" type="box"/>
+
+                        <geom class="slide_collision" pos="0 -.02 0" size="0.225 0.03 0.195" type="box" mass=".2"/>
+                        <geom class="slide_collision" euler="1.57 0 0" pos="-0.183 -0.06 -0.114" size="0.019 0.053 0.019" type="cylinder" mass=".02"/>
+                        <geom class="slide_collision" euler="1.57 0 0" pos="-0.183 -0.06 0.114" size="0.019 0.053 0.019" type="cylinder" mass=".02"/>
+                        <geom class="slide_collision" pos="-0.183 -0.123 0" size="0.022 0.159" type="cylinder" mass=".1"/>
+                        <site type="sphere" name="slide_site" pos="-0.183 -0.123 0" size=".01" group="3"/>
+                    </body>
+                </body>
+            </body>
+            <body name="hingecabinet" pos="-0.504 0.28 2.6">
+                <body name="hingecab" childclass="hingecabinet">
+                    <geom size="0.04 0.3 0.2" type="box"/>
+                    <geom pos="0.38 0 0" size="0.02 0.3 0.2" type="box"/>
+                    <geom pos="-0.38 0 0" size="0.02 0.3 0.2" type="box"/>
+                    <geom pos="-0.2 0 0.18" size="0.16 0.3 0.02" type="box"/>
+                    <geom pos="-0.2 0 -0.18" size="0.16 0.3 0.02" type="box"/>
+                    <geom pos="0.2 0 -0.18" size="0.16 0.3 0.02" type="box"/>
+                    <geom pos="0.2 0 0.18" size="0.16 0.3 0.02" type="box"/>
+                    <geom pos="-0.2 0.28 0" size="0.16 0.02 0.16" type="box"/>
+                    <geom pos="0.2 0.28 0" size="0.16 0.02 0.16" type="box"/>
+
+                    <geom class="hinge_collision" size="0.04 0.3 0.2" type="box" mass=".3"/>
+                    <geom class="hinge_collision" pos="0.38 0 0" size="0.02 0.3 0.2" type="box" mass=".2"/>
+                    <geom class="hinge_collision" pos="-0.38 0 0" size="0.02 0.3 0.2" type="box" mass=".2"/>
+                    <geom class="hinge_collision" pos="-0.2 0 0.18" size="0.16 0.3 0.02" type="box" mass=".2"/>
+                    <geom class="hinge_collision" pos="-0.2 0 -0.18" size="0.16 0.3 0.02" type="box" mass=".2"/>
+                    <geom class="hinge_collision" pos="0.2 0 -0.18" size="0.16 0.3 0.02" type="box" mass=".2"/>
+                    <geom class="hinge_collision" pos="0.2 0 0.18" size="0.16 0.3 0.02" type="box" mass=".2"/>
+                    <geom class="hinge_collision" pos="-0.2 0.28 0" size="0.16 0.02 0.16" type="box" mass=".2"/>
+                    <geom class="hinge_collision" pos="0.2 0.28 0" size="0.16 0.02 0.16" type="box" mass=".2"/>
+                    <body name="hingeleftdoor" pos="-0.38 -0.32 0">
+                        <joint type="hinge" axis="0 0 1" name="leftdoorhinge" range="-1.57 0"/>
+                        <geom material="M_hinge_metal" pos="0.302 -0.128 0" size="0.022 0.16" type="cylinder"/>
+                        <geom material="M_hinge_metal" pos="0.302 -0.061 0.114" euler="1.57 0 0" size="0.019 0.053 0.02" type="cylinder"/>
+                        <geom material="M_hinge_metal" pos="0.302 -0.061 -0.114" euler="1.57 0 0" size="0.019 0.053 0.02" type="cylinder"/>
+                        <geom pos="0.184 -.015 0" size="0.193 0.03 0.2" type="box"/>
+
+                        <geom class="hinge_collision" pos="0.184 -.015 0" size="0.193 0.03 0.2" type="box" mass=".2"/>
+                        <geom class="hinge_collision" pos="0.302 -0.128 0" size="0.022 0.16" type="cylinder" mass=".1"/>
+                        <geom class="hinge_collision" pos="0.302 -0.061 0.114" euler="1.57 0 0" size="0.019 0.053 0.02" type="cylinder" mass=".02"/>
+                        <geom class="hinge_collision" pos="0.302 -0.061 -0.114" euler="1.57 0 0" size="0.019 0.053 0.02" type="cylinder" mass=".02"/>
+                        <site type="sphere" name="hinge_site1" pos="0.302 -0.128 0" size=".01" group="3" rgba="1 0 0 1"/>
+                    </body>
+                    <body name="hingerightdoor" pos="0.38 -0.32 0">
+                        <joint type="hinge" axis="0 0 1" name="rightdoorhinge" range="0 1.57"/>
+                        <geom pos="-0.185 -.015 0" size="0.193 0.03 0.2" type="box"/>
+                        <geom material="M_hinge_metal" pos="-0.302 -0.128 0" size="0.022 0.16" type="cylinder"/>
+                        <geom material="M_hinge_metal" pos="-0.302 -0.061 -0.114" euler="1.57 0 0" size="0.019 0.053 0.02" type="cylinder"/>
+                        <geom material="M_hinge_metal" pos="-0.302 -0.061 0.114" euler="1.57 0 0" size="0.019 0.053 0.02" type="cylinder"/>
+
+                        <geom class="hinge_collision" pos="-0.302 -0.128 0" size="0.022 0.16" type="cylinder" mass=".1"/>
+                        <geom class="hinge_collision" pos="-0.302 -0.061 -0.114" euler="1.57 0 0" size="0.019 0.053 0.02" type="cylinder" mass=".02"/>
+                        <geom class="hinge_collision" pos="-0.302 -0.061 0.114" euler="1.57 0 0" size="0.019 0.053 0.02" type="cylinder" mass=".02"/>
+                        <geom class="hinge_collision" pos="-0.185 -.015 0" size="0.193 0.03 0.2" type="box" mass=".2"/>
+                        <site type="sphere" name="hinge_site2" pos="-0.302 -0.128 0" size=".01" group="3" rgba="0 1 0 1"/>
+                    </body>
+                </body>
+            </body>
+            <body name="microwave" pos="-0.750 -0.025 1.6" euler="0 0 0.3">
+                <body name="microroot" childclass="microwave">
+                    <geom type="mesh" mesh="micro"/>
+                    <geom material="micro_metal" type="mesh" mesh="microbutton"/>
+                    <geom material="micro_metal" type="mesh" mesh="microfeet"/>
+
+                    <geom class="micro_collision" pos="-0.316 0.023 0.187" size="0.029 0.199 0.187" type="box" mass=".5"/>
+                    <geom class="micro_collision" pos="0.236 0.023 0.187" size="0.109 0.199 0.187" type="box" mass=".5"/>
+                    <geom class="micro_collision" pos="-0.081 0.191 0.187" size="0.207 0.03 0.187" type="box" mass=".5"/>
+                    <geom class="micro_collision" pos="-0.08 -0.007 0.355" size="0.207 0.169 0.019" type="box" mass=".5"/>
+                    <geom class="micro_collision" pos="-0.08 -0.008 0.024" size="0.207 0.168 0.024" type="box" mass=".5"/>
+                    <geom class="micro_collision" pos="0.26 -0.197 0.187" size="0.085 0.024 0.187" type="box" mass=".5"/>
+                    <body name="microdoorroot" pos="-0.345 -0.176 0.192">
+                        <joint type="hinge" axis="0 0 1" limited="true" name="microjoint" range="-2.094 0"/>
+                        <geom type="mesh" mesh="microdoor" pos="0.345 0.176 -0.192"/>
+                        <geom material="micro_window" type="mesh" mesh="microwindow" pos="0.345 0.176 -0.192"/>
+                        <geom material="micro_metal" pos="0.475 -0.108 0" size="0.02 0.13" type="capsule"/>
+                        <geom material="micro_metal" euler="1.57 0 0" pos="0.475 -0.075 .13" size="0.02 0.03" type="capsule"/>
+                        <geom material="micro_metal" euler="1.57 0 0" pos="0.475 -0.075 -.13" size="0.02 0.03" type="capsule"/>
+
+                        <geom class="micro_collision" pos="0.475 -0.108 0" size="0.02 0.13" type="capsule" mass="0.020"/>
+                        <geom class="micro_collision" euler="1.57 0 0" pos="0.475 -0.075 .13" size="0.02 0.03" type="capsule" mass="0.020"/>
+                        <geom class="micro_collision" euler="1.57 0 0" pos="0.475 -0.075 -.13" size="0.02 0.03" type="capsule" mass="0.020"/>
+                        <geom class="micro_collision" pos="0.259 -0.026 0" size="0.259 0.024 0.185" type="box" mass="0.20"/>
+                        <site type="sphere" name="microhandle_site" pos="0.475 -0.108 0" size=".01" group="3" rgba="1 1 0 1"/>
+                    </body>
+                </body>
+            </body>
+        </body>
+
+        <body name="kettle" pos="-0.269 0.35 1.626">
+            <freejoint/>
+            <body name="kettleroot" childclass="kettle">
+                <geom type="mesh" mesh="kettle"/>
+                <geom material="kettle_wood" euler="0 1.57 0" pos="0 0 0.259" size="0.032 0.1" type="capsule"/>
+                <geom material="kettle_wood" euler="0 1.57 0" pos="0 0 0.13" size="0.011" type="sphere"/>
+                <geom euler="0 1.57 0" pos="0 0 0.259" size="0.02 0.115" type="capsule"/>
+                <geom pos="0.092 0 0.186" size="0.02 0.07" type="capsule"/>
+                <geom pos="-0.092 0 0.185" size="0.02 0.07" type="capsule"/>
+                <geom material="kettle_wood" pos="-0.092 0 0.22" size="0.022 0.015" type="capsule"/>
+                <geom material="kettle_wood" pos="0.092 0 0.22" size="0.022 0.015" type="capsule"/>
+
+                <geom class="kettle_collision" euler="0 1.57 0" pos="0 0 0.259" size="0.032 0.1" type="capsule" mass='.02'/>
+                <geom class="kettle_collision" pos="0.092 0 0.18" size="0.023 0.06" type="capsule" mass='.02'/>
+                <geom class="kettle_collision" pos="-0.092 0 0.18" size="0.023 0.06" type="capsule" mass='.02'/>
+                <geom class="kettle_collision" euler="0 2.25 0" pos="-0.126 0 0.07" size="0.031 0.05" type="cylinder" mass='.02'/>
+                <geom class="kettle_collision" pos="0 0 0.058" size="0.122 0.122 0.058" type="box" mass='.8'/>
+                <site type="sphere" name="kettle_site" pos="0 0 0.259" size=".01" group="3" rgba="1 0 0 1"/>
+            </body>
+        </body>
+
+        <!-- TODO: add collision geoms for trashbin -->
+        <!-- <body name="trashbin" pos="0.5 0.35 2.5" euler="1.57 0 0">
+            <include file="objects/chains/trashbin_chain.xml"/>
+        </body> -->
+
+    </worldbody>
+
+    <!-- <keyframe>
+        <key qpos='0.16 -1.76 1.84 -2.51 0.36 0.79 1.55 0.00 0.0 1.25561e-05 1.57437e-07 1.25561e-05 1.57437e-07 1.25561e-05 1.57437e-07 1.25561e-05 1.57437e-07 8.24417e-05 9.48283e-05 0 0 0 0 -0.269 0.35 1.61523 1 1.34939e-19 -3.51612e-05 -7.50168e-19'/>
+    </keyframe> -->
+
+</mujoco>

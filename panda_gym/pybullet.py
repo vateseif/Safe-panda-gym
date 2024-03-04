@@ -394,7 +394,12 @@ class PyBullet:
             body_name (str): The name of the body. Must be unique in the sim.
             mass (float): Mass of the body. Some URDFs have mass 0 which makes objects static.
         """
-        urdf =  self.physics_client.loadURDF(**kwargs)
+        try:
+            urdf =  self.physics_client.loadURDF(**kwargs)
+        except Exception as e:
+            print(f"Error loading URDF {kwargs['fileName']}")
+            print(e)
+            return
 
         # change mass of object is given
         if mass is not None:
@@ -645,7 +650,7 @@ class PyBullet:
             body_name=body_name,
             half_extents=np.array([length, width, height]) / 2,
             mass=0.0,
-            position=np.array([x_offset, y_offset, -height / 2]),
+            position=np.array([x_offset, y_offset, height / 2]),
             specular_color=np.zeros(3),
             rgba_color=np.array([220/255, 220/255, 220/255, 1]),
             lateral_friction=lateral_friction,
@@ -797,6 +802,10 @@ class PyBullet:
         texture_uid = self.physics_client.loadTexture(texture_path)
         self.physics_client.changeVisualShape(self._bodies_idx[name], -1, textureUniqueId=texture_uid)
     
+    def create_kitchen(self,):
+        objectUniqueIds = p.loadMJCF(os.path.join(BASE_DIR, "assets/kitchen.xml"))
+        # pass
+
     def visualize_trajectory(self, trajectory: np.ndarray) -> None:
         """ Visualize each trajecory point (xyz) as a sphere"""
         for i, point in enumerate(trajectory):

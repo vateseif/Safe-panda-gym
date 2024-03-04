@@ -26,14 +26,14 @@ class CookSteak(Task):
             self.sim.place_visualizer(target_position=np.zeros(3), distance=0.9, yaw=45, pitch=-30)
 
     def _create_scene(self) -> None:
-        self.sim.create_plane(z_offset=-0.4)
+        # self.sim.create_plane(z_offset=-0.4)
+        self.sim.create_kitchen()
         self.sim.create_table(length=1.8, width=0.6, height=0.4, x_offset=-0.15, y_offset=-0.2)
 
         self.handle_offsets = [np.array([-0.15, 0.0, 0.02]), np.array([0.15, 0.0, 0.02])]
 
         pan_position, oven_position, steak_position = self._sample_objects()
 
-        # load table URDF
         self.sim.loadURDF(body_name="pan", 
                         mass=2.0, 
                         fileName=os.path.join(BASE_DIR, "assets/blue_plate/model.urdf"), 
@@ -138,9 +138,9 @@ class CookSteak(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        pan_position = np.array([-0.0, -0.1, 0.])
-        oven_position = np.array([-0.15, 0.6, -0.4])
-        steak_position = np.array([0., -0.36, 0.05])
+        pan_position = np.array([-0.0, -0.1, 0.41])
+        oven_position = np.array([-0.15, 0.6, 0])
+        steak_position = np.array([0., -0.36, 0.41])
         return pan_position, oven_position, steak_position# np.array([-0.1, -0.1, 0.])
 
     def _get_object_orietation(self):
