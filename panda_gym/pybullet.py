@@ -840,6 +840,29 @@ class PyBullet:
         # texture_uid = self.physics_client.loadTexture(texture_path)
         # self.physics_client.changeVisualShape(self._bodies_idx[name], -1, textureUniqueId=texture_uid)
 
+    def create_kettle(self,):
+        name = "kettle"
+        stl = "assets/kettle/kettle.stl"
+        # texture = "assets/textures/metal.png"
+        oven_collision_shape = p.createCollisionShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, stl),
+            meshScale=np.array([0.6, 0.6, 0.35])
+        )
+        oven_shape = p.createVisualShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, stl),
+            meshScale=np.array([0.6, 0.6, 0.35]),
+            rgbaColor=np.array([74/255, 186/255, 158/255, 1])
+        )
+        oven = p.createMultiBody(
+            baseCollisionShapeIndex=oven_collision_shape,
+            baseVisualShapeIndex=oven_shape,
+            basePosition=np.array([-0.2, 0.35, 0.57]),
+            baseOrientation=[ 0, 0, 0.1736482, 0.9848078 ],
+        )
+        self._bodies_idx[name] = oven
+
     def create_kitchen(self,):
         # Currently only used to load the floor
         objectUniqueIds = p.loadMJCF(os.path.join(BASE_DIR, "assets/kitchen.xml"))
@@ -904,6 +927,8 @@ class PyBullet:
             rgba_color=np.array([220/255, 220/255, 220/255, 1]),
             # texture='assets/textures/metal.png',
         )
+
+        self.create_kettle()
 
     def visualize_trajectory(self, trajectory: np.ndarray) -> None:
         """ Visualize each trajecory point (xyz) as a sphere"""
