@@ -458,7 +458,7 @@ class PyBullet:
             collision_kwargs=collision_kwargs,
         )
         if texture is not None:
-            texture_path = os.path.join(BASE_DIR, 'assets/textures/marble.png')
+            texture_path = os.path.join(BASE_DIR, texture)
             texture_uid = self.physics_client.loadTexture(texture_path)
             self.physics_client.changeVisualShape(self._bodies_idx[body_name], -1, textureUniqueId=texture_uid)
 
@@ -655,7 +655,7 @@ class PyBullet:
             rgba_color=np.array([220/255, 220/255, 220/255, 1]),
             lateral_friction=lateral_friction,
             spinning_friction=spinning_friction,
-            texture='assets/textures/marble.png'
+            texture='assets/textures/wood2.png'
         )
 
     def create_sink(self, base_position:np.ndarray):
