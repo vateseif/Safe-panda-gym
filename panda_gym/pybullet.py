@@ -461,6 +461,7 @@ class PyBullet:
             texture_path = os.path.join(BASE_DIR, texture)
             texture_uid = self.physics_client.loadTexture(texture_path)
             self.physics_client.changeVisualShape(self._bodies_idx[body_name], -1, textureUniqueId=texture_uid)
+            print(f"Loaded texture {texture_path}")
 
     def create_cylinder(
         self,
@@ -648,14 +649,25 @@ class PyBullet:
         """
         self.create_box(
             body_name=body_name,
-            half_extents=np.array([length, width, height]) / 2,
+            half_extents=np.array([length, width, 0.04]) / 2,
             mass=0.0,
-            position=np.array([x_offset, y_offset, height / 2]),
+            position=np.array([x_offset, y_offset, (height - 0.04)]),
             specular_color=np.zeros(3),
             rgba_color=np.array([220/255, 220/255, 220/255, 1]),
             lateral_friction=lateral_friction,
             spinning_friction=spinning_friction,
             texture='assets/textures/wood2.png'
+        )
+        self.create_box(
+            body_name=body_name,
+            half_extents=np.array([length, width, (height - 0.06)]) / 2,
+            mass=0.0,
+            position=np.array([x_offset, y_offset, (height - 0.04) / 2]),
+            specular_color=np.zeros(3),
+            rgba_color=np.array([220/255, 220/255, 220/255, 1]),
+            lateral_friction=lateral_friction,
+            spinning_friction=spinning_friction,
+            # texture='assets/textures/wood2.png'
         )
 
     def create_sink(self, base_position:np.ndarray):
@@ -802,9 +814,96 @@ class PyBullet:
         texture_uid = self.physics_client.loadTexture(texture_path)
         self.physics_client.changeVisualShape(self._bodies_idx[name], -1, textureUniqueId=texture_uid)
     
+    def create_microwave(self,):
+        name = "microwave"
+        stl = "assets/micro/micro.stl"
+        # texture = "assets/textures/metal.png"
+        oven_collision_shape = p.createCollisionShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, stl),
+            meshScale=np.array([0.6, 0.6, 0.35])
+        )
+        oven_shape = p.createVisualShape(
+            shapeType=p.GEOM_MESH,
+            fileName=os.path.join(BASE_DIR, stl),
+            meshScale=np.array([0.6, 0.6, 0.35]),
+            #rgbaColor=np.array([0.306, 0.306, 0.306, 1.])
+        )
+        oven = p.createMultiBody(
+            baseCollisionShapeIndex=oven_collision_shape,
+            baseVisualShapeIndex=oven_shape,
+            basePosition=np.array([-0.7, 0.5, 0.55]),
+            baseOrientation=[ 0, 0, 0.1736482, 0.9848078 ],
+        )
+        self._bodies_idx[name] = oven
+        # texture_path = os.path.join(BASE_DIR, texture)
+        # texture_uid = self.physics_client.loadTexture(texture_path)
+        # self.physics_client.changeVisualShape(self._bodies_idx[name], -1, textureUniqueId=texture_uid)
+
     def create_kitchen(self,):
+        # Currently only used to load the floor
         objectUniqueIds = p.loadMJCF(os.path.join(BASE_DIR, "assets/kitchen.xml"))
-        # pass
+
+        self.create_box(
+            body_name="cabinetbase1",
+            half_extents=np.array([0.6, 0.4, 0.55]),
+            mass=0.0,
+            position=np.array([-1, 0.6, 0]),
+            specular_color=np.zeros(3),
+            rgba_color=np.array([220/255, 220/255, 220/255, 1]),
+            texture='assets/textures/metal2.png',
+        )
+        self.create_box(
+            body_name="cabinetbase2",
+            half_extents=np.array([0.6, 0.4, 0.55]),
+            mass=0.0,
+            position=np.array([0.82, 0.6, 0]),
+            specular_color=np.zeros(3),
+            rgba_color=np.array([220/255, 220/255, 220/255, 1]),
+            texture='assets/textures/metal2.png',
+        )
+
+        self.create_box(
+            body_name="wall",
+            half_extents=np.array([2, 0.1, 1.3]),
+            mass=0.0,
+            position=np.array([0, 1.1, 0]),
+            specular_color=np.zeros(3),
+            rgba_color=np.array([255/255, 255/255, 255/255, 1]),
+            # texture='assets/textures/metal2.png',
+        )
+
+        self.create_box(
+            body_name="hood",
+            half_extents=np.array([0.35, 0.35, 0.02]),
+            mass=0.0,
+            position=np.array([0, 0.5, 1.25]),
+            specular_color=np.zeros(3),
+            rgba_color=np.array([220/255, 220/255, 220/255, 1]),
+            texture='assets/textures/metal.png',
+        )
+
+        self.create_microwave()
+
+        self.create_box(
+            body_name="robot_support_1",
+            half_extents=np.array([0.15, 0.1, 0.4]),
+            mass=0.0,
+            position=np.array([-0.675, -0.1, 0]),
+            specular_color=np.zeros(3),
+            rgba_color=np.array([220/255, 220/255, 220/255, 1]),
+            # texture='assets/textures/metal.png',
+        )
+
+        self.create_box(
+            body_name="robot_support_2",
+            half_extents=np.array([0.15, 0.1, 0.4]),
+            mass=0.0,
+            position=np.array([0.375, -0.1, 0]),
+            specular_color=np.zeros(3),
+            rgba_color=np.array([220/255, 220/255, 220/255, 1]),
+            # texture='assets/textures/metal.png',
+        )
 
     def visualize_trajectory(self, trajectory: np.ndarray) -> None:
         """ Visualize each trajecory point (xyz) as a sphere"""

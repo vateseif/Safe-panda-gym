@@ -28,7 +28,7 @@ class CookSteak(Task):
     def _create_scene(self) -> None:
         # self.sim.create_plane(z_offset=-0.4)
         self.sim.create_kitchen()
-        self.sim.create_table(length=1.8, width=0.6, height=0.4, x_offset=-0.15, y_offset=-0.2)
+        self.sim.create_table(length=0.7, width=1, height=0.45, x_offset=-0.15, y_offset=-0.4)
 
         self.handle_offsets = [np.array([-0.15, 0.0, 0.02]), np.array([0.15, 0.0, 0.02])]
 
@@ -138,9 +138,9 @@ class CookSteak(Task):
         return np.zeros(1)
 
     def _sample_objects(self) -> Tuple[np.ndarray, np.ndarray]:
-        pan_position = np.array([-0.0, -0.1, 0.41])
+        pan_position = np.array([-0.0, -0.1, 0.46])
         oven_position = np.array([-0.15, 0.6, 0])
-        steak_position = np.array([0., -0.36, 0.41])
+        steak_position = np.array([0., -0.36, 0.46])
         return pan_position, oven_position, steak_position# np.array([-0.1, -0.1, 0.])
 
     def _get_object_orietation(self):
